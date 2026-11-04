@@ -1,0 +1,68 @@
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      changeDictionaryDict;
+}
+
+U
+{
+    internalField   uniform (0 0 0);
+    boundaryField
+    {
+        ".*"  { type noSlip; }
+        door  { type fixedValue; value uniform (1.0 0 0); }
+        vent  { type inletOutlet; inletValue uniform (0 0 0); value uniform (0 0 0); }
+    }
+}
+T
+{
+    internalField   uniform 303.15;
+    boundaryField
+    {
+        ".*"    { type zeroGradient; value uniform 303.15; }
+        floor   { type fixedValue; value uniform 293.15; }
+        door    { type fixedValue; value uniform 303.15; }
+        vent    { type inletOutlet; inletValue uniform 303.15; value uniform 303.15; }
+        "air_to_.*" { type compressible::turbulentTemperatureRadCoupledMixed; Tnbr T; kappaMethod fluidThermo; value uniform 303.15; }
+    }
+}
+epsilon
+{
+    internalField   uniform 0.01;
+    boundaryField
+    {
+        ".*"  { type epsilonWallFunction; value uniform 0.01; }
+        door  { type fixedValue; value uniform 0.01; }
+        vent  { type inletOutlet; inletValue uniform 0.01; value uniform 0.01; }
+    }
+}
+k
+{
+    internalField   uniform 0.01;
+    boundaryField
+    {
+        ".*"  { type kqRWallFunction; value uniform 0.01; }
+        door  { type fixedValue; value uniform 0.01; }
+        vent  { type inletOutlet; inletValue uniform 0.01; value uniform 0.01; }
+    }
+}
+p_rgh
+{
+    internalField   uniform 1e5;
+    boundaryField
+    {
+        ".*"  { type fixedFluxPressure; value uniform 1e5; }
+        vent  { type fixedValue; value uniform 1e5; }
+    }
+}
+p
+{
+    internalField   uniform 1e5;
+    boundaryField
+    {
+        ".*"  { type calculated; value uniform 1e5; }
+    }
+}
+

@@ -1,0 +1,31 @@
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      controlDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+application     simpleFoam;
+startFrom       latestTime;
+startTime       0;
+stopAt          endTime;
+endTime         1500;
+deltaT          1;
+writeControl    timeStep;
+writeInterval   500;
+purgeWrite      1;
+writeFormat     ascii;
+writePrecision  8;
+timeFormat      general;
+runTimeModifiable true;
+functions
+{
+    suctionFlow { type surfaceFieldValue; libs (fieldFunctionObjects); regionType patch; name suction;
+                  operation sum; fields (phi); writeFields false; writeControl timeStep; writeInterval 10; }
+    roofFlow    { type surfaceFieldValue; libs (fieldFunctionObjects); regionType patch; name roofOpening;
+                  operation sum; fields (phi); writeFields false; writeControl timeStep; writeInterval 10; }
+}
+
+// ************************************************************************* //

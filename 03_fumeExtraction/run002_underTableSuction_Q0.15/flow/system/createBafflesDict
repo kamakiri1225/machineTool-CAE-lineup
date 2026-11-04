@@ -1,0 +1,24 @@
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      createBafflesDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+internalFacesOnly true;
+baffles
+{
+    sheet
+    {
+        type        faceZone;
+        zoneName    sheet;
+        patchPairs
+        {
+            type        wall;
+        }
+    }
+}
+
+// ************************************************************************* //

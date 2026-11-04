@@ -1,0 +1,7 @@
+Running blockMesh on /mnt/d/work/002_CAE/openfoam/20261103_laserFumeExtraction/run003_underTableSuction_Q0.60/flow
+Running topoSet on /mnt/d/work/002_CAE/openfoam/20261103_laserFumeExtraction/run003_underTableSuction_Q0.60/flow
+Running createPatch on /mnt/d/work/002_CAE/openfoam/20261103_laserFumeExtraction/run003_underTableSuction_Q0.60/flow
+Running createBaffles on /mnt/d/work/002_CAE/openfoam/20261103_laserFumeExtraction/run003_underTableSuction_Q0.60/flow
+Running checkMesh on /mnt/d/work/002_CAE/openfoam/20261103_laserFumeExtraction/run003_underTableSuction_Q0.60/flow
+Running simpleFoam on /mnt/d/work/002_CAE/openfoam/20261103_laserFumeExtraction/run003_underTableSuction_Q0.60/flow
+Running icoUncoupledKinematicParcelFoam on /mnt/d/work/002_CAE/openfoam/20261103_laserFumeExtraction/run003_underTableSuction_Q0.60/particles

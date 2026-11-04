@@ -1,0 +1,20 @@
+#!/bin/sh
+cd "${0%/*}" || exit
+. ${WM_PROJECT_DIR:?}/bin/tools/RunFunctions
+runApplication blockMesh
+runApplication topoSet
+runApplication createPatch -overwrite
+restore0Dir
+runApplication splitMeshRegions -cellZones -overwrite
+for region in machineA machineB; do remove0DirFields -region "$region" -- nut alphat epsilon k U p_rgh; done
+for region in air machineA machineB; do runApplication -s $region changeDictionary -region $region; done
+# stage 1: buoyant flow develops (300 s)
+runApplication -s stage1 chtMultiRegionFoam
+# stage 2: freeze the flow, march the temperatures with large time steps
+foamDictionary -entry PIMPLE.frozenFlow -add yes system/air/fvSolution
+foamDictionary -entry endTime -set 21600 system/controlDict
+foamDictionary -entry writeInterval -set 600 system/controlDict
+foamDictionary -entry maxCo -set 1e5 system/controlDict
+foamDictionary -entry maxDeltaT -set 30 system/controlDict
+runApplication -s stage2 chtMultiRegionFoam
+touch post.foam

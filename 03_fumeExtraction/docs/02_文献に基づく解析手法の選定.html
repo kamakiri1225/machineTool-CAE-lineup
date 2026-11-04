@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>レーザー加工ヒューム：文献に基づく解析手法の選定</title>
+  <style>
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      html {
+        background-color: white;
+      }
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+      font-size: 85%;
+      margin: 0;
+      hyphens: manual;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      background-color: #1a1a1a;
+      border: none;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+  </style>
+  <style>
+  body{font-family:'Noto Sans JP','Hiragino Sans','Meiryo',sans-serif;max-width:1100px;margin:2em auto;padding:0 1.2em;line-height:1.75;color:#222}
+  h1{border-bottom:3px solid #1F3A5F;padding-bottom:.3em;color:#1F3A5F} h2{border-left:6px solid #2F6FB0;padding-left:.5em;margin-top:2em;color:#1F3A5F}
+  h3{color:#2F6FB0} img{max-width:100%;height:auto;border:1px solid #ddd;margin:.5em 0}
+  table{border-collapse:collapse;margin:1em 0;font-size:.95em} th,td{border:1px solid #bbb;padding:.35em .7em} th{background:#E3ECF7}
+  code{background:#f4f4f4;padding:.1em .3em;border-radius:3px} pre{background:#f4f4f4;padding:1em;overflow-x:auto}
+  nav.top{font-size:.9em;margin-bottom:1em} nav.top a{color:#2F6FB0}
+  </style>
+  <nav class="top"><a href="../../index.html">← 一覧に戻る</a></nav>
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script src="/usr/share/javascript/mathjax/MathJax.js"
+  type="text/javascript"></script>
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">レーザー加工ヒューム：文献に基づく解析手法の選定</h1>
+</header>
+<h1
+id="レーザー加工ヒューム文献に基づく解析手法の選定">レーザー加工ヒューム：文献に基づく解析手法の選定</h1>
+<p>調査日：2026-11-04</p>
+<h2 id="結論">結論</h2>
+<p>今回の目的を「レーザー加工中・加工後に残る煙の濃度分布、漏出、排気による除去時間を調べる」とする。微細なヒュームが気流へ十分追従する条件では、<strong>非定常の移流拡散方程式による濃度輸送を主解析</strong>にする。粒径による差が必要なら粒径区分ごとに濃度方程式を解き、慣性・沈降・衝突が重要な粗い粒子には粒子追跡を併用する。</p>
+<p>これは以下の文献と目的を照合した本件への工学的判断である。「粒子追跡が主流だから採用する」とは判断しない。材料、実際の粒径分布、装置寸法、噴流条件が未確定なので、現段階で唯一の手法を断定することもできない。</p>
+<h2 id="判断の根拠となる研究">判断の根拠となる研究</h2>
+<table>
+<thead>
+<tr class="header">
+<th>文献</th>
+<th>確認できた手法・結果</th>
+<th>本件への意味と適用範囲</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><a
+href="https://www.frontiersin.org/journals/energy-research/articles/10.3389/fenrg.2020.00102/full">Numerical
+Simulation and Validation of Aerosol Particle Removal by Water Spray
+Droplets With OpenFOAM During the Fukushima Daiichi Fuel Debris
+Retrieval (2020)</a></td>
+<td>0.2–1
+µmのエアロゾルを9粒径区分の受動スカラーとして輸送。水滴をLagrange追跡し、エアロゾル除去をソース・シンクとして追加。UTARTS実験の粒径別質量の時間変化と比較</td>
+<td>微細粒子をスカラー輸送で扱う具体的なOpenFOAM実績。検証対象は常温の水噴霧除去であり、レーザー加工機の排気フードを直接検証した論文ではない。標準ソルバだけで論文の捕集機構を再現できるわけでもない</td>
+</tr>
+<tr class="even">
+<td><a
+href="https://hdlgc.xml-journal.net/en/article/doi/10.13832/j.jnpe.2024.080018">Research
+on Optimization of Aerosol Collection Technology in Laser Cutting Based
+on Numerical Simulation (2025)</a></td>
+<td>レーザー切断エアロゾルにCFD＋DPMを使用し、フード角度と吸引量による捕集性能を比較</td>
+<td>粒子追跡もフード評価に使われる。ただし確認した公開抄録からは実験検証の有無や詳細設定までは判断できず、DPMの一般的優位性を示すものではない</td>
+</tr>
+<tr class="odd">
+<td><a
+href="https://pmc.ncbi.nlm.nih.gov/articles/PMC9408184/">Characterisation
+of Particles Emitted during Laser Cutting of Various Metal Sheets and an
+Exposure Assessment for the Laser Operators (2022)</a></td>
+<td>金属板切断で凝縮由来の凝集体・集合体を観察し、発生粒子は主に300
+nm未満と報告</td>
+<td>微細煙を2–50
+µmの粒子だけで代表させる根拠は弱い。この研究にも他研究で2–2.5
+µm程度の中央値の報告が紹介されており、材料・工程条件による差の確認が必要。個数分布と質量分布も区別する</td>
+</tr>
+<tr class="even">
+<td><a href="https://doi.org/10.1080/00223131.2020.1862717">Development
+and validation of an agglomeration model for CFD simulations of aerosol
+dispersion in the frame of Fukushima fuel debris retrieval
+(2021)</a></td>
+<td>レーザー切断模擬物質のエアロゾル分散に対し、複雑な初期粒径分布を考慮する凝集モデルを改善</td>
+<td>粒径分布の時間変化が目的なら、単一スカラーでは不足し、粒径区分法・モーメント法等による凝集の扱いも検討する</td>
+</tr>
+</tbody>
+</table>
+<h2 id="何を解くか">何を解くか</h2>
+<p>空気密度一定、粒子の滑りを無視する近似では、質量濃度 C [kg/m³]
+に対して次式を使う。</p>
+<p><span class="math display">\[
+\frac{\partial C}{\partial t}+\nabla\cdot(\mathbf{u}C)
+=\nabla\cdot\left[\left(D_B+\frac{\nu_t}{Sc_t}\right)\nabla
+C\right]+S_C-R_C
+\]</span></p>
+<ul>
+<li>u：空気の速度。煙の熱で上昇流が生じる場合は温度・浮力を含む流れから求める。</li>
+<li>D_B：粒径に応じたBrown拡散係数。気体成分の分子拡散係数をそのまま粒子へ使わない。</li>
+<li>ν_t /
+Sc_t：RANSでモデル化する乱流拡散。乱流Schmidt数は仮定値を明記して感度を確認する。</li>
+<li>S_C：加工部からの発生量・位置・時間履歴。加工停止後は発生を止めて残留濃度の減衰を計算する。残熱等で発生が続く場合はその履歴を反映する。</li>
+<li>R_C：必要に応じた除去項。壁面沈着は境界の沈着フラックスとして扱う方法もあり、二重計上しない。</li>
+</ul>
+<p>粒径ごとに追従性や沈着が違う場合は C_i
+を複数解く。沈降等の滑り速度を輸送速度に追加するEuler的な方法もあり、スカラー輸送だから粒径依存性を一切表現できない、というわけではない。</p>
+<p>受動スカラーの妥当性は、局所的なStokes数 St = τ_p / τ_flow
+が十分小さいか、沈降速度が対象流速に比べ十分小さいかで確認する。粒径だけで一律に区切らず、ノズル近傍の急加速や狭いすき間では別に確認する。微小粒子の緩和時間・拡散にはすべり補正も考慮する。</p>
+<h2 id="本件の実施順序と評価量">本件の実施順序と評価量</h2>
+<ol type="1">
+<li>加工機の囲い、給気・排気位置、流量、加工点、温度・残熱、横風を確認して流れ場を作る。上から吸う依頼なのか、既存run001の下引きテーブルなのかも形状条件として確認する。</li>
+<li>まず非定常の濃度輸送で、発生中の漏出と加工停止後の残留を比較する。絶対発生量が不明なら規格化した同一発生源を使い、絶対濃度の予測とは区別する。</li>
+<li>領域内総量、排気口へ流出する量、他開口から漏れる量、沈着量の収支を積分する。排気への流出をフィルタでの最終捕集と同一視しない。</li>
+<li>同じ初期・発生条件で、吸引位置・流量による濃度低減と除去時間を比較する。濃度が初期値の10%や5%へ下がる時間などは比較指標であり、安全基準を意味しない。</li>
+<li>粒径別捕集や粗い粉じん・スパッタの付着が必要ならDPMを追加し、乱流分散、粒径分布、注入統計、沈着条件を確認する。凝集が重要なら粒径分布を輸送するモデルへ進む。</li>
+<li>メッシュ・時間刻み依存性と質量収支を確認し、風速・濃度減衰等の実測と比較する。煙の見た目だけから質量濃度や粒径を決めない。</li>
+</ol>
+<h2 id="現在のrun001との関係">現在のrun001との関係</h2>
+<p>run001は熱浮力・実際のアシストガス流れ・乱流粒子分散を省略し、2–50
+µmの粒子を定常場で追跡した予備解析である。これを実ヒュームの捕集率へ読み替えない。既存の流量感度計算は同モデルの比較として保存し、次段階の煙濃度解析では上記の手法を採用する。</p>
+<p>実装の参考：<a
+href="https://doc.openfoam.com/2306/tools/post-processing/function-objects/solvers/scalarTransport/">OpenFOAM
+scalarTransport</a>。標準機能の拡散係数・乱流拡散・発生源の設定を使用バージョンで確認する。固定速度場での濃度解析は予備比較に使えるが、熱浮力が支配的な場合は流れ場自体の見直しを先に行う。</p>
+</body>
+</html>

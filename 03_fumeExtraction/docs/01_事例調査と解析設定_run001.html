@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>01 レーザー加工ヒュームの集塵：事例調査とOpenFOAM解析（run001）</title>
+  <style>
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      html {
+        background-color: white;
+      }
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+      font-size: 85%;
+      margin: 0;
+      hyphens: manual;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      background-color: #1a1a1a;
+      border: none;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    /* CSS for syntax highlighting */
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      {   }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+    code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+    code span.at { color: #7d9029; } /* Attribute */
+    code span.bn { color: #40a070; } /* BaseN */
+    code span.bu { color: #008000; } /* BuiltIn */
+    code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #4070a0; } /* Char */
+    code span.cn { color: #880000; } /* Constant */
+    code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+    code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+    code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+    code span.dt { color: #902000; } /* DataType */
+    code span.dv { color: #40a070; } /* DecVal */
+    code span.er { color: #ff0000; font-weight: bold; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #40a070; } /* Float */
+    code span.fu { color: #06287e; } /* Function */
+    code span.im { color: #008000; font-weight: bold; } /* Import */
+    code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+    code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+    code span.op { color: #666666; } /* Operator */
+    code span.ot { color: #007020; } /* Other */
+    code span.pp { color: #bc7a00; } /* Preprocessor */
+    code span.sc { color: #4070a0; } /* SpecialChar */
+    code span.ss { color: #bb6688; } /* SpecialString */
+    code span.st { color: #4070a0; } /* String */
+    code span.va { color: #19177c; } /* Variable */
+    code span.vs { color: #4070a0; } /* VerbatimString */
+    code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+  <style>
+  body{font-family:'Noto Sans JP','Hiragino Sans','Meiryo',sans-serif;max-width:1100px;margin:2em auto;padding:0 1.2em;line-height:1.75;color:#222}
+  h1{border-bottom:3px solid #1F3A5F;padding-bottom:.3em;color:#1F3A5F} h2{border-left:6px solid #2F6FB0;padding-left:.5em;margin-top:2em;color:#1F3A5F}
+  h3{color:#2F6FB0} img{max-width:100%;height:auto;border:1px solid #ddd;margin:.5em 0}
+  table{border-collapse:collapse;margin:1em 0;font-size:.95em} th,td{border:1px solid #bbb;padding:.35em .7em} th{background:#E3ECF7}
+  code{background:#f4f4f4;padding:.1em .3em;border-radius:3px} pre{background:#f4f4f4;padding:1em;overflow-x:auto}
+  nav.top{font-size:.9em;margin-bottom:1em} nav.top a{color:#2F6FB0}
+  </style>
+  <nav class="top"><a href="../../index.html">← 一覧に戻る</a></nav>
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">01
+レーザー加工ヒュームの集塵：事例調査とOpenFOAM解析（run001）</h1>
+</header>
+<h1 id="01-レーザー加工ヒュームの集塵事例調査とopenfoam解析run001">01
+レーザー加工ヒュームの集塵：事例調査とOpenFOAM解析（run001）</h1>
+<p>作成日：2026-11-03　OpenFOAM v2512</p>
+<p>手法選定の再調査（2026-11-04）：<a
+href="02_文献に基づく解析手法の選定.html">02
+文献に基づく解析手法の選定</a>。微細煙の濃度・加工後の除去時間には非定常スカラー輸送を主解析にする方針。以下は既存の粒子追跡による予備解析の記録。</p>
+<p><img
+src="../run001_underTableSuction_Q0.30/images/fume_extraction.gif"
+alt="ヒュームの粒子が集塵室へ吸い込まれる様子" /></p>
+<hr />
+<h2 id="1-事例調査">1. 事例調査</h2>
+<p>レーザー切断では、材料・板厚・レーザー条件・アシストガスによって粒子の大きさや発生量が変わる。集塵性能はフード形状、発生源との距離、流量、周囲気流にも左右されるため、文献の数値を対象機へそのまま転用できない。今回の設定に関係する公開資料を、対象との近さと使い方を分けて整理する。</p>
+<table>
+<thead>
+<tr class="header">
+<th>事例</th>
+<th>内容</th>
+<th>参考にした点</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>熱加工機の集塵装置（特許 6240477）</td>
+<td>加工エリアの下に上が開いた集塵室を設け、送気と吸気を向かい合わせてヒュームを除去</td>
+<td><strong>板の下の集塵室から吸う形</strong>（本モデルの基本形）</td>
+</tr>
+<tr class="even">
+<td>福岡県工業技術センター 研究報告（2024）</td>
+<td>溶接ヒュームをレーザーシートで可視化し、CFD（2 次元・SST
+k-ω）の条件を合わせ込み</td>
+<td>乱流モデル SST k-ω、可視化との比較の考え方</td>
+</tr>
+<tr class="odd">
+<td>Zhang ら（Nuclear Power Engineering, 2025）</td>
+<td>レーザー切断エアロゾルを CFD＋DPM
+で解析し、フード角度と排気流量を比較</td>
+<td><strong>流れ＋粒子追跡</strong>の構成と、形状・流量を比較する考え方。数値条件や捕集率を対象機へ直接移さない</td>
+</tr>
+<tr class="even">
+<td>Liu ら（Building and Environment, 2026）</td>
+<td>コンクリートブロックのレーザー切断で、エアカーテン付きフードを CFD
+と実験で評価</td>
+<td>CFD
+を実験で検証する重要性。材料・加工機・フードが異なるため、効率値は本件に適用しない</td>
+</tr>
+<tr class="odd">
+<td>金属板レーザー切断の粒子特性（2022）</td>
+<td>複数金属板のレーザー切断で発生粒子を測定。微小粒子が多いことを報告</td>
+<td>本 run001 の 2–50 µm 粒子を実ヒュームそのものと見なせない根拠</td>
+</tr>
+<tr class="even">
+<td>LLNL（2003）ダウンドラフトテーブルの CFD</td>
+<td>部屋全体とダウンドラフトテーブルの気流・汚染物質の輸送</td>
+<td>吸引テーブルを含む部屋全体を解く</td>
+</tr>
+<tr class="odd">
+<td>福岡県工業技術センター（2024）</td>
+<td>溶接ヒュームをレーザーシートで可視化し、SST k-ω の CFD と比較</td>
+<td>溶接を対象とした参考例。粒子発生位置・条件を合わせて可視化や測定と照合する考え方</td>
+</tr>
+<tr class="even">
+<td>SimScale（メーカー事例）</td>
+<td>プラズマテーブル・ダウンドラフトの区画設計</td>
+<td>区画ごとの吸引の偏り</td>
+</tr>
+</tbody>
+</table>
+<p>保存した文献：<code>refs/</code>（福岡県工技センター報告 PDF、特許
+6240477 の HTML）。 リンク：</p>
+<ul>
+<li>特許 6240477：<a
+href="https://ipforce.jp/patent-jp-B9-6240477">https://ipforce.jp/patent-jp-B9-6240477</a></li>
+<li>福岡県工業技術センター 研究報告 No.34（溶接ヒューム）：<a
+href="https://www.fitc.pref.fukuoka.jp/data/kenkyu-seika/report/no34/2024_kenkyuhoukoku_021.pdf">https://www.fitc.pref.fukuoka.jp/data/kenkyu-seika/report/no34/2024_kenkyuhoukoku_021.pdf</a></li>
+<li>LLNL downdraft table CFD：<a
+href="https://smartersmallbuildings.lbl.gov/publications/cfd-analysis-llnl-downdraft-table">https://smartersmallbuildings.lbl.gov/publications/cfd-analysis-llnl-downdraft-table</a></li>
+<li>IRSN：<a
+href="https://hal-cea.archives-ouvertes.fr/hal-02478477v1">https://hal-cea.archives-ouvertes.fr/hal-02478477v1</a></li>
+<li>Zhang ら（2025）：<a
+href="https://hdlgc.xml-journal.net/en/article/doi/10.13832/j.jnpe.2024.080018">https://hdlgc.xml-journal.net/en/article/doi/10.13832/j.jnpe.2024.080018</a></li>
+<li>Liu ら（2026, Building and Environment, CFD
+と実験によるレーザー切断フード評価）：<a
+href="https://www.sciencedirect.com/science/article/pii/S0360132326008152">https://www.sciencedirect.com/science/article/pii/S0360132326008152</a></li>
+<li>金属板レーザー切断粒子の特性評価（2022, IJERPH）：<a
+href="https://pmc.ncbi.nlm.nih.gov/articles/PMC9408184/">https://pmc.ncbi.nlm.nih.gov/articles/PMC9408184/</a></li>
+<li>SimScale：<a
+href="https://www.simscale.com/?p=111776">https://www.simscale.com/?p=111776</a></li>
+</ul>
+<hr />
+<h2 id="2-解析の方針2-段構え">2. 解析の方針（2 段構え）</h2>
+<ol type="1">
+<li><strong>流れ（定常）</strong>：<code>simpleFoam</code>（非圧縮・定常・SST
+k-ω）で、加工室と集塵室の空気の流れを解く。</li>
+<li><strong>粒子（非定常）</strong>：<code>icoUncoupledKinematicParcelFoam</code>
+で、1 の速度場を固定したまま、
+切断点から出るヒューム粒子を時間とともに動かす（粒子は流れに影響しない一方向連成）。</li>
+</ol>
+<p>ヒュームの濃度は低いので、粒子が空気の流れを変える効果は無視できる、という考え方。</p>
+<hr />
+<h2 id="3-形状メッシュrun001_undertablesuction_q030flow">3.
+形状・メッシュ（<code>run001_underTableSuction_Q0.30/flow</code>）</h2>
+<table>
+<thead>
+<tr class="header">
+<th>項目</th>
+<th>値</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>加工室</td>
+<td>x 0〜1.2 m、y −0.3〜0.6 m（鋼板の高さ y = 0）、z 0〜0.8 m</td>
+</tr>
+<tr class="even">
+<td>鋼板</td>
+<td>x 0.1〜1.1、z 0.1〜0.7 m の薄い壁（<code>createBaffles</code>
+で作る両面の壁）。周囲に 0.1 m のすき間</td>
+</tr>
+<tr class="odd">
+<td>切断点</td>
+<td>鋼板の中央 (0.6, 0, 0.4) に 50 × 50 mm の開口</td>
+</tr>
+<tr class="even">
+<td>集塵室</td>
+<td>鋼板の下、深さ 0.3 m</td>
+</tr>
+<tr class="odd">
+<td>吸引口</td>
+<td>集塵室の左右の側壁（x = 0 と 1.2、y −0.3〜−0.1、z 0.3〜0.5）</td>
+</tr>
+<tr class="even">
+<td>外気の取り入れ口</td>
+<td>天井全面（大気圧）</td>
+</tr>
+<tr class="odd">
+<td>メッシュ</td>
+<td>25 mm の六面体、48 × 36 × 32 = 55,296 セル</td>
+</tr>
+</tbody>
+</table>
+<p><strong>解像度上の注意</strong>：切断開口 50 × 50 mm
+はこのメッシュで幅・奥行き各 2
+セルしかない。開口近傍の速度勾配や粒子の通過割合を定量予測するには粗く、開口・すき間・吸引口の局所細分化とメッシュ依存性確認が必要。</p>
+<p>作成手順：<code>blockMesh</code> →
+<code>topoSet</code>（鋼板・吸引口の面を選ぶ）→
+<code>createPatch</code>（吸引口）→
+<code>createBaffles</code>（鋼板）</p>
+<hr />
+<h2 id="4-流れの計算条件flow">4.
+流れの計算条件（<code>flow/</code>）</h2>
+<table>
+<thead>
+<tr class="header">
+<th>項目</th>
+<th>設定</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>ソルバ</td>
+<td><code>simpleFoam</code>（SIMPLE
+法、<code>consistent yes</code>）</td>
+</tr>
+<tr class="even">
+<td>乱流モデル</td>
+<td>k-ω SST</td>
+</tr>
+<tr class="odd">
+<td>空気</td>
+<td>動粘性係数 1.5×10⁻⁵ m²/s</td>
+</tr>
+<tr class="even">
+<td>吸引口</td>
+<td><code>flowRateOutletVelocity</code> 合計 0.30 m³/s（約 1,080
+m³/h）</td>
+</tr>
+<tr class="odd">
+<td>天井</td>
+<td><code>totalPressure</code> p₀ =
+0（大気圧）、<code>pressureInletOutletVelocity</code></td>
+</tr>
+<tr class="even">
+<td>壁・鋼板</td>
+<td>すべりなし、壁関数</td>
+</tr>
+<tr class="odd">
+<td>反復</td>
+<td>1,500 回</td>
+</tr>
+</tbody>
+</table>
+<p><strong>結果の確認</strong>：流量積分は吸引口から 0.300
+m³/s、天井からの流入 0.299956 m³/s で、差は約 0.0146%。ただし U・p
+の初期残差は最終反復でもおおむね 1e-2
+程度で、指定反復数に達しただけで収束判定を満たしていない。流量収支が合うことは、局所流れの収束やモデル妥当性を保証しない。粒子計算には反復
+1500 の速度場を暫定的に使用した。</p>
+<hr />
+<h2 id="5-粒子の計算条件particles">5.
+粒子の計算条件（<code>particles/</code>）</h2>
+<table>
+<thead>
+<tr class="header">
+<th>項目</th>
+<th>設定</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>ソルバ</td>
+<td><code>icoUncoupledKinematicParcelFoam</code>（固定した速度場の上で粒子だけを動かす）</td>
+</tr>
+<tr class="even">
+<td>速度場</td>
+<td><code>flow/1500/U</code> をコピー、空気の密度 1.2 kg/m³、粘度
+1.8×10⁻⁵ Pa·s</td>
+</tr>
+<tr class="odd">
+<td>粒子</td>
+<td>密度 5,000 kg/m³（酸化鉄）、直径 2〜50 µm（Rosin–Rammler
+分布、代表径 15 µm）</td>
+</tr>
+<tr class="even">
+<td>力</td>
+<td>抗力（球）＋重力</td>
+</tr>
+<tr class="odd">
+<td>噴出 1：上向きの煙 <code>plumeUp</code></td>
+<td>切断点の上から、上向き 1.5 m/s、広がり角 35°、0〜2 秒に 6,000
+個</td>
+</tr>
+<tr class="even">
+<td>噴出 2：溝から下向き <code>kerfDown</code></td>
+<td>切断点の下から、下向き 20
+m/s（アシストガスで吹き下ろされる）、広がり角 10°、0〜2 秒に 6,000
+個</td>
+</tr>
+<tr class="odd">
+<td>壁との当たり方</td>
+<td>吸引口・天井：抜ける（escape）、壁・鋼板：くっつく（stick）</td>
+</tr>
+<tr class="even">
+<td>時間</td>
+<td>0〜3 秒、Δt = 2 ms、0.05 秒ごとに書き出し</td>
+</tr>
+<tr class="odd">
+<td>乱流拡散</td>
+<td>なし（<code>dispersionModel none</code>）</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="6-結果run001q030-m³s">6. 結果（run001、Q=0.30 m³/s）</h2>
+<ul>
+<li>天井から入った空気は鋼板のすき間と切断点の開口を通って集塵室へ下り、
+集塵室の中で大きな渦を巻きながら左右の吸引口へ吸い込まれる（流線）。</li>
+<li>下向きに吹き出した粒子は集塵室に入り、渦に乗って回りながら、徐々に吸引口へ吸われる。</li>
+<li>上向きに初速を与えた粒子も、この固定流れ場では天井からの下降流に押し戻され、鋼板上に沈着するか開口を通って集塵室へ移動した。</li>
+<li>3 秒の時点（噴出が止まってから 1 秒後）</li>
+</ul>
+<table>
+<thead>
+<tr class="header">
+<th>行き先</th>
+<th>個数</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>吸引口から抜けた</td>
+<td>6,123</td>
+</tr>
+<tr class="even">
+<td>天井から抜けた</td>
+<td>0</td>
+</tr>
+<tr class="odd">
+<td>壁・鋼板にくっついた</td>
+<td>336</td>
+</tr>
+<tr class="even">
+<td>まだ計算領域内にある（沈着分を含む）</td>
+<td>5,879</td>
+</tr>
+<tr class="odd">
+<td>うち未沈着で浮遊中</td>
+<td>5,543</td>
+</tr>
+</tbody>
+</table>
+<p>合計 12,002 parcel（2噴出×6,001）の収支は 6,123 + 336 + 5,543 =
+12,002。イベント記録を境界別に集計すると、退出した parcel
+は全て吸引口、天井退出は 0 だった。**これは本計算の仮定内での parcel
+追跡結果であり、実機の捕集率 6,123/12,002 = 51.0% を意味しない。**注入
+parcel
+数は質量濃度・粒径別個数の実測を反映しておらず、噴出速度・発生量・流れ場も実測検証されていない。多数が領域内に残り、3
+秒時点では定常的な除去性能を表さない。</p>
+<h3 id="run002--run003吸引流量の感度比較">run002 /
+run003：吸引流量の感度比較</h3>
+<p>追加計算の進行状況と結果は完了後に記入する。比較は同じ簡略形状・粒子条件で吸引流量だけを変える<strong>数値モデル内の感度試験</strong>であり、実機の推奨ファン流量や安全性評価ではない。左右側面吸引口の合計面積は
+0.08 m² なので、幾何平均速度は Q=0.15 / 0.30 / 0.60 m³/s に対し 1.875 /
+3.75 / 7.5 m/s。</p>
+<hr />
+<h2 id="7-限界と次の一手">7. 限界と次の一手</h2>
+<ul>
+<li><strong>粒径の代表性</strong>：金属レーザー切断の報告ではサブミクロン粒子が多い。2–50
+µm
+の設定は粗大粉じん・スパッタ相当の追跡例であり、微細なレーザーヒュームの粒径分布を再現しない。密度
+5,000 kg/m³ の単一材料仮定も実材料の酸化物・合金組成を表さない。</li>
+<li><strong>流れの物理</strong>：速度場は定常・固定で、熱浮力、実際のアシストガス噴流、加工機の囲い・開口、室内横風、ファン特性を含まない。粒子計算は
+<code>dispersionModel none</code> で乱流拡散を無視し、Brown
+運動・凝集・蒸発/凝縮・沈着再飛散も扱わない。20 m/s
+は粒子初期速度であって、流体のアシストガスを解いた結果ではない。</li>
+<li><strong>数値精度</strong>：残差が収束基準未達で、開口は幅 2
+セル。局所メッシュ細分化、格子依存性、残差・流量・速度場の収束確認を行う前に定量設計へ使えない。</li>
+<li><strong>次に必要な情報</strong>：加工機とテーブルの寸法・囲い、切断位置、材質と板厚、レーザー出力/速度、アシストガス種・圧力・流量/ノズル形状、既存フード・ダクト、ファン曲線、室内給気と横風、実粒径または濃度測定。これらを反映し、現場の風速・煙可視化・濃度等の測定と照合して段階的にモデルを検証する。</li>
+<li><strong>判断範囲</strong>：現時点の計算は流れの概念確認・条件感度を見る予備解析。作業者ばく露評価、法令適合、集塵装置の能力保証には使用できない。参考研究でも測定・実験との検証が重要。</li>
+<li>次の技術候補：熱浮力を含む非定常流れ、アシストガス噴流・囲いの再現、開口/吸引口細分化、実測粒径での粒子追跡、乱流分散、実測との比較。吸引量・吸引口位置の比較は、これらの前提条件と評価量を整えて進める。</li>
+</ul>
+<hr />
+<h2 id="8-再現手順">8. 再現手順</h2>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> /mnt/d/work/002_CAE/openfoam/20261103_laserFumeExtraction</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="ex">python3</span> tools/make_fume_cases.py run001_underTableSuction_Q0.30 <span class="st">&#39;{&quot;Q&quot;:0.30}&#39;</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="ex">openfoam2512</span> <span class="at">-c</span> <span class="st">&#39;./run001_underTableSuction_Q0.30/Allrun&#39;</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="ex">python3</span> tools/render_fume.py run001_underTableSuction_Q0.30    <span class="co"># images/fume_*.png と GIF</span></span></code></pre></div>
+<p>ParaView で見るときは <code>flow/post.foam</code> と
+<code>particles/post.foam</code> を開く（y 軸が上）。</p>
+</body>
+</html>

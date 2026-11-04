@@ -1,0 +1,61 @@
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      kinematicCloudProperties;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+solution
+{
+    active          true;
+    coupled         false;
+    transient       yes;
+    cellValueSourceCorrection off;
+    maxCo           0.3;
+    sourceTerms { schemes {} }
+    interpolationSchemes { rho cell; U cellPoint; mu cell; }
+    integrationSchemes { U Euler; }
+}
+constantProperties { rho0 7800; }
+subModels
+{
+    particleForces { sphereDrag; gravity; }
+    injectionModels
+    {
+        chips
+        {
+            type            coneInjection;
+            SOI             0;
+            duration        2.0;
+            positionAxis    ( ((0.6 0.38 0.4) (0 1 0)) );
+            parcelsPerInjector 3000;
+            flowRateProfile constant 1;
+            massTotal       1e-5;
+            parcelBasisType fixed;
+            nParticle       1;
+            Umag            constant 3;
+            thetaInner      constant 0;
+            thetaOuter      constant 80;
+            sizeDistribution { type RosinRammler; RosinRammlerDistribution { minValue 0.0003; maxValue 0.0015; lambda 0.0008; n 2; } }
+        }
+    }
+    dispersionModel none;
+    patchInteractionModel localInteraction;
+    localInteractionCoeffs
+    {
+        patches
+        (
+            suction       { type escape; }
+            roofOpening   { type escape; }
+            "(walls|sheet.*)" { type stick; }
+        );
+    }
+    surfaceFilmModel none;
+    stochasticCollisionModel none;
+    collisionModel none;
+}
+cloudFunctions {}
+
+// ************************************************************************* //

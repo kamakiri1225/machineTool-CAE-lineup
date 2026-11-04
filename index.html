@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>工作機械まわりの CFD</title>
+  <style>
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      html {
+        background-color: white;
+      }
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+      font-size: 85%;
+      margin: 0;
+      hyphens: manual;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      background-color: #1a1a1a;
+      border: none;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+  <style>
+  body{font-family:'Noto Sans JP','Hiragino Sans','Meiryo',sans-serif;max-width:1100px;margin:2em auto;padding:0 1.2em;line-height:1.75;color:#222}
+  h1{border-bottom:3px solid #1F3A5F;padding-bottom:.3em;color:#1F3A5F} h2{border-left:6px solid #2F6FB0;padding-left:.5em;margin-top:2em;color:#1F3A5F}
+  h3{color:#2F6FB0} img{max-width:100%;height:auto;border:1px solid #ddd;margin:.5em 0}
+  table{border-collapse:collapse;margin:1em 0;font-size:.95em} th,td{border:1px solid #bbb;padding:.35em .7em} th{background:#E3ECF7}
+  code{background:#f4f4f4;padding:.1em .3em;border-radius:3px} pre{background:#f4f4f4;padding:1em;overflow-x:auto}
+  nav.top{font-size:.9em;margin-bottom:1em} nav.top a{color:#2F6FB0}
+  </style>
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">工作機械まわりの CFD</h1>
+</header>
+<h1 id="工作機械まわりの-cfdopenfoam-v2512">工作機械まわりの
+CFD（OpenFOAM v2512）</h1>
+<p>工作機械まわりの流体・熱の現象を、一般的な寸法や論文の条件をなぞった簡易モデルで計算した記録です。
+各ケースの解析設定（<code>system/</code>・<code>constant/</code>・<code>0.orig/</code>
+とケースを作る Python
+スクリプト）、解説、図とアニメーションを置いています。</p>
+<h2 id="03-切断ヒュームの吸い込み流れ粒子">03
+切断ヒュームの吸い込み（流れ＋粒子）</h2>
+<ul>
+<li><a
+href="03_fumeExtraction/docs/01_事例調査と解析設定_run001.html">01
+レーザー加工ヒュームの集塵：事例調査とOpenFOAM解析（run001）</a></li>
+<li><a
+href="03_fumeExtraction/docs/02_文献に基づく解析手法の選定.html">レーザー加工ヒューム：文献に基づく解析手法の選定</a></li>
+<li><a
+href="03_fumeExtraction/docs/99_計算時間の記録_2026-11-03.html">99
+計算時間の記録（2026-11-03〜04 に行った計算）</a></li>
+</ul>
+<h2 id="04-工場の気温主軸の発熱ミストと切りくず">04
+工場の気温・主軸の発熱・ミストと切りくず</h2>
+<ul>
+<li><a
+href="04_factory_spindle_mist/docs/01_3つの簡易モデル_条件と結果.html">01
+工作機械まわりの 3 つの簡易モデル：条件と結果</a></li>
+<li><a
+href="04_factory_spindle_mist/docs/99_計算時間の記録_2026-11-03.html">99
+計算時間の記録（2026-11-03〜04 に行った計算）</a></li>
+</ul>
+</body>
+</html>

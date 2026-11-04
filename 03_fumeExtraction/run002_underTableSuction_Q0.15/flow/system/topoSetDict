@@ -1,0 +1,19 @@
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      topoSetDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+actions
+(
+    { name sheetFaces; type faceSet; action new;      source boxToFace; box (0.1 -0.001 0.1) (1.1 0.001 0.7); }
+    { name sheetFaces; type faceSet; action subtract; source boxToFace; box (0.575 -0.001 0.375) (0.625 0.001 0.425); }
+    { name sheet;      type faceZoneSet; action new;  source setToFaceZone; faceSet sheetFaces; }
+    { name suctionFaces; type faceSet; action new;    source boxToFace; box (-0.001 -0.3 0.3) (0.001 -0.1 0.5); }
+    { name suctionFaces; type faceSet; action add;    source boxToFace; box (1.199 -0.3 0.3) (1.2009999999999998 -0.1 0.5); }
+);
+
+// ************************************************************************* //

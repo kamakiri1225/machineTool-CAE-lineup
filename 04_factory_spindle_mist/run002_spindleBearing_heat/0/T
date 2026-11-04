@@ -1,0 +1,35 @@
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       volScalarField;
+    object      T;
+}
+
+dimensions [0 0 0 1 0 0 0];
+
+internalField uniform 293.15;
+
+boundaryField
+{
+    jacket
+    {
+        type             externalWallHeatFluxTemperature;
+        mode             coefficient;
+        kappaMethod      solidThermo;
+        h                uniform 800.0;
+        Ta               constant 293.15;
+        value            uniform 293.15;
+    }
+    air
+    {
+        type             externalWallHeatFluxTemperature;
+        mode             coefficient;
+        kappaMethod      solidThermo;
+        h                uniform 15.0;
+        Ta               constant 293.15;
+        value            uniform 293.15;
+    }
+    "(front|back)" { type wedge; }
+}
+

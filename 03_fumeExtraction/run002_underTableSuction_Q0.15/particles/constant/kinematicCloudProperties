@@ -1,0 +1,118 @@
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      kinematicCloudProperties;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+solution
+{
+    active          true;
+    coupled         false;
+    transient       yes;
+    cellValueSourceCorrection off;
+    maxCo           0.3;
+    sourceTerms { schemes {} }
+    interpolationSchemes { rho cell; U cellPoint; mu cell; }
+    integrationSchemes { U Euler; }
+}
+
+constantProperties
+{
+    rho0            5000;      // iron oxide fume / dross
+}
+
+subModels
+{
+    particleForces
+    {
+        sphereDrag;
+        gravity;
+    }
+
+    injectionModels
+    {
+        plumeUp        // fume rising from the cut (thermal plume)
+        {
+            type            coneInjection;
+            SOI             0;
+            duration        2.0;
+            positionAxis    ( ((0.6 0.01 0.4) (0 1 0)) );
+            parcelsPerInjector 6000;
+            flowRateProfile constant 1;
+            massTotal       1e-5;
+            parcelBasisType fixed;
+            nParticle       1;
+            Umag            constant 1.5;
+            thetaInner      constant 0;
+            thetaOuter      constant 35;
+            sizeDistribution
+            {
+                type        RosinRammler;
+                RosinRammlerDistribution
+                {
+                    minValue    2e-06;
+                    maxValue    5e-05;
+                    lambda      1.5e-05;
+                    n           2;
+                }
+            }
+        }
+        kerfDown       // fume / dross blown down through the kerf by the assist gas
+        {
+            type            coneInjection;
+            SOI             0;
+            duration        2.0;
+            positionAxis    ( ((0.6 -0.01 0.4) (0 -1 0)) );
+            parcelsPerInjector 6000;
+            flowRateProfile constant 1;
+            massTotal       1e-5;
+            parcelBasisType fixed;
+            nParticle       1;
+            Umag            constant 20;
+            thetaInner      constant 0;
+            thetaOuter      constant 10;
+            sizeDistribution
+            {
+                type        RosinRammler;
+                RosinRammlerDistribution
+                {
+                    minValue    2e-06;
+                    maxValue    5e-05;
+                    lambda      1.5e-05;
+                    n           2;
+                }
+            }
+        }
+    }
+
+    dispersionModel none;
+
+    patchInteractionModel localInteraction;
+    localInteractionCoeffs
+    {
+        patches
+        (
+            "(roofOpening|suction)" { type escape; }
+            "(walls|sheet.*)"       { type stick; }
+        );
+    }
+
+    surfaceFilmModel none;
+    stochasticCollisionModel none;
+    collisionModel none;
+}
+
+cloudFunctions
+{
+    particlePostProcessing1
+    {
+        type            particlePostProcessing;
+        maxStoredParcels 100000;
+        patches         (suction roofOpening);
+    }
+}
+
+// ************************************************************************* //

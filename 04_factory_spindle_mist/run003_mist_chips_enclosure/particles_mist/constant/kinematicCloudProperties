@@ -1,0 +1,77 @@
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      kinematicCloudProperties;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+solution
+{
+    active          true;
+    coupled         false;
+    transient       yes;
+    cellValueSourceCorrection off;
+    maxCo           0.3;
+    sourceTerms { schemes {} }
+    interpolationSchemes { rho cell; U cellPoint; mu cell; }
+    integrationSchemes { U Euler; }
+}
+constantProperties { rho0 1000; }
+subModels
+{
+    particleForces { sphereDrag; gravity; }
+    injectionModels
+    {
+        spray
+        {
+            type            coneInjection;
+            SOI             0;
+            duration        2.0;
+            positionAxis    ( ((0.6 0.62 0.4) (0 -1 0)) );
+            parcelsPerInjector 5000;
+            flowRateProfile constant 1;
+            massTotal       1e-5;
+            parcelBasisType fixed;
+            nParticle       1;
+            Umag            constant 20;
+            thetaInner      constant 0;
+            thetaOuter      constant 12;
+            sizeDistribution { type RosinRammler; RosinRammlerDistribution { minValue 5e-06; maxValue 0.0001; lambda 3e-05; n 2; } }
+        }
+        splash
+        {
+            type            coneInjection;
+            SOI             0;
+            duration        2.0;
+            positionAxis    ( ((0.6 0.38 0.4) (0 1 0)) );
+            parcelsPerInjector 5000;
+            flowRateProfile constant 1;
+            massTotal       1e-5;
+            parcelBasisType fixed;
+            nParticle       1;
+            Umag            constant 4;
+            thetaInner      constant 0;
+            thetaOuter      constant 75;
+            sizeDistribution { type RosinRammler; RosinRammlerDistribution { minValue 5e-06; maxValue 5e-05; lambda 2e-05; n 2; } }
+        }
+    }
+    dispersionModel none;
+    patchInteractionModel localInteraction;
+    localInteractionCoeffs
+    {
+        patches
+        (
+            suction       { type escape; }
+            roofOpening   { type escape; }
+            "(walls|sheet.*)" { type stick; }
+        );
+    }
+    surfaceFilmModel none;
+    stochasticCollisionModel none;
+    collisionModel none;
+}
+cloudFunctions {}
+
+// ************************************************************************* //

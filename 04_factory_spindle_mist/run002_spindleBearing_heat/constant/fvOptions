@@ -1,0 +1,25 @@
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      fvOptions;
+}
+
+bearingFrontHeat
+{
+    type            scalarSemiImplicitSource;
+    selectionMode   cellZone;
+    cellZone        bearingFront;
+    volumeMode      specific;           // [W/m3] (Q_front / bearing volume)
+    sources { h { explicit 1.70523e+06; implicit 0; } }
+}
+bearingRearHeat
+{
+    type            scalarSemiImplicitSource;
+    selectionMode   cellZone;
+    cellZone        bearingRear;
+    volumeMode      specific;
+    sources { h { explicit 909457; implicit 0; } }
+}
+

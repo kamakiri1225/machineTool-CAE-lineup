@@ -1,0 +1,22 @@
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      topoSetDict;
+}
+
+actions
+(
+    { name machineA; type cellSet; action new; source boxToCell; box (1.66 -1 1.36) (2.84 1.79 2.84); }
+    { name machineA; type cellZoneSet; action new; source setToCellZone; set machineA; }
+    { name machineB; type cellSet; action new; source boxToCell; box (3.46 -1 1.36) (4.64 1.79 2.84); }
+    { name machineB; type cellZoneSet; action new; source setToCellZone; set machineB; }
+    { name air; type cellSet; action new; source cellToCell; set machineA; }
+    { name air; type cellSet; action add; source cellToCell; set machineB; }
+    { name air; type cellSet; action invert; }
+    { name air; type cellZoneSet; action new; source setToCellZone; set air; }
+    { name doorFaces; type faceSet; action new; source boxToFace; box (-0.01 0 1.5) (0.01 2.1 2.7); }
+    { name ventFaces; type faceSet; action new; source boxToFace; box (5.99 2.7 1.5) (6.01 3.3 2.7); }
+);
+

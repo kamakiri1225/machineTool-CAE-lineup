@@ -1,0 +1,25 @@
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      controlDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+application     icoUncoupledKinematicParcelFoam;
+startFrom       startTime;
+startTime       0;
+stopAt          endTime;
+endTime         4.0;
+deltaT          2e-3;
+writeControl    adjustable;
+writeInterval   0.05;
+purgeWrite      0;
+writeFormat     ascii;
+writePrecision  8;
+timeFormat      general;
+timePrecision   6;
+runTimeModifiable true;
+
+// ************************************************************************* //

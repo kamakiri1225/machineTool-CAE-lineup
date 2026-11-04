@@ -1,0 +1,15 @@
+#!/bin/sh
+cd "${0%/*}" || exit
+. ${WM_PROJECT_DIR:?}/bin/tools/RunFunctions
+# ---- 1) steady flow
+( cd flow && rm -rf 0 \
+  && runApplication blockMesh && runApplication topoSet \
+  && runApplication createPatch -overwrite && runApplication createBaffles -overwrite \
+  && cp -r 0.orig 0 && runApplication checkMesh && runApplication simpleFoam && touch post.foam )
+# ---- 2) particles on the frozen flow field
+L=$(cd flow && foamListTimes -latestTime)
+for c in particles_mist particles_chips; do
+( cd $c && rm -rf 0 constant/polyMesh && cp -r 0.orig 0 \
+  && cp -r ../flow/constant/polyMesh constant/ && cp ../flow/$L/U 0/U \
+  && runApplication icoUncoupledKinematicParcelFoam && touch post.foam )
+done

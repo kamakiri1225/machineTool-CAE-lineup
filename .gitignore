@@ -1,0 +1,30 @@
+# ---- OpenFOAM results (re-run the case to regenerate) ----
+processor*/
+[1-9]*/
+0.[0-9]*/
+!0.orig/
+**/constant/polyMesh/
+**/constant/*/polyMesh/
+**/constant/cellToRegion
+**/0/cellToRegion
+**/0/*/cellToRegion
+**/lagrangian/
+**/VTK/
+**/dynamicCode/
+*.foam
+!post.foam
+log.*
+*.OpenFOAM
+**/postProcessing/**/surface*/
+**/images/*_[0-9][0-9].[0-9][0-9][0-9].png
+**/images/frame_*.png
+**/images/fume_*.png
+**/images/mist_*.png
+**/images/chips_*.png
+# ---- references: copyrighted papers / saved web pages (links are listed in docs) ----
+**/docs/refs/
+# ---- python ----
+__pycache__/
+*.pyc
+# particle cases: the flow field is copied from flow/ by Allrun
+**/particles*/0/U

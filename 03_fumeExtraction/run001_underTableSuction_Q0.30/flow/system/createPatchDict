@@ -1,0 +1,16 @@
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      createPatchDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+pointSync false;
+patches
+(
+    { name suction; patchInfo { type patch; } constructFrom set; set suctionFaces; }
+);
+
+// ************************************************************************* //
