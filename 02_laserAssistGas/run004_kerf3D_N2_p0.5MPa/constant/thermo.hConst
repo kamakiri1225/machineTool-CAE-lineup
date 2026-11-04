@@ -1,0 +1,21 @@
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      thermo.hConst;
+}
+
+O2
+{
+    specie          { molWeight 31.9988; }
+    thermodynamics  { Cp 918; Hf 0; }
+    transport       { mu 2.06e-05; Pr 0.72; }
+}
+N2
+{
+    specie          { molWeight 28.0134; }
+    thermodynamics  { Cp 1040; Hf 0; }
+    transport       { mu 1.79e-05; Pr 0.71; }
+}
+

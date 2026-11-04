@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>02 解析設定と結果：run004 加工エリアでワークにクーラントをかける</title>
+  <style>
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      html {
+        background-color: white;
+      }
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+      font-size: 85%;
+      margin: 0;
+      hyphens: manual;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      background-color: #1a1a1a;
+      border: none;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+  </style>
+  <style>
+  body{font-family:'Noto Sans JP','Hiragino Sans','Meiryo',sans-serif;max-width:1100px;margin:2em auto;padding:0 1.2em;line-height:1.75;color:#222}
+  h1{border-bottom:3px solid #1F3A5F;padding-bottom:.3em;color:#1F3A5F} h2{border-left:6px solid #2F6FB0;padding-left:.5em;margin-top:2em;color:#1F3A5F}
+  h3{color:#2F6FB0} img{max-width:100%;height:auto;border:1px solid #ddd;margin:.5em 0}
+  table{border-collapse:collapse;margin:1em 0;font-size:.95em} th,td{border:1px solid #bbb;padding:.35em .7em} th{background:#E3ECF7}
+  code{background:#f4f4f4;padding:.1em .3em;border-radius:3px} pre{background:#f4f4f4;padding:1em;overflow-x:auto}
+  nav.top{font-size:.9em;margin-bottom:1em} nav.top a{color:#2F6FB0}
+  </style>
+  <nav class="top"><a href="../../index.html">← 一覧に戻る</a></nav>
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">02 解析設定と結果：run004
+加工エリアでワークにクーラントをかける</h1>
+</header>
+<h1
+id="02-解析設定と結果run004-加工エリアでワークにクーラントをかける">02
+解析設定と結果：run004 加工エリアでワークにクーラントをかける</h1>
+<p>作成日：2026-11-03　OpenFOAM
+v2512　ソルバ：<code>chtMultiRegionTwoPhaseEulerFoam</code>（解説は
+01）</p>
+<p><img
+src="../run004_workspace_coolant_work3D/images/coolant_workspace.gif"
+alt="クーラントがワークに当たって広がる様子" /></p>
+<hr />
+<h2 id="1-ねらい">1. ねらい</h2>
+<p>工作機械の加工エリア（空気）に、ポンプで温まったクーラントを流し、
+ワークとテーブル（鋼）がどう温まるかを、気液二相流と固体の熱連成でまとめて解く。
+参考：<code>refs/02_Klimant…</code>（加工エリア内の壁の熱伝達率）、<code>refs/03_Geist…</code>（切削油と空気の
+CFD を FEM に渡す）。</p>
+<hr />
+<h3 id="解いている式くわしくは-01-の24-基礎式">解いている式（くわしくは
+01 の「2.4 基礎式」）</h3>
+<table>
+<thead>
+<tr class="header">
+<th>領域</th>
+<th>何を解くか</th>
+<th>式</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>流体（空気＋クーラント）</td>
+<td><strong>オイラー–オイラー二相流</strong>：気相と液相をそれぞれ連続体として、体積分率
+α・速度・温度を相ごとに解く。圧力は共通</td>
+<td>相ごとの質量・運動量・エネルギー保存＋相間の抗力・熱伝達、α<sub>g</sub>
++ α<sub>l</sub> = 1</td>
+</tr>
+<tr class="even">
+<td>固体（テーブル・ワーク）</td>
+<td><strong>熱伝導だけ</strong>（流れ・変形は解かない）</td>
+<td>ρc<sub>p</sub> ∂T/∂t = ∇·(κ∇T)</td>
+</tr>
+<tr class="odd">
+<td>境界</td>
+<td>温度が等しく、熱流束がつり合う（液が濡れている所ほど熱がよく伝わる）</td>
+<td>T<sub>流体</sub> =
+T<sub>固体</sub>、Σα<sub>k</sub>κ<sub>k</sub>∂T<sub>k</sub>/∂n =
+κ<sub>s</sub>∂T<sub>s</sub>/∂n</td>
+</tr>
+</tbody>
+</table>
+<h2 id="2-形状とメッシュ">2. 形状とメッシュ</h2>
+<table>
+<thead>
+<tr class="header">
+<th>項目</th>
+<th>値</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>加工エリア（囲い）</td>
+<td>x 0〜600、y 0〜600（上向き）、z 0〜400 mm</td>
+</tr>
+<tr class="even">
+<td>テーブル（鋼）</td>
+<td>x 140〜460、y 240〜300（高さの真ん中）、z 100〜300 mm</td>
+</tr>
+<tr class="odd">
+<td>ワーク（鋼）</td>
+<td>x 240〜360、y 300〜360（テーブルの上）、z 140〜260 mm</td>
+</tr>
+<tr class="even">
+<td>クーラントのノズル出口</td>
+<td>天井の中央 40 × 40 mm（x 280〜320、z 180〜220）＝ワークの真上</td>
+</tr>
+<tr class="odd">
+<td>排出口</td>
+<td>床の左右の帯（x &lt; 100、x &gt; 500 mm）</td>
+</tr>
+<tr class="even">
+<td>換気口</td>
+<td>天井のノズル以外の部分（大気に開放）</td>
+</tr>
+<tr class="odd">
+<td>メッシュ</td>
+<td>20 mm の六面体。流体 17,412 セル、固体（テーブル＋ワーク）588
+セル</td>
+</tr>
+</tbody>
+</table>
+<p>テーブルとワークは 1 つの固体領域 <code>solid</code>
+としてまとめている（接触熱抵抗なし）。</p>
+<p>作成手順（<code>make_case.py</code> → <code>Allrun</code>）</p>
+<pre><code>blockMesh → topoSet（固体セル、ノズル・排出口の面）→ createPatch（inlet, drain）
+→ splitMeshRegions -cellZonesOnly（water / solid に分割）→ setFields → ソルバ</code></pre>
+<hr />
+<h2 id="3-物性と条件">3. 物性と条件</h2>
+<table>
+<thead>
+<tr class="header">
+<th>項目</th>
+<th>設定</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>気相</td>
+<td>空気（理想気体、分子量 28.96、c<sub>p</sub> 1007、μ 1.81×10⁻⁵、Pr
+0.71）</td>
+</tr>
+<tr class="even">
+<td>液相（クーラント）</td>
+<td>水の物性（密度 1000、c<sub>p</sub> 4195、μ 9.59×10⁻⁴、Pr
+6.62）。水溶性クーラントの近似</td>
+</tr>
+<tr class="odd">
+<td>固体</td>
+<td>例題の鋼の物性</td>
+</tr>
+<tr class="even">
+<td>液滴の代表径（空気中に散ったとき）</td>
+<td>0.45 mm</td>
+</tr>
+<tr class="odd">
+<td>ノズル出口</td>
+<td>液のみ（α<sub>liquid</sub> = 1）、下向き 1.0 m/s、<strong>35 ℃（308
+K、ポンプで温まった想定）</strong>。流量 約 96 L/min</td>
+</tr>
+<tr class="even">
+<td>初期状態</td>
+<td>加工エリアは空気のみ、空気・テーブル・ワーク 20 ℃（293 K）</td>
+</tr>
+<tr class="odd">
+<td>囲いの壁・床</td>
+<td>20 ℃ 一定</td>
+</tr>
+<tr class="even">
+<td>排出口・換気口</td>
+<td>圧力一定（大気）で出入り自由</td>
+</tr>
+<tr class="odd">
+<td>時間</td>
+<td>0〜3 秒、Δt ≤ 2 ms（Courant 数で自動調整）、0.25
+秒ごとに書き出し</td>
+</tr>
+<tr class="even">
+<td>計算時間</td>
+<td>1 並列で約 12 分（この環境では mpirun が止まるため並列なし）</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="4-結果t--3-s">4. 結果（t = 3 s）</h2>
+<ul>
+<li>ノズルから出たクーラントは柱になって落ち、ワークの上面に当たって四方に広がる。</li>
+<li>ワークの縁からテーブルの上に流れ、テーブルの縁から床へ落ちて、左右の排出口へ流れる。</li>
+<li>3
+秒の間に温まったのは、クーラントが直接当たる<strong>ワークの上面とテーブルの上面の縁</strong>。
+<ul>
+<li>固体のセル温度：最低 293.0 K、平均 293.3 K、最高 295.7 K</li>
+<li>表面（点の値）では、ワークの上面とテーブルの縁が 299 K 程度</li>
+</ul></li>
+<li>鋼は熱容量が大きいので、3 秒では中まではほとんど温まらない。
+熱変形まで見るには、<strong>数分〜数十分の計算</strong>、または熱伝達率を求めて固体だけを長時間解く方法（Geist
+らの手順）が必要。</li>
+</ul>
+<hr />
+<h2 id="5-限界と次の一手">5. 限界と次の一手</h2>
+<ol type="1">
+<li><strong>ノズル</strong>：今は天井から 1
+本の柱として落としている。実機では主軸の先のノズルから ワークの 50〜100
+mm
+上で斜めに吹き付けるので、主軸ブロックとノズル数本を付けた版にする。</li>
+<li><strong>メッシュ</strong>：20 mm は粗い。液膜の厚さ（数
+mm）は表せない。ワーク周りだけ細かくする。</li>
+<li><strong>時間</strong>：3
+秒では熱の入り始めしか見えない。熱伝達率を時間平均で取り出し、固体の長時間計算につなぐ。</li>
+<li><strong>囲いの壁</strong>：今は温度一定。壁を固体（板金）として追加すれば、Klimant
+らの図のような壁の熱伝達率が出せる。</li>
+</ol>
+<hr />
+<h2 id="6-描画">6. 描画</h2>
+<p><code>tools/render_workspace.py</code>（python の VTK
+を直接使用。この環境では ParaView の pvbatch が止まるため）</p>
+<ul>
+<li>斜め上からの視点（y 軸が上）</li>
+<li>クーラントは「液の体積割合
+α（そのセルの体積のうち液体が占める割合）」の等値面で 2 段階に描く
+<ul>
+<li>薄い水色：α =
+0.05（液が少しでもある範囲の外形。飛沫や薄い流れも含む）</li>
+<li>濃い青：α = 0.5（ほぼ液だけの範囲。ノズル直下の液の柱）</li>
+<li>セルの値を点の値に直すときは、流体内部のセルだけを使う（境界の値を混ぜると、
+t = 0 で壁に沿った偽の面が出るため）</li>
+</ul></li>
+<li>テーブル・ワーク：流体との境界面の温度（熱をやり取りしている面の温度）で色付け（293〜300
+K）
+<ul>
+<li>3 秒の時点で、クーラントが当たるワークの側面の下やテーブル上面の縁が
+295〜297 K</li>
+</ul></li>
+<li>20 mm
+のメッシュでは、落ちる液の柱がすぐに空気と混ざってぼやけるため、α ≥ 0.5
+はノズル直下にしか残らない</li>
+<li>出力：<code>run004_workspace_coolant_work3D/images/frame_*.png</code>、<code>coolant_workspace.gif</code></li>
+</ul>
+<p>ParaView で開くときは
+<code>run004_workspace_coolant_work3D/post.foam</code>。
+上下が逆に見えるときは、カメラの「+Y を上」に設定する。</p>
+</body>
+</html>

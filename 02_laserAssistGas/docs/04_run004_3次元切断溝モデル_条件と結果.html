@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>04 run004：3 次元切断溝モデル（混合ガス）の条件と結果</title>
+  <style>
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      html {
+        background-color: white;
+      }
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+      font-size: 85%;
+      margin: 0;
+      hyphens: manual;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      background-color: #1a1a1a;
+      border: none;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+  </style>
+  <style>
+  body{font-family:'Noto Sans JP','Hiragino Sans','Meiryo',sans-serif;max-width:1100px;margin:2em auto;padding:0 1.2em;line-height:1.75;color:#222}
+  h1{border-bottom:3px solid #1F3A5F;padding-bottom:.3em;color:#1F3A5F} h2{border-left:6px solid #2F6FB0;padding-left:.5em;margin-top:2em;color:#1F3A5F}
+  h3{color:#2F6FB0} img{max-width:100%;height:auto;border:1px solid #ddd;margin:.5em 0}
+  table{border-collapse:collapse;margin:1em 0;font-size:.95em} th,td{border:1px solid #bbb;padding:.35em .7em} th{background:#E3ECF7}
+  code{background:#f4f4f4;padding:.1em .3em;border-radius:3px} pre{background:#f4f4f4;padding:1em;overflow-x:auto}
+  nav.top{font-size:.9em;margin-bottom:1em} nav.top a{color:#2F6FB0}
+  </style>
+  <nav class="top"><a href="../../index.html">← 一覧に戻る</a></nav>
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">04 run004：3
+次元切断溝モデル（混合ガス）の条件と結果</h1>
+</header>
+<h1 id="04-run0043-次元切断溝モデル混合ガスの条件と結果">04 run004：3
+次元切断溝モデル（混合ガス）の条件と結果</h1>
+<p>作成日：2026-11-04　OpenFOAM
+v2512　ソルバ：<code>reactingFoam</code>（O₂/N₂ 混合ガス、LTS
+疑似定常、transonic）
+状態：<strong>計算し直し中</strong>（2026-11-04）。5 章の結果は 1
+回目（板の下 2 mm の領域）のもので、下記 5.0 の問題があるため参考値</p>
+<p>参考文献（<code>refs/</code>）</p>
+<ul>
+<li><code>04_JSME2017_S0520603_…pdf</code>：松村・木綿・山口「レーザ切断溝内のアシストガスの流動解析」機械学会
+2017 年次大会 （3 次元・定常・圧縮性、空気、realizable k-ε、p₀ =
+0.5〜8.0 MPa、De = 1.5 mm、H = 1.0 mm、板厚 1.2 mm）</li>
+<li>東海大学 アシストガスの CFD（N₂ 0.2
+MPa、切断溝の中心線上のアシストガス濃度と速度。板の下からの空気の巻き込み）
+<a
+href="https://teamcoil.sp.u-tokai.ac.jp/researches/assistgas/index.html">https://teamcoil.sp.u-tokai.ac.jp/researches/assistgas/index.html</a></li>
+</ul>
+<hr />
+<h2 id="1-ねらい">1. ねらい</h2>
+<p>run002・003（軸対称、溝を丸い穴で近似）と違い、<strong>実際の切断に近い形</strong>で解く。</p>
+<ul>
+<li>切断溝は細長いスリット。ノズルは +x 方向へ進み、x &lt; 0
+はすでに切れている</li>
+<li>ノズルの軸は切断の最前面（x = 0）の真上 →
+噴流の半分は板に当たり、半分は溝に入る</li>
+<li>アシストガス（N₂）と周りの空気（O₂ 21 %・N₂ 79
+%）が<strong>混ざる混合ガス</strong>として解き、
+溝の中に空気（O₂）がどれだけ入り込むかを見る（N₂ 切断では O₂
+が混ざると切断面が酸化する）</li>
+<li>機械学会の論文と同じく、ノズル入口圧力 p₀ を 0.5／2.0／4.0／8.0 MPa
+に変えて比べる</li>
+</ul>
+<hr />
+<h2 id="2-モデルの形">2. モデルの形</h2>
+<p><img src="img/geom_run004_kerf3D.png" alt="3 次元の形" /></p>
+<p><img src="img/symplane_run004_kerf3D.png"
+alt="対称面のメッシュ" /></p>
+<table>
+<thead>
+<tr class="header">
+<th>項目</th>
+<th>値</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>解析領域</td>
+<td>x −4〜4 mm、y −3.2〜4 mm、z 0〜4 mm（<strong>溝の中心面 z = 0
+で左右対称、半分だけ解く</strong>）</td>
+</tr>
+<tr class="even">
+<td>ノズル</td>
+<td>先細ノズル。出口径 De = 1.5 mm、入口側の内径 3.0 mm、絞りの長さ 3.0
+mm、外径 6 mm</td>
+</tr>
+<tr class="odd">
+<td>スタンドオフ</td>
+<td>H = 1.0 mm</td>
+</tr>
+<tr class="even">
+<td>鋼板</td>
+<td>板厚 1.2 mm</td>
+</tr>
+<tr class="odd">
+<td>切断溝</td>
+<td>幅 0.3 mm、x &lt; 0（切断済み）。切断の最前面は x = 0
+の垂直な平面（実際は曲がって傾いている）</td>
+</tr>
+<tr class="even">
+<td>メッシュ</td>
+<td>snappyHexMesh。外側 0.25 mm、ノズル・噴流 0.0625 mm、溝の中 0.031
+mm（溝の半幅に約 5 セル）。<strong>169,773 セル</strong></td>
+</tr>
+</tbody>
+</table>
+<p><strong>メッシュの課題</strong>：ノズルの内側の円すい面が階段状のまま（snappyHexMesh
+の面合わせが効いていない）。
+出口の径は合っているが、ノズルの中の壁がでこぼこ。次の版で直す（ノズル部だけ
+blockMesh の構造格子にする、など）。</p>
+<hr />
+<h2 id="3-計算条件">3. 計算条件</h2>
+<table>
+<thead>
+<tr class="header">
+<th>項目</th>
+<th>設定</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>ソルバ</td>
+<td><code>reactingFoam</code>（化学反応なし）。O₂ と N₂ の 2
+成分を解く混合ガス</td>
+</tr>
+<tr class="even">
+<td>時間</td>
+<td><code>localEuler</code>（局所時間刻み）で疑似定常。4,000 回（8 MPa
+は 6,000 回）</td>
+</tr>
+<tr class="odd">
+<td>圧力方程式</td>
+<td><code>transonic yes</code>（チョーク・衝撃波に対応）</td>
+</tr>
+<tr class="even">
+<td>乱流</td>
+<td>realizable k-ε（論文と同じ）</td>
+</tr>
+<tr class="odd">
+<td>物性</td>
+<td>比熱一定の理想気体（O₂：分子量 32.0、c<sub>p</sub>
+918、N₂：28.0、1040）</td>
+</tr>
+<tr class="even">
+<td>入口</td>
+<td>N₂ 100 %、全圧 p₀（ゲージ圧 0.5／2.0／4.0／8.0 MPa）、全温 300
+K。最初の 500 回（8 MPa は 2,000 回）で 1 気圧から p₀ まで上げる</td>
+</tr>
+<tr class="odd">
+<td>周り（上・横・下の境界）</td>
+<td>大気圧 101,325 Pa、300 K、空気（質量割合 O₂ 0.233、N₂ 0.767）</td>
+</tr>
+<tr class="even">
+<td>ノズル・鋼板</td>
+<td>すべりなし、断熱</td>
+</tr>
+<tr class="odd">
+<td>見る量</td>
+<td>マッハ数・速度・静圧（論文の図 3 と同じ断面）、溝の中の O₂
+濃度（空気の巻き込み）、溝の壁のせん断応力、溝を抜ける質量流量</td>
+</tr>
+</tbody>
+</table>
+<p>基礎式とソースコードの対応は
+<code>03_ソースコードで読む基礎式とlocalEuler.md</code>。</p>
+<hr />
+<h2 id="4-計算時間1-並列--4-本同時">4. 計算時間（1 並列 × 4
+本同時）</h2>
+<table>
+<thead>
+<tr class="header">
+<th>ケース</th>
+<th>1 回あたり</th>
+<th>予定回数</th>
+<th>見込み</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>0.5／2.0／4.0 MPa</td>
+<td>約 4.4 s</td>
+<td>4,000</td>
+<td>約 5 時間</td>
+</tr>
+<tr class="even">
+<td>8.0 MPa</td>
+<td>約 4.4 s</td>
+<td>6,000</td>
+<td>約 7〜8 時間</td>
+</tr>
+</tbody>
+</table>
+<p>8.0 MPa は最初の設定（500 回で昇圧、maxCo 0.2）で発散したため、2,000
+回で昇圧・maxCo 0.1 に変えてやり直した。
+ほかのケースも、昇圧の途中で温度が一時的に 420〜440 K
+まで上がっている（全温 300 K なので本来はほぼ超えない）。
+落ち着くかどうかを結果で確かめる。</p>
+<hr />
+<h2 id="5-結果0520-mpa反復-4000-回">5. 結果（0.5・2.0 MPa、反復 4,000
+回）</h2>
+<h3 id="50-残差と1-回目の計算の問題2026-11-04-判明">5.0 残差と、1
+回目の計算の問題（2026-11-04 判明）</h3>
+<p><img src="img/run004_residuals.png" alt="残差とノズルの流量" /></p>
+<ul>
+<li>0.5 MPa：初期残差は 10⁻⁴
+前後で横ばい（小さく揺れている）。ノズルの流量は 1,500
+回目以降ほぼ一定。</li>
+<li>2.0 MPa：1,400 回目ごろから残差が 10⁻⁷
+で<strong>真っ平ら</strong>になった。これは収束ではなく、計算が事実上止まった状態だった。
+<ul>
+<li>局所時間刻みの最小値が 1,300 回目ごろから 4 × 10⁻¹³ s
+まで小さくなっていた（ふつうは 10⁻⁸ s 程度）。
+隣のセルとの時間刻みの比を制限する設定（<code>rDeltaTSmoothingCoeff 0.02</code>）のため、その小さな刻みが周りに広がり、ほとんど進まなくなった。</li>
+<li>原因：**解析領域の下の境界（板の下 2
+mm）**のすぐ近くで、圧力がほぼ真空（最小 1.9 Pa、33 セル）になっていた。
+溝から出た超音速の噴流が、超音速のまま圧力一定の境界にぶつかり、境界条件と合わなくなったためと考えられる。
+密度がほぼ 0 のセルで局所時間刻みが極端に小さくなる。</li>
+<li>4.0・8.0 MPa
+が圧力を上げる途中で止まったのも、同じ原因と考えられる。</li>
+</ul></li>
+<li>対策（2 回目）：板の下の空間を <strong>2 mm → 10 mm</strong>
+に広げ、噴流が周りと混ざって減速してから境界に達するようにした（27.9
+万セル）。 4 条件ともやり直している。</li>
+<li>1
+回目の結果（5.1〜5.4）は、溝の中・板の上の傾向は妥当と考えられるが、板の下の流れと数値は参考値。1
+回目のケースは <code>_old_run004_v2/</code> に残してある。</li>
+</ul>
+<h3 id="50b-2-回目板の下-10-mm-に拡大の途中結果2026-11-04-1540">5.0b 2
+回目（板の下 10 mm に拡大）の途中結果（2026-11-04 15:40）</h3>
+<ul>
+<li>0.5 MPa は 4,000 回で完了。圧力の最小値は 48 kPa で、1
+回目のような真空のセルはなくなった。 局所時間刻みも 10⁻⁸ s
+台のまま（止まっていない）。残差は 10⁻⁴
+前後で横ばい、ノズル流量は一定（2.7 g/s）。</li>
+</ul>
+<p><img src="img/run004v3_residuals_p0.5.png"
+alt="2 回目の残差（0.5 MPa）" /></p>
+<table>
+<thead>
+<tr class="header">
+<th>0.5 MPa</th>
+<th>1 回目（板の下 2 mm）</th>
+<th>2 回目（板の下 10 mm）</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>切断の最前面の平均せん断応力</td>
+<td>511 Pa</td>
+<td>504 Pa</td>
+</tr>
+<tr class="even">
+<td>溝を通る質量流量</td>
+<td>0.40 g/s</td>
+<td>0.41 g/s</td>
+</tr>
+</tbody>
+</table>
+<p>→ 0.5 MPa では領域の大きさの影響はほとんどない（差 2 % 以内）。</p>
+<ul>
+<li>2.0／4.0／8.0 MPa は計算中。</li>
+</ul>
+<p><img src="img/run004v3_slice_p0.5.png"
+alt="2 回目の溝の中心面（0.5 MPa）" /></p>
+<h3 id="51a-斜め上から見た結果と溝を横切る断面20-mpa1-回目の結果">5.1a
+斜め上から見た結果と、溝を横切る断面（2.0 MPa、1 回目の結果）</h3>
+<p><img src="img/run004_result3d_p2.0_v1.png"
+alt="斜め上から見たマッハ数と溝の断面" /></p>
+<ul>
+<li>左：手前が溝の中心面（z =
+0）、奥がノズルと鋼板の半分。噴流は切断の最前面の角（x =
+0、板の上面）に当たり、 一部は溝の中（x &lt;
+0）へ流れ込んで加速し、板の下ではマッハ 2 を超える。</li>
+<li>右：溝を横切る断面（x = −0.6
+mm）。板の上ではノズルから出た噴流が左右に広がり（マッハ 1.5〜2）、 幅
+0.3 mm の溝の中に入った流れは下へ向かって加速し、溝の出口からマッハ 2.5
+近くで噴き出す。</li>
+<li>道具：<code>tools/render_kerf3d_result.py</code></li>
+</ul>
+<h3 id="51-切断溝の中心面z--0速度静圧o₂-濃度">5.1 切断溝の中心面（z =
+0）：速度・静圧・O₂ 濃度</h3>
+<p><img src="img/run004_slice_p0.5_2.0.png"
+alt="溝の中心面の速度・静圧・O₂" /></p>
+<p>（白：ノズルと、まだ切っていない鋼板 x &gt; 0。x &lt; 0
+は切断溝の中なので流体）</p>
+<ul>
+<li><strong>速度（上段）</strong>：ノズルを出た直後に加速し、板の上面で一度減速、溝に入って再び加速する。
+2.0 MPa では溝の中から板の下にかけて 700 m/s を超える。論文の図 3
+と同じ傾向。</li>
+<li><strong>静圧（中段）</strong>：ノズル内は p₀
+近く。板の上面の切断の最前面の角（x ≈ 0、y ≈
+0）で圧力が高くなる（噴流が当たる所）。
+溝の中では静圧が大気圧以下まで下がる（超音速の膨張）。</li>
+<li><strong>O₂ 濃度（下段）</strong>：溝の中はほぼ 0 %（純
+N₂）。空気が混ざるのは、ノズルと板のすき間の外側と、板の下に出た後だけ。</li>
+</ul>
+<h3 id="52-溝の中x--015-mmの速度と-o₂-濃度">5.2 溝の中（x = −0.15
+mm）の速度と O₂ 濃度</h3>
+<p><img src="img/run004_slice_p0.5_2.0_profile.png"
+alt="溝の中の速度と O₂" /></p>
+<table>
+<thead>
+<tr class="header">
+<th>量</th>
+<th>0.5 MPa</th>
+<th>2.0 MPa</th>
+<th>論文（原点の速度）</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>板の上面（y = 0）付近の速度</td>
+<td>約 230 m/s</td>
+<td>約 290 m/s</td>
+<td>約 260 m/s（0.5 MPa）、約 310 m/s（1 MPa 以上）</td>
+</tr>
+<tr class="even">
+<td>溝の出口（板の下面）の速度</td>
+<td>約 450 m/s</td>
+<td>約 650 m/s</td>
+<td>—</td>
+</tr>
+<tr class="odd">
+<td>溝の中の O₂ 濃度</td>
+<td>ほぼ 0 %</td>
+<td>ほぼ 0 %</td>
+<td>—</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>板の上面の速度は論文とおおむね合う（論文は x = 0
+の原点、ここは溝の中の x = −0.15 mm で、場所が少し違う）。</li>
+<li>溝の中に空気は入り込まない。ノズルの軸が切断の最前面の真上にあり、溝の入口を
+N₂ が完全に覆うため。
+東海大学の例のように<strong>ノズルを横にずらす</strong>と、溝の下から空気が巻き込まれると考えられる
+→ 次の比較（<code>XOFF</code> で設定できる）。</li>
+</ul>
+<h3 id="53-質量流量半分のモデル--2">5.3 質量流量（半分のモデル ×
+2）</h3>
+<table>
+<thead>
+<tr class="header">
+<th></th>
+<th>0.5 MPa</th>
+<th>2.0 MPa</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>ノズルから出る N₂</td>
+<td>2.68 g/s</td>
+<td>10.3 g/s</td>
+</tr>
+<tr class="even">
+<td>一次元のチョーク流の理論値</td>
+<td>2.48 g/s</td>
+<td>8.7 g/s</td>
+</tr>
+</tbody>
+</table>
+<p>計算のほうが 8〜19 %
+多い。ノズル内側のメッシュが階段状で、出口の実効的な面積が大きくなっているためと考えられる（2
+章の課題）。</p>
+<h3
+id="54-論文の図-6-に当たる量切断の最前面のせん断応力と溝を通る質量流量">5.4
+論文の図 6 に当たる量：切断の最前面のせん断応力と、溝を通る質量流量</h3>
+<table>
+<thead>
+<tr class="header">
+<th></th>
+<th>0.5 MPa</th>
+<th>2.0 MPa</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>切断の最前面（x = 0 の壁、溝の中）の平均せん断応力 τ</td>
+<td>511 Pa</td>
+<td>3,323 Pa</td>
+</tr>
+<tr class="even">
+<td>板の上面から 1.1 mm 下の溝の断面を通る質量流量 ṁ</td>
+<td>0.40 g/s</td>
+<td>0.98 g/s</td>
+</tr>
+<tr class="odd">
+<td>ノズルから出る全流量のうち溝を通る割合</td>
+<td>15 %</td>
+<td>9.5 %</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>論文と同じく、p₀ を上げると τ も ṁ も増える。τ は 6.5 倍、ṁ は 2.4
+倍になった。</li>
+<li>ノズルから出たガスの大部分（85〜90
+%）は板の上を横へ流れ、溝には入らない。</li>
+<li>論文は溝の断面の「半円部分」を通る流量で、ここは溝の幅全体（x &lt;
+0）で数えているので、値そのものは直接比べられない。</li>
+<li>計算：<code>tools/kerf_metrics.py</code></li>
+</ul>
+<h3 id="55-4080-mpaやり直し中">5.5 4.0・8.0 MPa（やり直し中）</h3>
+<p>1 回目は、圧力を上げる途中で温度が負になって止まった。 2 回目は 2.0
+MPa
+の結果を初期値にしたが、<strong>入口の圧力の設定（<code>p0Coeffs</code>）が
+2.0 MPa の値のまま優先されていて、 実際には 2.0 MPa
+のまま計算していた</strong>（流量が 2.0 MPa と同じで気づいた）。 3
+回目（2026-11-04）は、その設定を消して 2.0 MPa の 4,000 回目から
+4.0／8.0 MPa へ上げ直している。終わりしだい追記する。</p>
+<h3 id="今後追加する図">今後追加する図</h3>
+<ul>
+<li>p₀ 4 条件の比較（論文の図 3 の完全な再現）</li>
+<li>溝の壁のせん断応力と溝を通る質量流量の p₀ 依存（論文の図 6
+との比較）</li>
+</ul>
+</body>
+</html>

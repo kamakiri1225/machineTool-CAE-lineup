@@ -1,0 +1,32 @@
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      controlDict;
+}
+
+application     reactingFoam;
+startFrom       latestTime;
+startTime       0;
+stopAt          endTime;
+endTime         4000;   // LTS pseudo-time iterations
+deltaT          1;
+writeControl    timeStep;
+writeInterval   500;
+purgeWrite      0;
+writeFormat     ascii;
+writePrecision  8;
+timeFormat      general;
+timePrecision   6;
+runTimeModifiable true;
+functions
+{
+    MachNo      { type MachNo; libs (fieldFunctionObjects); executeControl writeTime; writeControl writeTime; }
+    wallShearStress { type wallShearStress; libs (fieldFunctionObjects); patches (plate); executeControl writeTime; writeControl writeTime; }
+    slotFlow    { type surfaceFieldValue; libs (fieldFunctionObjects); regionType patch; name bottom;
+                   operation sum; fields (phi); writeFields false; writeControl timeStep; writeInterval 20; }
+    inletFlow   { type surfaceFieldValue; libs (fieldFunctionObjects); regionType patch; name inlet;
+                   operation sum; fields (phi); writeFields false; writeControl timeStep; writeInterval 20; }
+}
+

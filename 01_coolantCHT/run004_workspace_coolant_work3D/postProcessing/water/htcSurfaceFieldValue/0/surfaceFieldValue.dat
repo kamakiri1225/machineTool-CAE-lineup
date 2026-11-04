@@ -1,0 +1,7 @@
+# Region type :     patch water_to_solid
+# Faces             : 544
+# Area              : 2.176000000000e-01
+# Scale factor      : 1.000000000000e+00
+# Time              	areaAverage(reactingEulerHtcModel(T.liquid))
+0.25                	-2.305483499218e+01
+0.5                 	-2.867484470431e+01

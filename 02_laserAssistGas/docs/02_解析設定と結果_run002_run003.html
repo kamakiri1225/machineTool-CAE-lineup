@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>02 解析設定と結果：実際に近い条件のアシストガス流れ（run002・run003）</title>
+  <style>
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      html {
+        background-color: white;
+      }
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+      font-size: 85%;
+      margin: 0;
+      hyphens: manual;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      background-color: #1a1a1a;
+      border: none;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    /* CSS for syntax highlighting */
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      {   }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+    code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+    code span.at { color: #7d9029; } /* Attribute */
+    code span.bn { color: #40a070; } /* BaseN */
+    code span.bu { color: #008000; } /* BuiltIn */
+    code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #4070a0; } /* Char */
+    code span.cn { color: #880000; } /* Constant */
+    code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+    code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+    code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+    code span.dt { color: #902000; } /* DataType */
+    code span.dv { color: #40a070; } /* DecVal */
+    code span.er { color: #ff0000; font-weight: bold; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #40a070; } /* Float */
+    code span.fu { color: #06287e; } /* Function */
+    code span.im { color: #008000; font-weight: bold; } /* Import */
+    code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+    code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+    code span.op { color: #666666; } /* Operator */
+    code span.ot { color: #007020; } /* Other */
+    code span.pp { color: #bc7a00; } /* Preprocessor */
+    code span.sc { color: #4070a0; } /* SpecialChar */
+    code span.ss { color: #bb6688; } /* SpecialString */
+    code span.st { color: #4070a0; } /* String */
+    code span.va { color: #19177c; } /* Variable */
+    code span.vs { color: #4070a0; } /* VerbatimString */
+    code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+  <style>
+  body{font-family:'Noto Sans JP','Hiragino Sans','Meiryo',sans-serif;max-width:1100px;margin:2em auto;padding:0 1.2em;line-height:1.75;color:#222}
+  h1{border-bottom:3px solid #1F3A5F;padding-bottom:.3em;color:#1F3A5F} h2{border-left:6px solid #2F6FB0;padding-left:.5em;margin-top:2em;color:#1F3A5F}
+  h3{color:#2F6FB0} img{max-width:100%;height:auto;border:1px solid #ddd;margin:.5em 0}
+  table{border-collapse:collapse;margin:1em 0;font-size:.95em} th,td{border:1px solid #bbb;padding:.35em .7em} th{background:#E3ECF7}
+  code{background:#f4f4f4;padding:.1em .3em;border-radius:3px} pre{background:#f4f4f4;padding:1em;overflow-x:auto}
+  nav.top{font-size:.9em;margin-bottom:1em} nav.top a{color:#2F6FB0}
+  </style>
+  <nav class="top"><a href="../../index.html">← 一覧に戻る</a></nav>
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">02
+解析設定と結果：実際に近い条件のアシストガス流れ（run002・run003）</h1>
+</header>
+<h1
+id="02-解析設定と結果実際に近い条件のアシストガス流れrun002run003">02
+解析設定と結果：実際に近い条件のアシストガス流れ（run002・run003）</h1>
+<p>作成日：2026-11-03　OpenFOAM
+v2512　ソルバ：<code>reactingFoam</code>（化学反応なし、局所時間刻み LTS
+による疑似定常） ソルバ選定・<code>transonic</code> の意味は
+<code>01_圧縮性ソルバの選び方とtransonic.md</code></p>
+<hr />
+<h2 id="1-モデルの形軸対称両ケース共通の作り">1.
+モデルの形（軸対称、両ケース共通の作り）</h2>
+<p><code>tools/make_laser_case.py</code> で作る。中心軸（y）まわりの 5°
+のくさび形（wedge）で、3 次元の回転体を表す。</p>
+<p><img src="img/geom3d_run002_axisym.png"
+alt="軸対称モデルを斜めから見た図（run002）" /></p>
+<p>断面とメッシュ：</p>
+<p><img src="img/geom_run002_axisym.png"
+alt="軸対称モデルの断面とメッシュ" /></p>
+<table>
+<thead>
+<tr class="header">
+<th>境界</th>
+<th>条件</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>inlet（ノズル入口）</td>
+<td>全圧を 0 → 1,500
+回で目標値まで上げる（<code>uniformTotalPressure</code>）、全温 300
+K</td>
+</tr>
+<tr class="even">
+<td>ambient（外周・上・下）</td>
+<td>大気圧 101,325 Pa、300 K、空気（O₂ 23.3 %、N₂ 76.7
+%、質量分率）</td>
+</tr>
+<tr class="odd">
+<td>nozzle・plate（壁）</td>
+<td>すべりなし、300 K 一定</td>
+</tr>
+<tr class="even">
+<td>ガス</td>
+<td>O₂ と N₂ の 2 成分。比熱一定（O₂ 918、N₂ 1040
+J/kgK）・理想気体。超音速で温度が下がっても使える</td>
+</tr>
+<tr class="odd">
+<td>乱流</td>
+<td>k-ω SST</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="2-2-つのケースの条件">2. 2 つのケースの条件</h2>
+<table>
+<thead>
+<tr class="header">
+<th></th>
+<th>run002 酸素切断</th>
+<th>run003 高圧空気切断</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>想定</td>
+<td>軟鋼 板厚 6 mm の酸素切断</td>
+<td>薄板 2 mm の高圧空気（窒素）切断</td>
+</tr>
+<tr class="even">
+<td>ガス</td>
+<td>O₂ 100 %</td>
+<td>空気</td>
+</tr>
+<tr class="odd">
+<td>圧力（ゲージ）</td>
+<td>0.1 MPa</td>
+<td>0.8 MPa</td>
+</tr>
+<tr class="even">
+<td>ノズル出口径</td>
+<td>1.5 mm</td>
+<td>2.0 mm</td>
+</tr>
+<tr class="odd">
+<td>スタンドオフ</td>
+<td>1.0 mm</td>
+<td>0.8 mm</td>
+</tr>
+<tr class="even">
+<td>切断溝の幅</td>
+<td>0.5 mm</td>
+<td>0.3 mm</td>
+</tr>
+<tr class="odd">
+<td>セル数</td>
+<td>10,525</td>
+<td>12,270</td>
+</tr>
+<tr class="even">
+<td>反復</td>
+<td>8,000</td>
+<td>12,000</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="3-結果">3. 結果</h2>
+<h3 id="run002-酸素切断01-mpa">run002 酸素切断（0.1 MPa）</h3>
+<p><img src="../run002_O2cut_mildSteel6mm/images/result3d_Mach.png"
+alt="run002 斜め上から" /></p>
+<p>断面：</p>
+<p><img src="../run002_O2cut_mildSteel6mm/images/axisym_Mach_8000.png"
+alt="run002" /></p>
+<ul>
+<li>圧力比（全圧／大気圧）が約 2.0
+で、音速になる限界（1.89）をわずかに超える程度。</li>
+<li>ノズル出口でマッハ約 0.8、板に当たって止まり（よどみ圧 約 1.7
+bar）、大部分は板に沿って外へ流れる。</li>
+<li>切断溝に入ったガスは溝の中で加速し、溝の出口でマッハ約 1.0
+になる。</li>
+<li>全体に穏やかな流れで、強い衝撃波はない。</li>
+</ul>
+<h4 id="酸素と窒素の割合o₂-純度">酸素と窒素の割合（O₂ 純度）</h4>
+<p><img
+src="../run002_O2cut_mildSteel6mm/images/axisym_O2purity_8000.png"
+alt="run002 O2 purity" /></p>
+<ul>
+<li>ガスは O₂ と N₂ の 2 成分として解いているので、周りの空気（O₂ 21
+%・N₂ 79 %、体積割合）が
+どれだけ混ざるかがわかる（<code>tools/plot_species.py</code>）。</li>
+<li>この軸対称モデルでは、ノズルから出た純酸素が切断溝の入口を完全に覆うため、
+<strong>溝の中の O₂ 純度はほぼ 100
+%</strong>。空気が混ざるのは、板の上を外へ流れる薄い層と、板の下に噴き出した後だけ。</li>
+<li>実際の溝（スリット・ノズルが移動）では、溝の後ろ側から空気が巻き込まれて純度が下がる。
+酸素切断では純度が 99.5 % から 1 %
+下がるだけで切断速度が落ちるとされるので、3
+次元モデルで確かめたい点。</li>
+<li>入口の O₂ の割合（例：工業用酸素 99.5
+%）を変えることも、<code>make_laser_case.py</code> の
+<code>YO2_in</code> で簡単にできる。</li>
+</ul>
+<h3 id="run003-高圧空気切断08-mpa">run003 高圧空気切断（0.8 MPa）</h3>
+<p><img
+src="../run003_airCut_highPressure_t2mm/images/result3d_Mach.png"
+alt="run003 斜め上から" /></p>
+<p>断面：</p>
+<p><img
+src="../run003_airCut_highPressure_t2mm/images/axisym_Mach_latest.png"
+alt="run003" /></p>
+<ul>
+<li>圧力比 約 8.9 の強い超音速の流れ。</li>
+<li>板の中央に当たったところで止まり（よどみ圧 約 8
+bar）、<strong>板の上面に沿ってマッハ 2
+を超える超音速の壁噴流</strong>になって外へ広がる。</li>
+<li>切断溝に入ったガスは溝の中で加速し、板の下へマッハ約 2
+で噴き出す。</li>
+<li>想定していた流れ（ノズル → 板に当たる →
+溝の中を下へ／板に沿って横へ）と同じ形の流れになっている。</li>
+</ul>
+<hr />
+<h2 id="4-限界と次の一手">4. 限界と次の一手</h2>
+<ol type="1">
+<li><strong>切断溝を丸い穴で近似</strong>している（軸対称のため）。実際の溝は細長いスリットで、
+ノズルが動きながら切るので、切断面（前面）が傾き、溝に入るガスはもっと多い。
+→ 次はスリットと傾いた切断前面をもつ <strong>3
+次元モデル</strong>（対称面で半分だけ解く）。</li>
+<li>溶けた金属（ドロス）や酸化反応の熱は入れていない（ガスだけの流れ）。</li>
+<li>衝撃波は upwind
+の離散化で数セル分なまる。衝撃波の位置を詳しく見るならメッシュを細かくするか、
+密度ベースの <code>rhoCentralFoam</code>（1 成分）と比べる。</li>
+<li>この環境では mpirun が止まるため、1 並列で計算している。</li>
+</ol>
+<hr />
+<h2 id="5-再現手順">5. 再現手順</h2>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> /mnt/d/work/002_CAE/openfoam/20261103_laserAssistGas</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="ex">python3</span> tools/make_laser_case.py run002_O2cut_mildSteel6mm <span class="st">&#39;{&quot;RK&quot;:0.25,&quot;RN&quot;:0.75,&quot;RIN&quot;:1.5,&quot;H&quot;:1.0,&quot;T&quot;:6.0,&quot;p0_gauge&quot;:0.1e6,&quot;YO2_in&quot;:1.0}&#39;</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="ex">openfoam2512</span> <span class="at">-c</span> <span class="st">&#39;./run002_O2cut_mildSteel6mm/Allrun&#39;</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="ex">python3</span> tools/plot_axisym.py run002_O2cut_mildSteel6mm      <span class="co"># images/axisym_Mach_&lt;反復&gt;.png</span></span></code></pre></div>
+<p>ParaView で見るときは各ケースの <code>post.foam</code>（wedge
+なので、<code>Reflect</code> で折り返すか
+<code>Rotational Extrusion</code> で回転体にすると見やすい）。</p>
+</body>
+</html>

@@ -1,0 +1,61 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  v2512                                 |
+|   \\  /    A nd           | Website:  www.openfoam.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       volScalarField;
+    object      T.gas;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+dimensions      [ 0 0 0 1 0 0 0 ];
+
+internalField   uniform 293;
+
+boundaryField
+{
+    #includeEtc "caseDicts/setConstraintTypes"
+
+    maxY
+    {
+        type            inletOutlet;
+        value           uniform 293;
+        inletValue      uniform 293;
+    }
+
+    maxX
+    {
+        type            fixedValue;
+        value           uniform 293;
+    }
+
+    minY
+    {
+        type            fixedValue;
+        value           uniform 293;
+    }
+
+    water_to_solid
+    {
+        type            copiedFixedValue;
+        sourceFieldName T.liquid;
+        value           uniform 293;
+    }
+    inlet
+    {
+        type fixedValue; value uniform 308;
+    }
+    drain
+    {
+        type inletOutlet; inletValue uniform 293; value uniform 293;
+    }
+}
+
+
+// ************************************************************************* //

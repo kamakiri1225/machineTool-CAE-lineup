@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>01 ソルバ解説：chtMultiRegionTwoPhaseEulerFoam</title>
+  <style>
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      html {
+        background-color: white;
+      }
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+      font-size: 85%;
+      margin: 0;
+      hyphens: manual;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      background-color: #1a1a1a;
+      border: none;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+  </style>
+  <style>
+  body{font-family:'Noto Sans JP','Hiragino Sans','Meiryo',sans-serif;max-width:1100px;margin:2em auto;padding:0 1.2em;line-height:1.75;color:#222}
+  h1{border-bottom:3px solid #1F3A5F;padding-bottom:.3em;color:#1F3A5F} h2{border-left:6px solid #2F6FB0;padding-left:.5em;margin-top:2em;color:#1F3A5F}
+  h3{color:#2F6FB0} img{max-width:100%;height:auto;border:1px solid #ddd;margin:.5em 0}
+  table{border-collapse:collapse;margin:1em 0;font-size:.95em} th,td{border:1px solid #bbb;padding:.35em .7em} th{background:#E3ECF7}
+  code{background:#f4f4f4;padding:.1em .3em;border-radius:3px} pre{background:#f4f4f4;padding:1em;overflow-x:auto}
+  nav.top{font-size:.9em;margin-bottom:1em} nav.top a{color:#2F6FB0}
+  </style>
+  <nav class="top"><a href="../../index.html">← 一覧に戻る</a></nav>
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script src="/usr/share/javascript/mathjax/MathJax.js"
+  type="text/javascript"></script>
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">01 ソルバ解説：chtMultiRegionTwoPhaseEulerFoam</h1>
+</header>
+<h1 id="01-ソルバ解説chtmultiregiontwophaseeulerfoam">01
+ソルバ解説：chtMultiRegionTwoPhaseEulerFoam</h1>
+<p>作成日：2026-11-03　OpenFOAM v2512（ESI） 対象：このフォルダの
+run001・run004（<code>system/controlDict</code> の
+<code>application chtMultiRegionTwoPhaseEulerFoam;</code>）</p>
+<hr />
+<h2 id="1-ひとことで言うと">1. ひとことで言うと</h2>
+<p><strong>「気液二相流（オイラー–オイラー法）」と「固体の熱伝導」を、領域（region）ごとに分けて解き、
+境界で熱をやり取りさせる非定常ソルバ</strong>。</p>
+<p>ソースの説明文（<code>applications/solvers/heatTransfer/chtMultiRegionFoam/chtMultiRegionTwoPhaseEulerFoam/</code>）：</p>
+<blockquote>
+<p>Transient solver for buoyant, turbulent fluid flow and solid heat
+conduction with conjugate heat transfer between solid and fluid regions.
+It solves a two-phase Euler approach on the fluid region.</p>
+</blockquote>
+<table>
+<thead>
+<tr class="header">
+<th>名前の部分</th>
+<th>意味</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>cht</td>
+<td>Conjugate Heat Transfer（共役熱伝達：流体と固体の熱連成）</td>
+</tr>
+<tr class="even">
+<td>MultiRegion</td>
+<td>流体領域と固体領域を別々のメッシュ（region）として持つ</td>
+</tr>
+<tr class="odd">
+<td>TwoPhaseEuler</td>
+<td>流体領域を「気相＋液相」の 2
+つの連続体として解く（オイラー–オイラー法）</td>
+</tr>
+<tr class="even">
+<td>Foam</td>
+<td>OpenFOAM のソルバ</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="2-何を解いているか">2. 何を解いているか</h2>
+<h3 id="21-流体領域例water-領域-オイラーオイラー二相流">2.1
+流体領域（例：<code>water</code> 領域）— オイラー–オイラー二相流</h3>
+<p>気相（gas）と液相（liquid）を、それぞれ<strong>体積分率 α
+と速度・温度をもつ連続体</strong>として重ね合わせる。</p>
+<ul>
+<li>体積分率：α<sub>gas</sub> + α<sub>liquid</sub> = 1</li>
+<li>各相ごとに：質量保存、運動量保存、エネルギー（エンタルピー）保存</li>
+<li>圧力 p は両相で共通（<code>p_rgh</code> = p − ρgh を解く）</li>
+<li>相の間のやり取り（<code>constant/&lt;流体領域&gt;/phaseProperties</code>）
+<ul>
+<li>抗力 <code>drag</code>（IshiiZuber）、仮想質量
+<code>virtualMass</code>、揚力 <code>lift</code>、壁潤滑
+<code>wallLubrication</code>、乱流分散</li>
+<li>相間熱伝達 <code>heatTransfer</code>（RanzMarshall など）</li>
+<li>どちらが「連続相」でどちらが「分散相」かは α
+で自動的に切り替わる（<code>blending</code>）
+<ul>
+<li><code>(gas in liquid)</code>：液の中の気泡</li>
+<li><code>(liquid in gas)</code>：空気の中の液滴（クーラントの噴流・飛沫はこちら）</li>
+</ul></li>
+</ul></li>
+<li>乱流：相ごとに k-ε（<code>turbulenceProperties.gas</code> /
+<code>.liquid</code>）</li>
+</ul>
+<p><strong>VOF（interFoam）との違い</strong>：VOF は 1
+つの速度場で界面を鋭く追う。
+オイラー–オイラー法は界面を追わず、セルの中に気と液が「混ざって」存在してよい。
+噴霧・飛沫・気泡流に向き、薄い液膜や界面の形状そのものは苦手。</p>
+<h3 id="22-固体領域例solid-領域-熱伝導">2.2
+固体領域（例：<code>solid</code> 領域）— 熱伝導</h3>
+<p><span class="math display">\[
+\rho c_p \frac{\partial T}{\partial t} = \nabla\cdot(\kappa\nabla T) + Q
+\]</span></p>
+<p>物性は
+<code>constant/solid/thermophysicalProperties</code>（本ケースは鋼）。</p>
+<h3 id="23-流体と固体の境界--熱の受け渡し">2.3 流体と固体の境界 —
+熱の受け渡し</h3>
+<p><code>splitMeshRegions</code> が作る境界 <code>water_to_solid</code>
+/ <code>solid_to_water</code> に、
+<code>compressible::turbulentTemperatureTwoPhaseRadCoupledMixed</code>
+という境界条件を置く。</p>
+<ul>
+<li>両側の温度と熱流束が一致するように、毎反復で互いの値を渡し合う</li>
+<li>流体側では、気相・液相それぞれの熱伝達（壁関数
+<code>alphat</code>）を α で重み付けして合計する
+（<code>kappaMethod phaseSystem;</code>）</li>
+<li>液が濡れている所は熱伝達が大きく、空気だけの所は小さくなる →
+<strong>クーラントがかかる場所の熱伝達率が自然に大きくなる</strong></li>
+</ul>
+<hr />
+<h3 id="24-基礎式まとめ">2.4 基礎式（まとめ）</h3>
+<p>記号：相 k（g = 気相＝空気、l = 液相＝クーラント）、α<sub>k</sub>
+体積分率、ρ<sub>k</sub> 密度、 <strong>u</strong><sub>k</sub>
+速度、h<sub>k</sub> 比エンタルピー、p
+圧力（両相で共通）、<strong>g</strong> 重力加速度。</p>
+<p><strong>(1) 体積分率の拘束</strong></p>
+<p><span class="math display">\[
+\alpha_g + \alpha_l = 1
+\]</span></p>
+<p><strong>(2) 各相の質量保存</strong>（相変化なしなので右辺 0）</p>
+<p><span class="math display">\[
+\frac{\partial (\alpha_k \rho_k)}{\partial t} + \nabla\cdot(\alpha_k
+\rho_k \mathbf{u}_k) = 0
+\]</span></p>
+<p><strong>(3) 各相の運動量保存</strong></p>
+<p><span class="math display">\[
+\frac{\partial (\alpha_k \rho_k \mathbf{u}_k)}{\partial t} +
+\nabla\cdot(\alpha_k \rho_k \mathbf{u}_k \mathbf{u}_k)
+= -\alpha_k \nabla p + \nabla\cdot\left(\alpha_k
+\boldsymbol{\tau}_k^{\mathrm{eff}}\right) + \alpha_k \rho_k \mathbf{g} +
+\mathbf{M}_k ,
+\qquad \mathbf{M}_g = -\mathbf{M}_l
+\]</span></p>
+<ul>
+<li><strong>τ</strong><sup>eff</sup>
+は分子粘性＋乱流粘性（k-ε）の応力</li>
+<li><strong>M</strong><sub>k</sub>
+は相間で受け渡す力（<code>phaseProperties</code> で選ぶ）</li>
+</ul>
+<p>$$ \mathbf{M}_l = \underbrace{K(\mathbf{u}_g -
+\mathbf{u}<em>l)}</em>{\text{抗力}}</p>
+<ul>
+<li>\underbrace{C_{vm}\alpha_d\rho_c\left(\frac{D\mathbf{u}_c}{Dt}-\frac{D\mathbf{u}<em>d}{Dt}\right)}</em>{\text{仮想質量}}</li>
+<li>\text{揚力} + \text{壁潤滑} + \text{乱流分散}, \qquad K =
+\frac{3}{4},C_D,\frac{\alpha_d \rho_c,|\mathbf{u}_g-\mathbf{u}_l|}{d}
+$$</li>
+</ul>
+<p>（c = 連続相、d = 分散相。空気の中の液滴なら c = 空気・d =
+液。C<sub>D</sub> は Ishii–Zuber の式。 どちらが連続相かは α
+で自動的に切り替わる＝ <code>blending</code>）</p>
+<p><strong>(4) 各相のエネルギー保存</strong></p>
+<p><span class="math display">\[
+\frac{\partial (\alpha_k \rho_k h_k)}{\partial t} + \nabla\cdot(\alpha_k
+\rho_k \mathbf{u}_k h_k)
+= \alpha_k \frac{\partial p}{\partial t} + \nabla\cdot\left(\alpha_k
+\kappa_k^{\mathrm{eff}} \nabla T_k\right) + Q_k ,
+\qquad Q_l = h_i\, a_i\, (T_g - T_l) = -Q_g
+\]</span></p>
+<ul>
+<li>界面面積濃度 a<sub>i</sub> = 6α<sub>d</sub>/d、界面の熱伝達率
+h<sub>i</sub> は Ranz–Marshall の式 Nu = 2 + 0.6 Re<sup>1/2</sup>
+Pr<sup>1/3</sup></li>
+</ul>
+<p><strong>(5) 固体（テーブル・ワーク）の熱伝導</strong></p>
+<p><span class="math display">\[
+\rho_s c_{p,s} \frac{\partial T_s}{\partial t} = \nabla\cdot(\kappa_s
+\nabla T_s)
+\]</span></p>
+<p>（流れも変形も解かない。温度だけ）</p>
+<p><strong>(6)
+流体と固体の境界の条件</strong>（<code>turbulentTemperatureTwoPhaseRadCoupledMixed</code>）</p>
+<p><span class="math display">\[
+T_{\text{流体側}} = T_s ,\qquad
+\sum_{k=g,l} \alpha_k\,\kappa_k^{\mathrm{eff}} \frac{\partial
+T_k}{\partial n} = \kappa_s \frac{\partial T_s}{\partial n}
+\]</span></p>
+<p>境界の温度が等しく、熱流束がつり合う。流体側の熱流束は相ごとの壁関数の熱伝達を
+α で重み付けして足すので、
+<strong>液が濡れている所ほど熱がよく伝わる</strong>。</p>
+<h2 id="3-1-タイムステップの流れ">3. 1 タイムステップの流れ</h2>
+<p><code>chtMultiRegionTwoPhaseEulerFoam.C</code>
+の本体は次の順で回っている。</p>
+<ol type="1">
+<li>流体の Courant 数・固体の拡散数から Δt を決める（<code>maxCo</code>,
+<code>maxDi</code>, <code>maxDeltaT</code>）</li>
+<li><strong>流体領域を解く</strong>（<code>fluid/solveFluid.H</code>）
+<ul>
+<li>α（体積分率）→ 運動量 → 圧力補正 → エネルギー → 乱流</li>
+</ul></li>
+<li><strong>固体領域を解く</strong>（<code>solid/solveSolid.H</code>）：熱伝導方程式</li>
+<li>必要なら 2〜3
+を外側反復（<code>nOuterCorrectors</code>）で繰り返し、境界の温度・熱流束を合わせる</li>
+<li>書き出し</li>
+</ol>
+<hr />
+<h2 id="4-ケースの作り方run001run004-共通">4.
+ケースの作り方（run001・run004 共通）</h2>
+<pre><code>blockMesh                         # 全体を 1 つのメッシュで作る
+topoSet                           # 固体にするセル(cellZone)、入口・排出口の面(faceSet)を選ぶ
+createPatch -overwrite            # （run004）面集合から inlet / drain パッチを作る
+splitMeshRegions -cellZonesOnly   # cellZone ごとに water / solid の 2 領域に分ける
+setFields -region water           # 初期の液の分布
+chtMultiRegionTwoPhaseEulerFoam   # 本計算</code></pre>
+<p>主な設定ファイル</p>
+<table>
+<thead>
+<tr class="header">
+<th>ファイル</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>constant/regionProperties</code></td>
+<td><code>fluid (water); solid (solid);</code>
+どの領域が流体/固体か</td>
+</tr>
+<tr class="even">
+<td><code>constant/water/phaseProperties</code></td>
+<td>相の組み合わせ、相間の力・熱伝達、表面張力、飽和温度</td>
+</tr>
+<tr class="odd">
+<td><code>constant/water/thermophysicalProperties.gas/.liquid</code></td>
+<td>気相・液相の物性</td>
+</tr>
+<tr class="even">
+<td><code>constant/solid/thermophysicalProperties</code></td>
+<td>固体の物性</td>
+</tr>
+<tr class="odd">
+<td><code>system/controlDict</code></td>
+<td>終了時刻、<code>maxCo</code>、<code>maxDi</code>（固体の拡散数）、<code>maxDeltaT</code></td>
+</tr>
+<tr class="even">
+<td><code>system/&lt;領域&gt;/fvSchemes, fvSolution</code></td>
+<td>領域ごとの離散化・解法</td>
+</tr>
+<tr class="odd">
+<td><code>0.orig/&lt;領域&gt;/*</code></td>
+<td>領域ごとの初期値・境界条件</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="5-各ケースでの使い方">5. 各ケースでの使い方</h2>
+<table>
+<thead>
+<tr class="header">
+<th>ケース</th>
+<th>内容</th>
+<th>気相</th>
+<th>液相</th>
+<th>固体</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>run001</td>
+<td>公式例題 solidQuenching2D（2
+次元・焼入れ、沸騰あり）。動作確認用</td>
+<td>水蒸気</td>
+<td>水</td>
+<td>加熱体 1123 K</td>
+</tr>
+<tr class="even">
+<td>run004</td>
+<td>加工エリア：空気の中で、温かいクーラントをテーブル中央のワークにかける</td>
+<td><strong>空気</strong></td>
+<td>クーラント（水物性）</td>
+<td>鋼テーブル＋ワーク</td>
+</tr>
+</tbody>
+</table>
+<p>（途中で作った run002〈run001 の 3 次元版〉と
+run003〈テーブルが床にある旧版〉は削除済み）</p>
+<p>run004 では、気相の物性を空気（分子量 28.96、c<sub>p</sub> 1007、μ
+1.81e-5、Pr 0.71）に変え、 クーラントを 35
+℃（ポンプで温まった想定）、空気・テーブル・囲いを 20 ℃ にしている。
+液は沸点（<code>Tsat_water_1_2bar.csv</code>）よりずっと低いので、例題に入っていた沸騰のモデルは働かない。</p>
+<hr />
+<h2 id="6-注意点限界">6. 注意点・限界</h2>
+<ul>
+<li>液の噴流や液膜を「界面として」は表さない（α が 0〜1
+の間でぼやけた分布になる）。 液膜の厚さや跳ね返りを詳しく見たいときは
+VOF 系（interFoam）が必要だが、 VOF
+と固体の熱連成は標準ソルバにはない。</li>
+<li>囲いの壁は固体として解かず、温度一定（20 ℃）の壁にしている。
+壁の中の熱伝導も見たい場合は、壁を固体領域として追加する。</li>
+<li>並列計算（mpirun）がこの環境では起動したまま止まるため、現状は 1
+並列で計算している。</li>
+</ul>
+</body>
+</html>

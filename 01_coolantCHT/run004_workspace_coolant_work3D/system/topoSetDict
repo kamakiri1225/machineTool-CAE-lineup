@@ -1,0 +1,89 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  v2512                                 |
+|   \\  /    A nd           | Website:  www.openfoam.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      topoSetDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+actions
+(
+    {
+        name    inletFaces;
+        type    faceSet;
+        action  new;
+        source  boxToFace;
+        box     (0.28 0.599 0.18) (0.32 0.601 0.22);
+    }
+    {
+        name    drainFaces;
+        type    faceSet;
+        action  new;
+        source  boxToFace;
+        box     (-0.01 -0.001 -0.01) (0.1 0.001 0.41);
+    }
+    {
+        name    drainFaces;
+        type    faceSet;
+        action  add;
+        source  boxToFace;
+        box     (0.5 -0.001 -0.01) (0.61 0.001 0.41);
+    }
+
+    heater
+    {
+        name    heaterCellSet;
+        type    cellSet;
+        action  new;
+        source  boxToCell;
+        box     (0.141 0.241 0.101) (0.459 0.299 0.299);
+    }
+    {
+        name    heaterCellSet;
+        type    cellSet;
+        action  add;
+        source  boxToCell;
+        box     (0.241 0.299 0.141) (0.359 0.359 0.259);
+    }
+
+    {
+        name    solid;
+        type    cellZoneSet;
+        action  new;
+        source  setToCellZone;
+        set     heaterCellSet;
+    }
+
+    {
+        name    bottomWaterCellSet;
+        type    cellSet;
+        action  new;
+        source  cellToCell;
+        set     heaterCellSet;
+    }
+
+    {
+        name    bottomWaterCellSet;
+        type    cellSet;
+        action  invert;
+    }
+
+    {
+        name    water;
+        type    cellZoneSet;
+        action  new;
+        source  setToCellZone;
+        set     bottomWaterCellSet;
+    }
+);
+
+
+// ************************************************************************* //

@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>99 計算時間の記録（2026-11-03〜04 に行った計算）</title>
+  <style>
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      html {
+        background-color: white;
+      }
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+      font-size: 85%;
+      margin: 0;
+      hyphens: manual;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      background-color: #1a1a1a;
+      border: none;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    /* CSS for syntax highlighting */
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      {   }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+    code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+    code span.at { color: #7d9029; } /* Attribute */
+    code span.bn { color: #40a070; } /* BaseN */
+    code span.bu { color: #008000; } /* BuiltIn */
+    code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #4070a0; } /* Char */
+    code span.cn { color: #880000; } /* Constant */
+    code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+    code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+    code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+    code span.dt { color: #902000; } /* DataType */
+    code span.dv { color: #40a070; } /* DecVal */
+    code span.er { color: #ff0000; font-weight: bold; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #40a070; } /* Float */
+    code span.fu { color: #06287e; } /* Function */
+    code span.im { color: #008000; font-weight: bold; } /* Import */
+    code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+    code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+    code span.op { color: #666666; } /* Operator */
+    code span.ot { color: #007020; } /* Other */
+    code span.pp { color: #bc7a00; } /* Preprocessor */
+    code span.sc { color: #4070a0; } /* SpecialChar */
+    code span.ss { color: #bb6688; } /* SpecialString */
+    code span.st { color: #4070a0; } /* String */
+    code span.va { color: #19177c; } /* Variable */
+    code span.vs { color: #4070a0; } /* VerbatimString */
+    code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+  <style>
+  body{font-family:'Noto Sans JP','Hiragino Sans','Meiryo',sans-serif;max-width:1100px;margin:2em auto;padding:0 1.2em;line-height:1.75;color:#222}
+  h1{border-bottom:3px solid #1F3A5F;padding-bottom:.3em;color:#1F3A5F} h2{border-left:6px solid #2F6FB0;padding-left:.5em;margin-top:2em;color:#1F3A5F}
+  h3{color:#2F6FB0} img{max-width:100%;height:auto;border:1px solid #ddd;margin:.5em 0}
+  table{border-collapse:collapse;margin:1em 0;font-size:.95em} th,td{border:1px solid #bbb;padding:.35em .7em} th{background:#E3ECF7}
+  code{background:#f4f4f4;padding:.1em .3em;border-radius:3px} pre{background:#f4f4f4;padding:1em;overflow-x:auto}
+  nav.top{font-size:.9em;margin-bottom:1em} nav.top a{color:#2F6FB0}
+  </style>
+  <nav class="top"><a href="../../index.html">← 一覧に戻る</a></nav>
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">99 計算時間の記録（2026-11-03〜04 に行った計算）</h1>
+</header>
+<h1 id="99-計算時間の記録2026-11-0304-に行った計算">99
+計算時間の記録（2026-11-03〜04 に行った計算）</h1>
+<p>対象：2026-11-03 に始めた 3 つのフォルダの計算すべて
+（<code>20261103_multiphaseCHT</code>、<code>20261103_laserAssistGas</code>、<code>20261103_laserFumeExtraction</code>）</p>
+<h2 id="計算環境">計算環境</h2>
+<table>
+<thead>
+<tr class="header">
+<th>項目</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>CPU</td>
+<td>Intel Xeon Gold 6212U 2.40 GHz（WSL2 から 48 スレッド見える）</td>
+</tr>
+<tr class="even">
+<td>メモリ</td>
+<td>61 GB</td>
+</tr>
+<tr class="odd">
+<td>OpenFOAM</td>
+<td>v2512（ESI）</td>
+</tr>
+<tr class="even">
+<td>並列数</td>
+<td><strong>すべて 1 並列（1 プロセス）</strong>。この WSL 環境では
+<code>mpirun</code> が起動したまま止まるため、MPI
+並列は使えていない（<code>mpirun -np 2 hostname</code>
+も返らない。2026-11-04 時点で未解決）</td>
+</tr>
+<tr class="odd">
+<td>同時実行</td>
+<td>別々のケースを、それぞれ 1 並列で同時に走らせた（例：3 次元切断溝の
+4 圧力を同時に 4 本）</td>
+</tr>
+</tbody>
+</table>
+<p>ExecutionTime は CPU 時間、ClockTime
+は実時間（ログの最後の値）。同時実行の本数によって 1
+本あたりの速さは変わる。</p>
+<h2 id="計算時間の一覧">計算時間の一覧</h2>
+<table>
+<thead>
+<tr class="header">
+<th>フォルダ / ケース</th>
+<th>ソルバ</th>
+<th>セル数</th>
+<th>反復・ステップ数</th>
+<th>並列数</th>
+<th>実時間</th>
+<th>1 回あたり</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>multiphaseCHT / run001（公式例題 2 次元、t = 0.2 s）</td>
+<td>chtMultiRegionTwoPhaseEulerFoam</td>
+<td>例題の 2D メッシュ</td>
+<td>1,809</td>
+<td>1</td>
+<td>12 分（740 s）</td>
+<td>0.4 s</td>
+</tr>
+<tr class="even">
+<td>multiphaseCHT / run004（加工エリア 3 次元、t = 3 s）</td>
+<td>chtMultiRegionTwoPhaseEulerFoam</td>
+<td>流体 17,412 ＋ 固体 588</td>
+<td>1,633</td>
+<td>1</td>
+<td>12 分（735 s）</td>
+<td>0.45 s</td>
+</tr>
+<tr class="odd">
+<td>laserAssistGas / run002（酸素切断、軸対称）</td>
+<td>reactingFoam（LTS）</td>
+<td>10,525</td>
+<td>8,000</td>
+<td>1</td>
+<td>24 分（1,454 s）</td>
+<td>0.18 s</td>
+</tr>
+<tr class="even">
+<td>laserAssistGas / run003（高圧空気切断、軸対称）</td>
+<td>reactingFoam（LTS）</td>
+<td>12,270</td>
+<td>12,000</td>
+<td>1</td>
+<td>42 分（2,524 s）</td>
+<td>0.21 s</td>
+</tr>
+<tr class="odd">
+<td>laserFumeExtraction / run001 流れ</td>
+<td>simpleFoam</td>
+<td>55,296</td>
+<td>1,500</td>
+<td>1</td>
+<td>6 分（332 s）</td>
+<td>0.22 s</td>
+</tr>
+<tr class="even">
+<td>laserFumeExtraction / run001 粒子（3 s、約 1.2 万個）</td>
+<td>icoUncoupledKinematicParcelFoam</td>
+<td>55,296</td>
+<td>1,500</td>
+<td>1</td>
+<td>3 分（170 s）</td>
+<td>0.11 s</td>
+</tr>
+<tr class="odd">
+<td>laserAssistGas / run004（3 次元切断溝、N₂、混合ガス、4 圧力）</td>
+<td>reactingFoam（LTS）</td>
+<td>169,773</td>
+<td>4,000（予定）</td>
+<td>1（×4 本同時）</td>
+<td><strong>計算中：1 本あたり約 5 時間の見込み</strong></td>
+<td>約 4.4 s</td>
+</tr>
+</tbody>
+</table>
+<h2 id="途中でやめた計算参考">途中でやめた計算（参考）</h2>
+<table>
+<thead>
+<tr class="header">
+<th>ケース</th>
+<th>内容</th>
+<th>やめた理由</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>multiphaseCHT / run002・run003</td>
+<td>例題の 3 次元版、テーブルが床にある旧版</td>
+<td>不要になり削除</td>
+</tr>
+<tr class="even">
+<td>laserAssistGas / run001</td>
+<td>平板だけの軸対称、JANAF 物性</td>
+<td>低温で物性の範囲外になったため作り直し・削除</td>
+</tr>
+<tr class="odd">
+<td>laserAssistGas / run004（rhoCentralFoam 版）</td>
+<td>3 次元切断溝、アシストガスを受動スカラーで近似</td>
+<td>混合ガスとして解く必要があるため、reactingFoam 版に作り直し。32.6
+万セル・時間進行では 1 ステップ 2.3 s、定常まで 11
+時間の見込みだった</td>
+</tr>
+</tbody>
+</table>
+<h2 id="メモ">メモ</h2>
+<ul>
+<li>1 並列でも 2 万セル程度までなら数十分で終わる。3 次元の 10
+万セルを超えると数時間かかる。</li>
+<li>MPI 並列が使えれば 16〜32 並列で 10
+倍以上速くできるはずなので、<code>mpirun</code> が止まる原因 （WSL
+のネットワーク設定や Open MPI
+の設定が疑わしい）を直すのが今後の課題。</li>
+</ul>
+<h2
+id="追加2026-11-0420261104_machinetoolsims">追加（2026-11-04、<code>20261104_machineToolSims</code>）</h2>
+<table>
+<thead>
+<tr class="header">
+<th>ケース</th>
+<th>ソルバ</th>
+<th>セル数</th>
+<th>並列数</th>
+<th>実時間</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>run001 工場の気温（流れ 120 s ＋ 温度 24 h）</td>
+<td>chtMultiRegionFoam</td>
+<td>26,880</td>
+<td>1</td>
+<td>23 分 ＋ 3 分</td>
+</tr>
+<tr class="even">
+<td>run002 主軸の発熱（1 h）</td>
+<td>solidFoam</td>
+<td>1,584</td>
+<td>1</td>
+<td>18 秒</td>
+</tr>
+<tr class="odd">
+<td>run003 ミスト・切りくず（流れ ＋ 粒子 2 種）</td>
+<td>simpleFoam ＋ icoUncoupledKinematicParcelFoam</td>
+<td>73,728</td>
+<td>1</td>
+<td>約 25 分 ＋ 4 分 ＋ 3 分</td>
+</tr>
+<tr class="even">
+<td>laserAssistGas run004 0.5／2.0 MPa（3,000 回まで）</td>
+<td>reactingFoam（LTS）</td>
+<td>169,773</td>
+<td>1（× 4 本同時）</td>
+<td>約 2 時間</td>
+</tr>
+</tbody>
+</table>
+<h2
+id="並列計算が使えるようになった2026-11-04">並列計算が使えるようになった（2026-11-04）</h2>
+<ul>
+<li>原因：Open MPI が起動時に使う hwloc（CPU・GPU
+の構成を調べるライブラリ）が、GL（画面）の情報を調べるために
+127.0.0.1:6001（X11）へ接続しに行き、応答がないまま止まっていた（<code>/etc/hosts</code>
+は正しかった）。</li>
+<li>対策：環境変数 <code>HWLOC_COMPONENTS=-gl</code> を付けて mpirun
+する。
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">HWLOC_COMPONENTS</span><span class="op">=</span>-gl</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="ex">mpirun</span> <span class="at">-np</span> 4 reactingFoam <span class="at">-parallel</span></span></code></pre></div></li>
+<li>タンク試験（1 万セル）は 1 並列 → 4 並列で約 3 倍速くなった（1
+分あたり 0.045 ms → 0.13 ms）。</li>
+</ul>
+</body>
+</html>

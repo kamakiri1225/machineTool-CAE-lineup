@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>03 オイラー–オイラー法と VOF の違い、VOF で固体連成はできるか</title>
+  <style>
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      html {
+        background-color: white;
+      }
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+      font-size: 85%;
+      margin: 0;
+      hyphens: manual;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      background-color: #1a1a1a;
+      border: none;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+  </style>
+  <style>
+  body{font-family:'Noto Sans JP','Hiragino Sans','Meiryo',sans-serif;max-width:1100px;margin:2em auto;padding:0 1.2em;line-height:1.75;color:#222}
+  h1{border-bottom:3px solid #1F3A5F;padding-bottom:.3em;color:#1F3A5F} h2{border-left:6px solid #2F6FB0;padding-left:.5em;margin-top:2em;color:#1F3A5F}
+  h3{color:#2F6FB0} img{max-width:100%;height:auto;border:1px solid #ddd;margin:.5em 0}
+  table{border-collapse:collapse;margin:1em 0;font-size:.95em} th,td{border:1px solid #bbb;padding:.35em .7em} th{background:#E3ECF7}
+  code{background:#f4f4f4;padding:.1em .3em;border-radius:3px} pre{background:#f4f4f4;padding:1em;overflow-x:auto}
+  nav.top{font-size:.9em;margin-bottom:1em} nav.top a{color:#2F6FB0}
+  </style>
+  <nav class="top"><a href="../../index.html">← 一覧に戻る</a></nav>
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script src="/usr/share/javascript/mathjax/MathJax.js"
+  type="text/javascript"></script>
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">03 オイラー–オイラー法と VOF の違い、VOF
+で固体連成はできるか</h1>
+</header>
+<h1 id="03-オイラーオイラー法と-vof-の違いvof-で固体連成はできるか">03
+オイラー–オイラー法と VOF の違い、VOF で固体連成はできるか</h1>
+<p>作成日：2026-11-04</p>
+<hr />
+<h2 id="1-2-つの方法のちがい">1. 2 つの方法のちがい</h2>
+<p>気液の流れを解く代表的な方法が、今回使った<strong>オイラー–オイラー法</strong>（<code>chtMultiRegionTwoPhaseEulerFoam</code>）と
+<strong>VOF 法</strong>（<code>interFoam</code> など）。</p>
+<table>
+<thead>
+<tr class="header">
+<th></th>
+<th>オイラー–オイラー法（今回）</th>
+<th>VOF 法</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>考え方</td>
+<td>気相と液相を<strong>2 つの連続体</strong>として重ねる。1
+つのセルの中に気と液が混ざって存在してよい</td>
+<td>気と液を<strong>1 つの流体</strong>として解き、どこが液か（α =
+1）を追う。界面をくっきり捉える</td>
+</tr>
+<tr class="even">
+<td>速度</td>
+<td><strong>相ごとに別々</strong>（<strong>u</strong><sub>g</sub>、<strong>u</strong><sub>l</sub>）</td>
+<td><strong>1 つ</strong>（気液で共通）</td>
+</tr>
+<tr class="odd">
+<td>方程式の数</td>
+<td>相ごとに質量・運動量・エネルギー（2 倍）</td>
+<td>質量（α の輸送）・運動量・エネルギーを 1 組</td>
+</tr>
+<tr class="even">
+<td>相の間の力</td>
+<td>抗力・揚力・仮想質量などの<strong>モデルが必要</strong>（液滴・気泡の径を仮定）</td>
+<td>界面の<strong>表面張力</strong>だけ（形はメッシュで直接表す）</td>
+</tr>
+<tr class="odd">
+<td>界面</td>
+<td>ぼやける（α が 0〜1 の間で連続的に変わる）</td>
+<td>鋭い（界面圧縮の工夫で 1〜3 セルの厚さに保つ）</td>
+</tr>
+<tr class="even">
+<td>メッシュ</td>
+<td>粗くてもよい（液滴や気泡はセルより小さくてよい）</td>
+<td>液膜・液柱の厚さより十分細かいセルが必要</td>
+</tr>
+<tr class="odd">
+<td>向いているもの</td>
+<td>噴霧・飛沫・気泡流・沸騰など、<strong>細かい粒・泡が多数ある流れ</strong></td>
+<td>液面・液柱・液膜・跳ね返りなど、<strong>界面の形そのものを見たい流れ</strong></td>
+</tr>
+<tr class="even">
+<td>今回の加工エリアでは</td>
+<td>20 mm
+の粗いメッシュでも動くが、液の柱がすぐ空気と混ざってぼやける</td>
+<td>液の柱・ワーク上の液膜の形が見える。ただし液膜（数 mm）を表すには 1
+mm 以下のセルが必要で、3 次元では重い</td>
+</tr>
+</tbody>
+</table>
+<p><strong>VOF の基礎式</strong>（<code>interFoam</code> 系）</p>
+<p><span class="math display">\[
+\frac{\partial \alpha}{\partial t} + \nabla\cdot(\alpha\mathbf{u}) +
+\nabla\cdot\big(\alpha(1-\alpha)\mathbf{u}_r\big) = 0
+\]</span></p>
+<p><span class="math display">\[
+\frac{\partial (\rho\mathbf{u})}{\partial t} +
+\nabla\cdot(\rho\mathbf{u}\mathbf{u}) = -\nabla p +
+\nabla\cdot\boldsymbol{\tau} + \rho\mathbf{g} +
+\sigma\kappa\nabla\alpha,
+\qquad \rho = \alpha\rho_l + (1-\alpha)\rho_g
+\]</span></p>
+<p>（第 3 項 ∇·(α(1−α)<strong>u</strong><sub>r</sub>)
+は界面をくっきり保つための人工的な圧縮項、σκ∇α は表面張力）</p>
+<p>オイラー–オイラー法の式は <code>01_…</code> の「2.4
+基礎式」。運動量の式が相ごとに 2 本あり、 その間を抗力などの相間力
+<strong>M</strong><sub>k</sub> でつないでいる点が VOF
+との一番の違い。</p>
+<hr />
+<h2 id="2-vof-で固体との熱連成はできるか">2. VOF
+で固体との熱連成はできるか</h2>
+<p><strong>できる。ただし、OpenFOAM の版によって違う。</strong></p>
+<table>
+<thead>
+<tr class="header">
+<th>版</th>
+<th>VOF ＋ 固体の熱連成</th>
+<th>方法</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>ESI 版 v2512</strong>（今回の run で使用）</td>
+<td><strong>標準のソルバにはない</strong></td>
+<td><code>chtMultiRegionFoam</code>
+の流体は単相、<code>chtMultiRegionTwoPhaseEulerFoam</code>
+はオイラー–オイラー法のみ</td>
+</tr>
+<tr class="even">
+<td><strong>Foundation 版 OpenFOAM 13</strong>（このパソコンに
+<code>/opt/openfoam13</code> で入っている）</td>
+<td><strong>できる</strong></td>
+<td><code>foamMultiRun</code> で、流体領域に
+<code>compressibleVoF</code>、固体領域に <code>solid</code>
+のモジュールを割り当てる。例題
+<code>tutorials/multiRegion/CHT/VoFcoolingCylinder2D</code> がある</td>
+</tr>
+</tbody>
+</table>
+<p>OpenFOAM 13 の例題の設定（<code>system/controlDict</code>）：</p>
+<pre><code>regionSolvers
+{
+    fluid           compressibleVoF;    // 気液（VOF、圧縮性、エネルギー式あり）
+    solid           solid;              // 固体の熱伝導
+}</code></pre>
+<p>ESI 版でやる場合の回避策：</p>
+<ol type="1">
+<li><strong>一方向の受け渡し</strong>（Geist ら 2026
+の方法）：VOF（<code>compressibleInterFoam</code>）で壁の温度を固定して
+熱伝達率を求め、その熱伝達率を固体の計算（<code>solidFoam</code> や
+FEM）の境界条件にする。
+熱が時間をかけて伝わる工作機械の熱変形の計算は、この方法が現実的。</li>
+<li>自作ソルバ：<code>chtMultiRegionFoam</code> の流体部分を
+<code>interFoam</code> 系に入れ替える（手間が大きい）。</li>
+</ol>
+<hr />
+<h2 id="3-今回のクーラントの問題にどちらを使うか">3.
+今回のクーラントの問題にどちらを使うか</h2>
+<table>
+<thead>
+<tr class="header">
+<th>見たいもの</th>
+<th>おすすめ</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>クーラントの液柱・液膜がワークのどこを濡らすか</td>
+<td><strong>VOF</strong>（OpenFOAM 13 の <code>compressibleVoF</code> ＋
+<code>solid</code>）。ワーク周りを 1 mm 程度に細かくする</td>
+</tr>
+<tr class="even">
+<td>飛び散った飛沫やミストが加工エリア全体にどう広がるか、平均的な熱の入り方</td>
+<td><strong>オイラー–オイラー法</strong>（今回の方法）</td>
+</tr>
+<tr class="odd">
+<td>長時間（数分〜数時間）の熱変形</td>
+<td>流れは短時間だけ解いて熱伝達率を取り出し、固体だけを長時間解く（一方向の受け渡し）</td>
+</tr>
+</tbody>
+</table>
+<p>次の一手の候補：OpenFOAM 13 で、run004 と同じ加工エリアを VOF ＋
+固体連成で解き、
+オイラー–オイラー法の結果（ワーク上面がほとんど温まらない）と比べる。</p>
+</body>
+</html>

@@ -1,0 +1,15 @@
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      topoSetDict;
+}
+
+actions
+(
+    { name inletFaces; type faceSet; action new; source patchToFace; patch top; }
+    { name inletFaces; type faceSet; action subset; source cylinderToFace;
+       point1 (0.0005 0.003 0); point2 (0.0005 0.005 0); radius 0.0018000000000000002; }
+);
+

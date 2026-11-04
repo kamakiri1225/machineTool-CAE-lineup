@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>01 圧縮性ソルバの選び方と transonic オプション</title>
+  <style>
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      html {
+        background-color: white;
+      }
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+      font-size: 85%;
+      margin: 0;
+      hyphens: manual;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      background-color: #1a1a1a;
+      border: none;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    /* CSS for syntax highlighting */
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      {   }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+    code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+    code span.at { color: #7d9029; } /* Attribute */
+    code span.bn { color: #40a070; } /* BaseN */
+    code span.bu { color: #008000; } /* BuiltIn */
+    code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #4070a0; } /* Char */
+    code span.cn { color: #880000; } /* Constant */
+    code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+    code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+    code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+    code span.dt { color: #902000; } /* DataType */
+    code span.dv { color: #40a070; } /* DecVal */
+    code span.er { color: #ff0000; font-weight: bold; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #40a070; } /* Float */
+    code span.fu { color: #06287e; } /* Function */
+    code span.im { color: #008000; font-weight: bold; } /* Import */
+    code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+    code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+    code span.op { color: #666666; } /* Operator */
+    code span.ot { color: #007020; } /* Other */
+    code span.pp { color: #bc7a00; } /* Preprocessor */
+    code span.sc { color: #4070a0; } /* SpecialChar */
+    code span.ss { color: #bb6688; } /* SpecialString */
+    code span.st { color: #4070a0; } /* String */
+    code span.va { color: #19177c; } /* Variable */
+    code span.vs { color: #4070a0; } /* VerbatimString */
+    code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+  <style>
+  body{font-family:'Noto Sans JP','Hiragino Sans','Meiryo',sans-serif;max-width:1100px;margin:2em auto;padding:0 1.2em;line-height:1.75;color:#222}
+  h1{border-bottom:3px solid #1F3A5F;padding-bottom:.3em;color:#1F3A5F} h2{border-left:6px solid #2F6FB0;padding-left:.5em;margin-top:2em;color:#1F3A5F}
+  h3{color:#2F6FB0} img{max-width:100%;height:auto;border:1px solid #ddd;margin:.5em 0}
+  table{border-collapse:collapse;margin:1em 0;font-size:.95em} th,td{border:1px solid #bbb;padding:.35em .7em} th{background:#E3ECF7}
+  code{background:#f4f4f4;padding:.1em .3em;border-radius:3px} pre{background:#f4f4f4;padding:1em;overflow-x:auto}
+  nav.top{font-size:.9em;margin-bottom:1em} nav.top a{color:#2F6FB0}
+  </style>
+  <nav class="top"><a href="../../index.html">← 一覧に戻る</a></nav>
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script src="/usr/share/javascript/mathjax/MathJax.js"
+  type="text/javascript"></script>
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">01 圧縮性ソルバの選び方と transonic オプション</h1>
+</header>
+<h1 id="01-圧縮性ソルバの選び方と-transonic-オプション">01
+圧縮性ソルバの選び方と transonic オプション</h1>
+<p>作成日：2026-11-03　対象：run002・run003（OpenFOAM v2512）。※
+最初の試し計算 run001（平板のみ・JANAF 物性）は削除済み</p>
+<p>レーザー切断のアシストガス（O₂
+と空気の混合ガス）は、ノズル出口で音速に達し、
+条件によっては超音速になる。このメモは、そのような流れを OpenFOAM
+で解くときの ソルバと設定の選び方をまとめたもの。</p>
+<hr />
+<h2 id="1-定常か非定常かlts-による疑似定常">1. 定常か非定常か：LTS
+による疑似定常</h2>
+<p>run002・run003 は
+<code>reactingFoam</code>（非定常ソルバ）を使っているが、<code>system/fvSchemes</code>
+で</p>
+<pre><code>ddtSchemes
+{
+    default         localEuler;   // 局所時間刻み（LTS）
+}</code></pre>
+<p>としているので、<strong>実質的には定常解析</strong>である。</p>
+<ul>
+<li>セルごとに、そのセルの流速・格子幅から決まる「自分に合った大きな疑似時間刻み」で進める。</li>
+<li>時間の途中経過には物理的な意味がない。繰り返すうちに時間微分項が 0
+に近づき、 収束した状態が定常解になる。</li>
+<li><code>controlDict</code> の <code>endTime 6000; deltaT 1;</code>
+は「6000 回繰り返す」という意味で、秒ではない。</li>
+<li>完全な定常ソルバ <code>rhoSimpleFoam</code>（SIMPLE 法）は 1
+種類のガスしか扱えないため、 O₂/N₂
+の混合ガスを解くためにこの方法を選んだ。</li>
+</ul>
+<p>LTS の調整は <code>system/fvSolution</code> の <code>PIMPLE</code>
+にある。</p>
+<table>
+<thead>
+<tr class="header">
+<th>項目</th>
+<th>値</th>
+<th>意味</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>maxCo</code></td>
+<td>0.2</td>
+<td>セルごとのクーラン数の上限</td>
+</tr>
+<tr class="even">
+<td><code>maxDeltaT</code></td>
+<td>1e-6</td>
+<td>疑似時間刻みの上限。最初は流れが止まっていて刻みが上限で決まるため、小さくしないと発散した</td>
+</tr>
+<tr class="odd">
+<td><code>alphaTemp</code> / <code>alphaY</code></td>
+<td>0.05</td>
+<td>温度・濃度の変化で刻みを制限する</td>
+</tr>
+<tr class="even">
+<td><code>rDeltaTSmoothingCoeff</code></td>
+<td>0.02</td>
+<td>隣のセルと刻みが急に変わらないようにならす</td>
+</tr>
+</tbody>
+</table>
+<p>また、止まっている気体に急に 2
+気圧をかけると最初の数ステップで発散したため、 入口の全圧を
+<code>uniformTotalPressure</code> で最初の 1000 回の間に 1 気圧から 2
+気圧まで上げている。</p>
+<hr />
+<h2 id="2-reactingfoam-と-rhoreactingfoam-の違い">2. reactingFoam と
+rhoReactingFoam の違い</h2>
+<p>どちらも「多成分ガス・圧縮性・非定常（PIMPLE）」のソルバで、違いは<strong>密度の扱い</strong>だけ。</p>
+<table>
+<thead>
+<tr class="header">
+<th></th>
+<th>reactingFoam</th>
+<th>rhoReactingFoam</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>熱物性クラス</td>
+<td><code>psiReactionThermo</code></td>
+<td><code>rhoReactionThermo</code></td>
+</tr>
+<tr class="even">
+<td>密度</td>
+<td>圧縮率 ψ を使い ρ = ψp</td>
+<td>状態方程式から ρ を直接計算</td>
+</tr>
+<tr class="odd">
+<td>向いている流れ</td>
+<td>高速・高マッハ数（遷音速〜超音速、衝撃波）</td>
+<td>低マッハ数（燃焼炉など）。液体の状態方程式も使える</td>
+</tr>
+<tr class="even">
+<td><code>transonic</code> オプション</td>
+<td>使える</td>
+<td>基本的に使わない</td>
+</tr>
+</tbody>
+</table>
+<p>アシストガスは音速を超えるので、<strong>psi 型の
+<code>reactingFoam</code> に <code>transonic yes</code>
+を組み合わせる</strong>のが合う。 （化学反応は
+<code>constant/chemistryProperties</code> の <code>chemistry off;</code>
+で切っているので、O₂ と N₂ が混ざるだけ。）</p>
+<hr />
+<h2 id="3-transonic-yes-を入れると何が変わるか">3.
+<code>transonic yes</code> を入れると何が変わるか</h2>
+<p><code>system/fvSolution</code> の <code>PIMPLE</code> に
+<code>transonic yes;</code> を書くと、 <code>reactingFoam</code>
+の圧力方程式（<code>applications/solvers/combustion/reactingFoam/pEqn.H</code>）が別の形に切り替わる。</p>
+<h3 id="transonic-なし低マッハ数向け">transonic
+なし（低マッハ数向け）</h3>
+<p>面の質量流束を「密度 ×
+速度」で作り、密度は<strong>今わかっている値で固定</strong>して圧力を解く。</p>
+<p><span class="math display">\[
+\frac{\partial (\psi p)}{\partial t} +
+\nabla\cdot\big(\underbrace{\rho_f\,\boldsymbol{H}/A}_{\text{既知}}\big)
+- \nabla\cdot\left(\frac{\rho}{A}\nabla p\right) = 0
+\]</span></p>
+<p>圧力は<strong>ラプラシアン（拡散のような形）だけ</strong>で決まる。
+圧力の変化が一瞬で全体に伝わる、という低速流れの性質に合った形。</p>
+<h3 id="transonic-あり遷音速超音速向け">transonic
+あり（遷音速・超音速向け）</h3>
+<p>密度を ρ = ψp と<strong>圧力で書き直し</strong>、質量流束を「ψ × 速度
+× 圧力」とする。</p>
+<p><span class="math display">\[
+\frac{\partial (\psi p)}{\partial t} +
+\nabla\cdot\big(\underbrace{\psi_f\,\boldsymbol{H}/A}_{\phi_d}\;p\big) -
+\nabla\cdot\left(\frac{\rho}{A}\nabla p\right) = 0
+\]</span></p>
+<p>コードでは次の 2 行が増える。</p>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>surfaceScalarField phid<span class="op">(</span><span class="st">&quot;phid&quot;</span><span class="op">,</span> fvc<span class="op">::</span>interpolate<span class="op">(</span>psi<span class="op">)*(</span>fvc<span class="op">::</span>flux<span class="op">(</span>HbyA<span class="op">)</span> <span class="op">+</span> <span class="op">...));</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>fvm<span class="op">::</span>ddt<span class="op">(</span>psi<span class="op">,</span> p<span class="op">)</span> <span class="op">+</span> fvm<span class="op">::</span>div<span class="op">(</span>phid<span class="op">,</span> p<span class="op">)</span> <span class="op">-</span> fvm<span class="op">::</span>laplacian<span class="op">(</span>rhorAUf<span class="op">,</span> p<span class="op">)</span></span></code></pre></div>
+<p><code>fvm::div(phid, p)</code>
+という<strong>圧力の対流項</strong>が加わるのがポイント。</p>
+<table>
+<thead>
+<tr class="header">
+<th></th>
+<th>transonic なし</th>
+<th>transonic あり</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>圧力方程式の形</td>
+<td>拡散型（楕円型）</td>
+<td>対流＋拡散型（双曲型の性質をもつ）</td>
+</tr>
+<tr class="even">
+<td>圧力・密度の情報の伝わり方</td>
+<td>一瞬で全体へ</td>
+<td>流れに乗って運ばれる（超音速では下流にしか伝わらない）</td>
+</tr>
+<tr class="odd">
+<td>衝撃波・チョーク（音速での流量頭打ち）</td>
+<td>うまく表せない。収束しにくい</td>
+<td>表せる</td>
+</tr>
+<tr class="even">
+<td>必要な設定</td>
+<td>なし</td>
+<td><code>fvSchemes</code> に <code>div(phid,p)</code>（本ケースは
+<code>Gauss upwind</code>）</td>
+</tr>
+<tr class="odd">
+<td>注意</td>
+<td>超音速の領域があると不安定・不正確</td>
+<td>低速だけの流れでは不要。upwind の影響で衝撃波は数セル分なまる</td>
+</tr>
+</tbody>
+</table>
+<p><strong>超音速では、下流の圧力変化は上流に伝わらない</strong>（音より速く流れているため）。
+transonic なしの形ではこれを表せないため、チョークや衝撃波を含む流れでは
+<code>transonic yes</code> が必要になる。</p>
+<hr />
+<h2 id="4-最初の試し計算run001削除済みで起きたこと改善">4.
+最初の試し計算（run001、削除済み）で起きたこと・改善</h2>
+<ul>
+<li>入口全圧 2.0 bar（絶対圧）と大気圧の比は 1.97 で、音速になる限界の比
+1.89 を超えるため、 ノズル出口で音速、出た直後に<strong>最大マッハ数
+1.13</strong>（1000 回目）になった。</li>
+<li>ただし、物性データ（JANAF）の適用範囲は 250 K
+以上で、超音速の膨張で温度がそれより下がるため、 温度が 250 K
+に張り付いた（理論的にはマッハ 1.13 で約 239 K）。</li>
+<li>次の <code>run002</code> では、
+<ol type="1">
+<li>物性を比熱一定（<code>hConst</code>）に変え、低温でも使えるようにする</li>
+<li>入口圧力を 0.5
+MPa（ゲージ圧）程度に上げ、マッハディスクのある超音速噴流にする</li>
+<li>ノズル出口〜鋼板の間のメッシュを細かくする</li>
+</ol></li>
+<li>衝撃波をもっと鋭く捉えたい場合は、密度ベースの
+<code>rhoCentralFoam</code>（非定常・1 成分のみ）と比較する。</li>
+</ul>
+</body>
+</html>
