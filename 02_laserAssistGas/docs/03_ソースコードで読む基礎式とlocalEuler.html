@@ -235,8 +235,8 @@
   nav.top{font-size:.9em;margin-bottom:1em} nav.top a{color:#2F6FB0}
   </style>
   <nav class="top"><a href="../../index.html">← 一覧に戻る</a></nav>
-  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
-  <script src="/usr/share/javascript/mathjax/MathJax.js"
+  <script
+  src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-chtml-full.js"
   type="text/javascript"></script>
 </head>
 <body>
@@ -308,22 +308,19 @@ O₂・N₂ を混ぜるだけ</td>
 の本体）。</p>
 <pre><code>rhoEqn.H → UEqn.H → YEqn.H → EEqn.H → pEqn.H（圧力を直し、速度・密度・流束を更新）→ 乱流</code></pre>
 <h3 id="21-質量保存rhoeqnh">2.1 質量保存（<code>rhoEqn.H</code>）</h3>
-<p><span class="math display">\[
-\frac{\partial \rho}{\partial t} + \nabla\cdot(\rho\mathbf{u}) = 0
-\]</span></p>
+<p><span class="math display">\[\frac{\partial \rho}{\partial t} +
+\nabla\cdot(\rho\mathbf{u}) = 0\]</span></p>
 <div class="sourceCode" id="cb2"><pre
 class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>fvScalarMatrix rhoEqn<span class="op">(</span> fvm<span class="op">::</span>ddt<span class="op">(</span>rho<span class="op">)</span> <span class="op">+</span> fvc<span class="op">::</span>div<span class="op">(</span>phi<span class="op">)</span> <span class="op">==</span> fvOptions<span class="op">(</span>rho<span class="op">)</span> <span class="op">);</span></span></code></pre></div>
 <p><code>phi</code> は面を通る質量流束
 ρ<strong>u</strong>·<strong>S</strong>。</p>
 <h3 id="22-運動量保存ueqnh">2.2 運動量保存（<code>UEqn.H</code>）</h3>
-<p>$$ \frac{\partial (\rho\mathbf{u})}{\partial t} +
-\nabla\cdot(\rho\mathbf{u}\mathbf{u})</p>
-<ul>
-<li>\nabla\cdot\left[\mu_{\mathrm{eff}}\left(\nabla\mathbf{u} +
+<p><span class="math display">\[\frac{\partial
+(\rho\mathbf{u})}{\partial t} + \nabla\cdot(\rho\mathbf{u}\mathbf{u}) -
+\nabla\cdot\left[\mu_{\mathrm{eff}}\left(\nabla\mathbf{u} +
 \nabla\mathbf{u}^T -
-\tfrac{2}{3}(\nabla\cdot\mathbf{u})\mathbf{I}\right)\right] = -\nabla p
-$$</li>
-</ul>
+\tfrac{2}{3}(\nabla\cdot\mathbf{u})\mathbf{I}\right)\right] = -\nabla
+p\]</span></p>
 <div class="sourceCode" id="cb3"><pre
 class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>fvm<span class="op">::</span>ddt<span class="op">(</span>rho<span class="op">,</span> U<span class="op">)</span> <span class="op">+</span> fvm<span class="op">::</span>div<span class="op">(</span>phi<span class="op">,</span> U<span class="op">)</span> <span class="op">+</span> turbulence<span class="op">-&gt;</span>divDevRhoReff<span class="op">(</span>U<span class="op">)</span>  <span class="op">==</span>  fvOptions<span class="op">(</span>rho<span class="op">,</span> U<span class="op">)</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>solve<span class="op">(</span>UEqn <span class="op">==</span> <span class="op">-</span>fvc<span class="op">::</span>grad<span class="op">(</span>p<span class="op">));</span>        <span class="co">// momentumPredictor yes のとき</span></span></code></pre></div>
@@ -356,12 +353,10 @@ class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb3-1"><a href="#c
 </table>
 <h3 id="23-成分化学種の輸送yeqnh">2.3
 成分（化学種）の輸送（<code>YEqn.H</code>）</h3>
-<p><span class="math display">\[
-\frac{\partial (\rho Y_i)}{\partial t} + \nabla\cdot(\rho\mathbf{u}Y_i)
-- \nabla\cdot(\mu_{\mathrm{eff}}\nabla Y_i) = \dot{\omega}_i
-\qquad (i = \mathrm{O_2}),\qquad Y_{\mathrm{N_2}} = 1 - \sum_{i \ne
-\mathrm{N_2}} Y_i
-\]</span></p>
+<p><span class="math display">\[\frac{\partial (\rho Y_i)}{\partial t} +
+\nabla\cdot(\rho\mathbf{u}Y_i) - \nabla\cdot(\mu_{\mathrm{eff}}\nabla
+Y_i) = \dot{\omega}_i \qquad (i = \mathrm{O_2}),\qquad Y_{\mathrm{N_2}}
+= 1 - \sum_{i \ne \mathrm{N_2}} Y_i\]</span></p>
 <div class="sourceCode" id="cb4"><pre
 class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>fvm<span class="op">::</span>ddt<span class="op">(</span>rho<span class="op">,</span> Yi<span class="op">)</span> <span class="op">+</span> mvConvection<span class="op">-&gt;</span>fvmDiv<span class="op">(</span>phi<span class="op">,</span> Yi<span class="op">)</span> <span class="op">-</span> fvm<span class="op">::</span>laplacian<span class="op">(</span>turbulence<span class="op">-&gt;</span>muEff<span class="op">(),</span> Yi<span class="op">)</span></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a> <span class="op">==</span> reaction<span class="op">-&gt;</span>R<span class="op">(</span>Yi<span class="op">)</span> <span class="op">+</span> fvOptions<span class="op">(</span>rho<span class="op">,</span> Yi<span class="op">)</span></span>
@@ -377,17 +372,11 @@ Y<sub>O₂</sub>。
 </ul>
 <h3 id="24-エネルギー保存eeqnh本ケースは顕エンタルピー-h">2.4
 エネルギー保存（<code>EEqn.H</code>、本ケースは顕エンタルピー h）</h3>
-<p>$$ \frac{\partial (\rho h)}{\partial t} +
-\nabla\cdot(\rho\mathbf{u}h)</p>
-<ul>
-<li>\frac{\partial (\rho K)}{\partial t} +
-\nabla\cdot(\rho\mathbf{u}K)</li>
-</ul>
-<ul>
-<li>\frac{\partial p}{\partial t}</li>
-<li>\nabla\cdot(\alpha_{\mathrm{eff}}\nabla h) = \dot{Q}, \qquad K =
-\tfrac12|\mathbf{u}|^2 $$</li>
-</ul>
+<p><span class="math display">\[\frac{\partial (\rho h)}{\partial t} +
+\nabla\cdot(\rho\mathbf{u}h) + \frac{\partial (\rho K)}{\partial t} +
+\nabla\cdot(\rho\mathbf{u}K) - \frac{\partial p}{\partial t} -
+\nabla\cdot(\alpha_{\mathrm{eff}}\nabla h) = \dot{Q}, \qquad K =
+\tfrac12|\mathbf{u}|^2\]</span></p>
 <div class="sourceCode" id="cb5"><pre
 class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>fvm<span class="op">::</span>ddt<span class="op">(</span>rho<span class="op">,</span> he<span class="op">)</span> <span class="op">+</span> mvConvection<span class="op">-&gt;</span>fvmDiv<span class="op">(</span>phi<span class="op">,</span> he<span class="op">)</span></span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="op">+</span> fvc<span class="op">::</span>ddt<span class="op">(</span>rho<span class="op">,</span> K<span class="op">)</span> <span class="op">+</span> fvc<span class="op">::</span>div<span class="op">(</span>phi<span class="op">,</span> K<span class="op">)</span></span>
@@ -399,33 +388,28 @@ class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb5-1"><a href="#c
 <h3 id="25-圧力方程式peqnhtransonic-yes">2.5
 圧力方程式（<code>pEqn.H</code>、<code>transonic yes</code>）</h3>
 <p>詳しくは <code>01_…transonic.md</code>。ρ = ψp を使い、</p>
-<p><span class="math display">\[
-\frac{\partial (\psi p)}{\partial t} +
+<p><span class="math display">\[\frac{\partial (\psi p)}{\partial t} +
 \nabla\cdot(\psi_f\,\boldsymbol{\phi}_d\, p) -
-\nabla\cdot\left(\frac{\rho}{A}\nabla p\right) = 0
-\]</span></p>
+\nabla\cdot\left(\frac{\rho}{A}\nabla p\right) = 0\]</span></p>
 <div class="sourceCode" id="cb6"><pre
 class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>fvm<span class="op">::</span>ddt<span class="op">(</span>psi<span class="op">,</span> p<span class="op">)</span> <span class="op">+</span> fvm<span class="op">::</span>div<span class="op">(</span>phid<span class="op">,</span> p<span class="op">)</span> <span class="op">-</span> fvm<span class="op">::</span>laplacian<span class="op">(</span>rhorAUf<span class="op">,</span> p<span class="op">)</span></span></code></pre></div>
 <p>圧力の対流項 <code>fvm::div(phid, p)</code>
 によって、チョーク・衝撃波を含む流れを扱える。</p>
 <h3 id="26-状態方程式と混合物の物性constantthermophysicalproperties">2.6
 状態方程式と混合物の物性（<code>constant/thermophysicalProperties</code>）</h3>
-<p><span class="math display">\[
-p = \rho R_{\mathrm{mix}} T,\qquad R_{\mathrm{mix}} = R_u\sum_i
-\frac{Y_i}{W_i},\qquad
-c_{p,\mathrm{mix}} = \sum_i Y_i\,c_{p,i}
-\]</span></p>
+<p><span class="math display">\[p = \rho R_{\mathrm{mix}} T,\qquad
+R_{\mathrm{mix}} = R_u\sum_i \frac{Y_i}{W_i},\qquad c_{p,\mathrm{mix}} =
+\sum_i Y_i\,c_{p,i}\]</span></p>
 <p>（W<sub>i</sub>：分子量 O₂ 32.0、N₂ 28.0、c<sub>p</sub>：O₂ 918、N₂
 1040 J/kgK、<code>hConst</code> = 比熱一定）</p>
 <hr />
 <h2 id="3-乱流realizable-k-εrun004">3. 乱流（realizable
 k-ε、run004）</h2>
-<p><span class="math display">\[
-\frac{\partial(\rho k)}{\partial t} + \nabla\cdot(\rho\mathbf{u}k) =
+<p><span class="math display">\[\frac{\partial(\rho k)}{\partial t} +
+\nabla\cdot(\rho\mathbf{u}k) =
 \nabla\cdot\left[\left(\mu+\frac{\mu_t}{\sigma_k}\right)\nabla k\right]
-+ G_k - \rho\varepsilon,
-\qquad \mu_t = \rho C_\mu \frac{k^2}{\varepsilon}
-\]</span></p>
++ G_k - \rho\varepsilon, \qquad \mu_t = \rho C_\mu
+\frac{k^2}{\varepsilon}\]</span></p>
 <p>realizable 型は C<sub>μ</sub>
 を流れの変形の速さに応じて変え、噴流の広がりを標準 k-ε
 より正しく出しやすい
@@ -435,20 +419,18 @@ k-ε、run004）</h2>
 localEuler（局所時間刻み）は式の上で何をしているか</h2>
 <h3 id="41-ふつうの時間進行euler">4.1 ふつうの時間進行（Euler）</h3>
 <p>全セル共通の Δt で</p>
-<p><span class="math display">\[
-\frac{(\rho\phi)^{n+1}_P - (\rho\phi)^{n}_P}{\Delta t}\,V_P + \sum_f
-F_f(\phi^{n+1}) = S_P
-\]</span></p>
+<p><span class="math display">\[\frac{(\rho\phi)^{n+1}_P -
+(\rho\phi)^{n}_P}{\Delta t}\,V_P + \sum_f F_f(\phi^{n+1}) =
+S_P\]</span></p>
 <p>Δt は「いちばん小さいセル・いちばん速い流れ」の Courant
 数で決まるので、 ノズルの近く（細かいセル・超音速）に合わせた小さな Δt
 で、遠くの遅い領域まで進めることになる。</p>
 <h3 id="42-localeuler">4.2 localEuler</h3>
 <p>時間微分の離散化はそのままで、<strong>Δt をセル P
 ごとに変える</strong>：</p>
-<p><span class="math display">\[
-\frac{(\rho\phi)^{n+1}_P - (\rho\phi)^{n}_P}{\Delta t_P}\,V_P + \sum_f
-F_f(\phi^{n+1}) = S_P
-\]</span></p>
+<p><span class="math display">\[\frac{(\rho\phi)^{n+1}_P -
+(\rho\phi)^{n}_P}{\Delta t_P}\,V_P + \sum_f F_f(\phi^{n+1}) =
+S_P\]</span></p>
 <p>各セルの Δt<sub>P</sub>（実際は逆数 1/Δt<sub>P</sub> =
 <code>rDeltaT</code>）は <code>setRDeltaT.H</code> で決める：</p>
 <div class="sourceCode" id="cb7"><pre
@@ -458,11 +440,10 @@ class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb7-1"><a href="#c
 <span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>（alphaY <span class="op">&lt;</span> <span class="dv">1</span> なら 成分の変化でも制限）</span>
 <span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>fvc<span class="op">::</span>smooth<span class="op">(</span>rDeltaT<span class="op">,</span> rDeltaTSmoothingCoeff<span class="op">);</span>                          <span class="co">// 隣のセルと急に変わらないように</span></span></code></pre></div>
 <p>式で書くと</p>
-<p><span class="math display">\[
-\frac{1}{\Delta t_P} = \max\left(\frac{\sum_f
-|\phi_f|}{2\,Co_{\max}\,\rho_P V_P},\ \frac{1}{\Delta t_{\max}},\
-\frac{|\dot Q_P|}{\alpha_T\,\rho_P c_p T_P},\ \cdots\right)
-\]</span></p>
+<p><span class="math display">\[\frac{1}{\Delta t_P} =
+\max\left(\frac{\sum_f |\phi_f|}{2\,Co_{\max}\,\rho_P V_P},\
+\frac{1}{\Delta t_{\max}},\ \frac{|\dot Q_P|}{\alpha_T\,\rho_P c_p
+T_P},\ \cdots\right)\]</span></p>
 <ul>
 <li>細かいセル・速い流れのセルは小さい
 Δt<sub>P</sub>、粗いセル・遅い流れのセルは大きい Δt<sub>P</sub>。</li>
@@ -472,9 +453,7 @@ maxCo」で進む</strong>ので、全体が少ない反復で落ち着く。</l
 <h3 id="43-なぜ定常解になるのか">4.3 なぜ定常解になるのか</h3>
 <p>収束すると、どのセルでも (ρφ)<sup>n+1</sup> =
 (ρφ)<sup>n</sup>、つまり時間微分の項が 0 になり、</p>
-<p><span class="math display">\[
-\sum_f F_f(\phi) = S_P
-\]</span></p>
+<p><span class="math display">\[\sum_f F_f(\phi) = S_P\]</span></p>
 <p>と、<strong>定常の方程式そのもの</strong>が残る。Δt<sub>P</sub>
 の値は最終の解に影響しない（途中の進み方だけを変える）。
 一方、途中経過はセルごとに時刻がずれているので、<strong>物理的な時間変化としては意味がない</strong>。

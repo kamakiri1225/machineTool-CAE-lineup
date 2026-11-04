@@ -171,8 +171,8 @@
   nav.top{font-size:.9em;margin-bottom:1em} nav.top a{color:#2F6FB0}
   </style>
   <nav class="top"><a href="../../index.html">← 一覧に戻る</a></nav>
-  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
-  <script src="/usr/share/javascript/mathjax/MathJax.js"
+  <script
+  src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-chtml-full.js"
   type="text/javascript"></script>
 </head>
 <body>
@@ -237,11 +237,10 @@ dispersion in the frame of Fukushima fuel debris retrieval
 <h2 id="何を解くか">何を解くか</h2>
 <p>空気密度一定、粒子の滑りを無視する近似では、質量濃度 C [kg/m³]
 に対して次式を使う。</p>
-<p><span class="math display">\[
-\frac{\partial C}{\partial t}+\nabla\cdot(\mathbf{u}C)
+<p><span class="math display">\[\frac{\partial C}{\partial
+t}+\nabla\cdot(\mathbf{u}C)
 =\nabla\cdot\left[\left(D_B+\frac{\nu_t}{Sc_t}\right)\nabla
-C\right]+S_C-R_C
-\]</span></p>
+C\right]+S_C-R_C\]</span></p>
 <ul>
 <li>u：空気の速度。煙の熱で上昇流が生じる場合は温度・浮力を含む流れから求める。</li>
 <li>D_B：粒径に応じたBrown拡散係数。気体成分の分子拡散係数をそのまま粒子へ使わない。</li>

@@ -235,8 +235,8 @@
   nav.top{font-size:.9em;margin-bottom:1em} nav.top a{color:#2F6FB0}
   </style>
   <nav class="top"><a href="../../index.html">← 一覧に戻る</a></nav>
-  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
-  <script src="/usr/share/javascript/mathjax/MathJax.js"
+  <script
+  src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-chtml-full.js"
   type="text/javascript"></script>
 </head>
 <body>
@@ -359,22 +359,18 @@ rhoReactingFoam の違い</h2>
 なし（低マッハ数向け）</h3>
 <p>面の質量流束を「密度 ×
 速度」で作り、密度は<strong>今わかっている値で固定</strong>して圧力を解く。</p>
-<p><span class="math display">\[
-\frac{\partial (\psi p)}{\partial t} +
+<p><span class="math display">\[\frac{\partial (\psi p)}{\partial t} +
 \nabla\cdot\big(\underbrace{\rho_f\,\boldsymbol{H}/A}_{\text{既知}}\big)
-- \nabla\cdot\left(\frac{\rho}{A}\nabla p\right) = 0
-\]</span></p>
+- \nabla\cdot\left(\frac{\rho}{A}\nabla p\right) = 0\]</span></p>
 <p>圧力は<strong>ラプラシアン（拡散のような形）だけ</strong>で決まる。
 圧力の変化が一瞬で全体に伝わる、という低速流れの性質に合った形。</p>
 <h3 id="transonic-あり遷音速超音速向け">transonic
 あり（遷音速・超音速向け）</h3>
 <p>密度を ρ = ψp と<strong>圧力で書き直し</strong>、質量流束を「ψ × 速度
 × 圧力」とする。</p>
-<p><span class="math display">\[
-\frac{\partial (\psi p)}{\partial t} +
+<p><span class="math display">\[\frac{\partial (\psi p)}{\partial t} +
 \nabla\cdot\big(\underbrace{\psi_f\,\boldsymbol{H}/A}_{\phi_d}\;p\big) -
-\nabla\cdot\left(\frac{\rho}{A}\nabla p\right) = 0
-\]</span></p>
+\nabla\cdot\left(\frac{\rho}{A}\nabla p\right) = 0\]</span></p>
 <p>コードでは次の 2 行が増える。</p>
 <div class="sourceCode" id="cb2"><pre
 class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>surfaceScalarField phid<span class="op">(</span><span class="st">&quot;phid&quot;</span><span class="op">,</span> fvc<span class="op">::</span>interpolate<span class="op">(</span>psi<span class="op">)*(</span>fvc<span class="op">::</span>flux<span class="op">(</span>HbyA<span class="op">)</span> <span class="op">+</span> <span class="op">...));</span></span>

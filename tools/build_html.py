@@ -20,15 +20,20 @@ def build(md):
     html = md[:-3] + ".html"
     src = open(md, encoding="utf-8").read()
     src = re.sub(r"\]\(([^)]+?)\.md\)", r"](\1.html)", src)
+    # join multi-line display math so that lines starting with "+" or "-" are not read as list items
+    src = re.sub(r"\$\$(.+?)\$\$", lambda m: "$$" + " ".join(l.strip() for l in m.group(1).strip().splitlines()) + "$$", src, flags=re.S)
     title = (re.search(r"^# (.+)$", src, re.M) or [None, os.path.basename(md)[:-3]])[1]
     tmp = md + ".tmp"
     open(tmp, "w", encoding="utf-8").write(src)
     header = f'{CSS}\n<nav class="top"><a href="{rel}/index.html">← 一覧に戻る</a></nav>'
     hp = md + ".hdr"
     open(hp, "w", encoding="utf-8").write(header)
-    subprocess.run(["pandoc", tmp, "-f", "gfm+tex_math_dollars", "-t", "html5", "-s", "--mathjax",
+    subprocess.run(["pandoc", tmp, "-f", "gfm+tex_math_dollars", "-t", "html5", "-s", "--mathjax=https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-chtml-full.js",
                     "--metadata", f"title={title}", "--include-in-header", hp, "-o", html], check=True)
     os.remove(tmp); os.remove(hp)
+    h = open(html, encoding="utf-8").read()
+    h = re.sub(r'<script src="https://polyfill\.io[^"]*"></script>\s*', "", h)   # polyfill.io is no longer safe/available
+    open(html, "w", encoding="utf-8").write(h)
     return html, title
 
 
