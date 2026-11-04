@@ -53,10 +53,32 @@ for h, t in items:
 NAMES = {"01_coolantCHT": "01 加工エリアのクーラントと熱（気液二相流＋固体の熱連成）",
          "02_laserAssistGas": "02 レーザー切断のアシストガス（圧縮性・超音速、混合ガス）",
          "03_fumeExtraction": "03 切断ヒュームの吸い込み（流れ＋粒子）",
-         "04_factory_spindle_mist": "04 工場の気温・主軸の発熱・ミストと切りくず"}
+         "04_factoryAmbient": "04 工場の気温と機械の温度（流れ＋固体の熱連成）",
+         "05_spindleBearingHeat": "05 主軸と軸受の発熱・冷却（固体の熱伝導）",
+         "06_mistChips": "06 加工室のミストと切りくず（流れ＋粒子）"}
+TIME = """## 計算時間の一覧
+
+計算環境：Intel Xeon Gold 6212U 2.40 GHz（WSL2）、OpenFOAM v2512。並列は `export HWLOC_COMPONENTS=-gl` を付けた `mpirun`。
+
+| フォルダ / ケース | ソルバ | セル数 | 並列数 | 実時間 |
+|---|---|---|---|---|
+| 01 クーラント run001（公式例題 2D、0.2 s） | chtMultiRegionTwoPhaseEulerFoam | 例題の 2D メッシュ | 1 | 12 分 |
+| 01 クーラント run004（加工エリア 3D、3 s） | chtMultiRegionTwoPhaseEulerFoam | 流体 17,412 ＋ 固体 588 | 1 | 12 分 |
+| 02 アシストガス run002（酸素切断、軸対称） | reactingFoam（LTS） | 10,525 | 1 | 24 分 |
+| 02 アシストガス run003（高圧空気切断、軸対称） | reactingFoam（LTS） | 12,270 | 1 | 42 分 |
+| 02 アシストガス run004（3D 切断溝、N₂、0.5 / 2.0 MPa） | reactingFoam（LTS） | 588,724 | 4（× 2 本同時） | 各 約 7.5 時間（4,000 回） |
+| 03 ヒューム run001 流れ ＋ 粒子（Q = 0.30） | simpleFoam ＋ icoUncoupledKinematicParcelFoam | 55,296 | 1 | 6 分 ＋ 3 分 |
+| 03 ヒューム run002 / run003 流れ（Q = 0.15 / 0.60） | simpleFoam | 55,296 | 1 | 8.5 分 / 11 分 |
+| 04 工場の気温 run001（流れ 120 s ＋ 温度 24 h） | chtMultiRegionFoam | 26,880 | 1 | 23 分 ＋ 3 分 |
+| 05 主軸の発熱 run001（1 h） | solidFoam | 1,584 | 1 | 18 秒 |
+| 06 ミスト・切りくず run001（流れ ＋ 粒子 2 種） | simpleFoam ＋ icoUncoupledKinematicParcelFoam | 73,728 | 1 | 約 25 分 ＋ 4 分 ＋ 3 分 |
+
+- 2 万セル程度までは 1 並列でも数十分。3D で数十万セルになると、4 並列でも数時間かかる。
+- 02 の run004 の 4.0 / 8.0 MPa は、計算が途中で進まなくなったため条件を見直し中。
+"""
 body = ["# 工作機械まわりの CFD（OpenFOAM v2512）", "",
         "工作機械まわりの流体・熱の現象を、一般的な寸法や論文の条件をなぞった簡易モデルで計算した記録です。",
-        "各ケースの解析設定（`system/`・`constant/`・`0.orig/` とケースを作る Python スクリプト）、解説、図とアニメーションを置いています。", ""]
+        "各ケースの解析設定（`system/`・`constant/`・`0.orig/` とケースを作る Python スクリプト）、解説、図とアニメーションを置いています。", "", TIME]
 for g in sorted(groups):
     body.append(f"## {NAMES.get(g, g)}"); body.append("")
     for h, t in groups[g]:

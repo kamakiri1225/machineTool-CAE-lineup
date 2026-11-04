@@ -182,6 +182,99 @@ CFD（OpenFOAM v2512）</h1>
 各ケースの解析設定（<code>system/</code>・<code>constant/</code>・<code>0.orig/</code>
 とケースを作る Python
 スクリプト）、解説、図とアニメーションを置いています。</p>
+<h2 id="計算時間の一覧">計算時間の一覧</h2>
+<p>計算環境：Intel Xeon Gold 6212U 2.40 GHz（WSL2）、OpenFOAM
+v2512。並列は <code>export HWLOC_COMPONENTS=-gl</code> を付けた
+<code>mpirun</code>。</p>
+<table>
+<thead>
+<tr class="header">
+<th>フォルダ / ケース</th>
+<th>ソルバ</th>
+<th>セル数</th>
+<th>並列数</th>
+<th>実時間</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>01 クーラント run001（公式例題 2D、0.2 s）</td>
+<td>chtMultiRegionTwoPhaseEulerFoam</td>
+<td>例題の 2D メッシュ</td>
+<td>1</td>
+<td>12 分</td>
+</tr>
+<tr class="even">
+<td>01 クーラント run004（加工エリア 3D、3 s）</td>
+<td>chtMultiRegionTwoPhaseEulerFoam</td>
+<td>流体 17,412 ＋ 固体 588</td>
+<td>1</td>
+<td>12 分</td>
+</tr>
+<tr class="odd">
+<td>02 アシストガス run002（酸素切断、軸対称）</td>
+<td>reactingFoam（LTS）</td>
+<td>10,525</td>
+<td>1</td>
+<td>24 分</td>
+</tr>
+<tr class="even">
+<td>02 アシストガス run003（高圧空気切断、軸対称）</td>
+<td>reactingFoam（LTS）</td>
+<td>12,270</td>
+<td>1</td>
+<td>42 分</td>
+</tr>
+<tr class="odd">
+<td>02 アシストガス run004（3D 切断溝、N₂、0.5 / 2.0 MPa）</td>
+<td>reactingFoam（LTS）</td>
+<td>588,724</td>
+<td>4（× 2 本同時）</td>
+<td>各 約 7.5 時間（4,000 回）</td>
+</tr>
+<tr class="even">
+<td>03 ヒューム run001 流れ ＋ 粒子（Q = 0.30）</td>
+<td>simpleFoam ＋ icoUncoupledKinematicParcelFoam</td>
+<td>55,296</td>
+<td>1</td>
+<td>6 分 ＋ 3 分</td>
+</tr>
+<tr class="odd">
+<td>03 ヒューム run002 / run003 流れ（Q = 0.15 / 0.60）</td>
+<td>simpleFoam</td>
+<td>55,296</td>
+<td>1</td>
+<td>8.5 分 / 11 分</td>
+</tr>
+<tr class="even">
+<td>04 工場の気温 run001（流れ 120 s ＋ 温度 24 h）</td>
+<td>chtMultiRegionFoam</td>
+<td>26,880</td>
+<td>1</td>
+<td>23 分 ＋ 3 分</td>
+</tr>
+<tr class="odd">
+<td>05 主軸の発熱 run001（1 h）</td>
+<td>solidFoam</td>
+<td>1,584</td>
+<td>1</td>
+<td>18 秒</td>
+</tr>
+<tr class="even">
+<td>06 ミスト・切りくず run001（流れ ＋ 粒子 2 種）</td>
+<td>simpleFoam ＋ icoUncoupledKinematicParcelFoam</td>
+<td>73,728</td>
+<td>1</td>
+<td>約 25 分 ＋ 4 分 ＋ 3 分</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>2 万セル程度までは 1 並列でも数十分。3D で数十万セルになると、4
+並列でも数時間かかる。</li>
+<li>02 の run004 の 4.0 / 8.0 MPa
+は、計算が途中で進まなくなったため条件を見直し中。</li>
+</ul>
 <h2 id="01-加工エリアのクーラントと熱気液二相流固体の熱連成">01
 加工エリアのクーラントと熱（気液二相流＋固体の熱連成）</h2>
 <ul>
@@ -227,15 +320,32 @@ href="03_fumeExtraction/docs/02_文献に基づく解析手法の選定.html">�
 href="03_fumeExtraction/docs/99_計算時間の記録_2026-11-03.html">99
 計算時間の記録（2026-11-03〜04 に行った計算）</a></li>
 </ul>
-<h2 id="04-工場の気温主軸の発熱ミストと切りくず">04
-工場の気温・主軸の発熱・ミストと切りくず</h2>
+<h2 id="04-工場の気温と機械の温度流れ固体の熱連成">04
+工場の気温と機械の温度（流れ＋固体の熱連成）</h2>
 <ul>
 <li><a
-href="04_factory_spindle_mist/docs/01_3つの簡易モデル_条件と結果.html">01
-工作機械まわりの 3 つの簡易モデル：条件と結果</a></li>
+href="04_factoryAmbient/docs/01_工場の気温と機械の温度_条件と結果.html">01
+工場の気温と機械の温度（断熱カバーの効果）</a></li>
+<li><a href="04_factoryAmbient/docs/99_計算時間の記録.html">99
+計算時間の記録（工場の気温と機械の温度）</a></li>
+</ul>
+<h2 id="05-主軸と軸受の発熱冷却固体の熱伝導">05
+主軸と軸受の発熱・冷却（固体の熱伝導）</h2>
+<ul>
 <li><a
-href="04_factory_spindle_mist/docs/99_計算時間の記録_2026-11-03.html">99
-計算時間の記録（2026-11-03〜04 に行った計算）</a></li>
+href="05_spindleBearingHeat/docs/01_主軸と軸受の発熱_条件と結果.html">01
+主軸と軸受の発熱・冷却（軸対称）</a></li>
+<li><a href="05_spindleBearingHeat/docs/99_計算時間の記録.html">99
+計算時間の記録（主軸と軸受の発熱）</a></li>
+</ul>
+<h2 id="06-加工室のミストと切りくず流れ粒子">06
+加工室のミストと切りくず（流れ＋粒子）</h2>
+<ul>
+<li><a
+href="06_mistChips/docs/01_ミストと切りくずの飛散_条件と結果.html">01
+加工室のミストと切りくずの飛散</a></li>
+<li><a href="06_mistChips/docs/99_計算時間の記録.html">99
+計算時間の記録（ミストと切りくず）</a></li>
 </ul>
 </body>
 </html>

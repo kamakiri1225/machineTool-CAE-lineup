@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="generator" content="pandoc" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
-  <title>01 工作機械まわりの 3 つの簡易モデル：条件と結果</title>
+  <title>01 工場の気温と機械の温度（断熱カバーの効果）</title>
   <style>
     html {
       color: #1a1a1a;
@@ -238,50 +238,41 @@
 </head>
 <body>
 <header id="title-block-header">
-<h1 class="title">01 工作機械まわりの 3 つの簡易モデル：条件と結果</h1>
+<h1 class="title">01 工場の気温と機械の温度（断熱カバーの効果）</h1>
 </header>
-<h1 id="01-工作機械まわりの-3-つの簡易モデル条件と結果">01
-工作機械まわりの 3 つの簡易モデル：条件と結果</h1>
-<p>作成日：2026-11-04　OpenFOAM v2512　すべて 1 並列</p>
+<h1 id="01-工場の気温と機械の温度断熱カバーの効果">01
+工場の気温と機械の温度（断熱カバーの効果）</h1>
+<p>作成日：2026-11-04　OpenFOAM v2512</p>
 <table>
 <thead>
 <tr class="header">
-<th>ケース</th>
+<th>項目</th>
 <th>内容</th>
-<th>ソルバ</th>
-<th>セル数</th>
-<th>計算時間</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
+<td>ケース</td>
 <td>run001_factory_ambient_cover</td>
-<td>30 ℃ の工場に 20 ℃ の機械 2 台（むき出し／断熱カバー 30 mm）、24
-時間</td>
-<td>chtMultiRegionFoam（流れ 120 s → frozenFlow で温度だけ 24 h）</td>
-<td>空気 24,960 ＋ 機械 960 × 2</td>
-<td>流れ 23 分 ＋ 温度 3 分</td>
 </tr>
 <tr class="even">
-<td>run002_spindleBearing_heat</td>
-<td>主軸＋前後軸受（150 W／80 W）＋ハウジング（水冷）、1
-時間、軸対称</td>
-<td>solidFoam</td>
-<td>1,584</td>
-<td>18 秒</td>
+<td>ソルバ</td>
+<td>chtMultiRegionFoam（空気の流れ 120 s → frozenFlow で温度だけ 24
+h）</td>
 </tr>
 <tr class="odd">
-<td>run003_mist_chips_enclosure</td>
-<td>加工室のミスト（5〜100 µm）と切りくず（0.3〜1.5 mm）、ミストコレクタ
-0.1 m³/s、扉の下のすき間</td>
-<td>simpleFoam ＋ icoUncoupledKinematicParcelFoam</td>
-<td>73,728</td>
-<td>流れ 約 25 分、粒子 各 3〜4 分</td>
+<td>セル数</td>
+<td>空気 24,960 ＋ 機械 960 × 2</td>
+</tr>
+<tr class="even">
+<td>計算時間</td>
+<td>流れ 23 分 ＋ 温度 3 分（1 並列）</td>
 </tr>
 </tbody>
 </table>
-<h2 id="run001-工場の気温klimant-ら-2026-の-franke-の例を簡略化">run001
-工場の気温（Klimant ら 2026 の Franke の例を簡略化）</h2>
+<h2
+id="条件と結果klimant-ら-2026-の-franke-の例を簡略化">条件と結果（Klimant
+ら 2026 の Franke の例を簡略化）</h2>
 <p><img
 src="../run001_factory_ambient_cover/images/factory_ambient.gif" /></p>
 <p>（黒い矢印は中央の断面の流速ベクトル。扉から入った空気が機械の間を抜けて換気口へ向かう）</p>
@@ -302,44 +293,10 @@ K・上面近く +0.8 K。約 10 時間で落ち着く</li>
 6 W/m²K）に上げている。
 きちんとやるなら乱流モデル＋機械まわりを細かくしたメッシュにする。窓からの日射は入れていない</li>
 </ul>
-<h2 id="run002-主軸の発熱">run002 主軸の発熱</h2>
-<p><img
-src="../run002_spindleBearing_heat/images/spindle3d_heatup.gif" /></p>
-<p>断面図版：</p>
-<p><img
-src="../run002_spindleBearing_heat/images/spindle_heatup.gif" /></p>
-<ul>
-<li>主軸 r 0〜25 mm・長さ 300 mm、軸受 r 25〜45 mm（前 y 40〜60、後 y
-230〜250）、ハウジング r 45〜90 mm</li>
-<li>すべて鋼（κ 45、ρ 7850、c<sub>p</sub>
-460）のひとかたまり。軸受の中の接触熱抵抗は入れていない</li>
-<li>軸受の発熱は体積あたりの熱源（<code>scalarSemiImplicitSource</code>）、ハウジング外周は水冷
-h = 800 W/m²K・20 ℃、ほかは空気 h = 15 W/m²K・20 ℃</li>
-<li>結果：前軸受まわりが約 10 分で +15 K、主軸の伸び（α = 11.5 × 10⁻⁶
-で積分）約 41 µm</li>
-</ul>
-<h2 id="run003-ミストと切りくず">run003 ミストと切りくず</h2>
-<p><img src="../run003_mist_chips_enclosure/images/mist.gif" /> <img
-src="../run003_mist_chips_enclosure/images/chips.gif" /></p>
-<ul>
-<li>加工室 1.2 × 1.2 × 0.8 m、テーブル（薄い板、高さ 0.35
-m）、天井の隅にミストコレクタ（0.1 m³/s）、扉の下に 5 cm
-のすき間（大気圧）</li>
-<li>ミスト：主軸の先から下向き 20 m/s（広がり
-12°）＋ワークからの跳ね返り 4 m/s（75°）、各 5,000 個、密度 1,000</li>
-<li>切りくず：ワークから 3 m/s（80°）、3,000 個、密度 7,800</li>
-<li>結果（4 s）：ミストは吸引口へ 272 個（約 3
-%）、ほとんどは加工室の大きな渦に乗って漂う。切りくずは 2,998
-個がテーブル・床に付き、扉のすき間から 3 個</li>
-<li>乱流による粒子のばらつきは入れていない（<code>dispersionModel none</code>）</li>
-</ul>
 <h2 id="再現">再現</h2>
 <div class="sourceCode" id="cb1"><pre
-class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> /mnt/d/work/002_CAE/openfoam/20261104_machineToolSims</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="ex">python3</span> tools/make_factory_case.py run001_factory_ambient_cover    <span class="co"># → Allrun（stage1/2）</span></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="ex">python3</span> tools/make_spindle_case.py run002_spindleBearing_heat <span class="kw">&amp;&amp;</span> <span class="ex">run002_spindleBearing_heat/Allrun</span></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="ex">python3</span> tools/make_mist_cases.py run003_mist_chips_enclosure <span class="st">&#39;{&quot;Q&quot;:0.10}&#39;</span> <span class="kw">&amp;&amp;</span> <span class="ex">run003_mist_chips_enclosure/Allrun</span></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="ex">python3</span> tools/render_factory.py run001_factory_ambient_cover<span class="kw">;</span> <span class="ex">python3</span> tools/render_spindle.py run002_spindleBearing_heat</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="ex">python3</span> tools/render_mist.py run003_mist_chips_enclosure particles_mist<span class="kw">;</span> <span class="ex">python3</span> tools/render_mist.py run003_mist_chips_enclosure particles_chips</span></code></pre></div>
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">python3</span> tools/make_factory_case.py run001_factory_ambient_cover</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="ex">run001_factory_ambient_cover/Allrun</span>          <span class="co"># stage1（流れ）→ stage2（frozenFlow で温度）</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="ex">python3</span> tools/render_factory.py run001_factory_ambient_cover</span></code></pre></div>
 </body>
 </html>

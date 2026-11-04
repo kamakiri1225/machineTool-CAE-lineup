@@ -28,3 +28,4 @@ __pycache__/
 *.pyc
 # particle cases: the flow field is copied from flow/ by Allrun
 **/particles*/0/U
+**/_old_*/

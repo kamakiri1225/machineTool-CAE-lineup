@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""run002: spindle (shaft + bearings + housing) heat-up, axisymmetric (5 deg wedge), solidFoam.
+"""spindle (shaft + bearings + housing) heat-up, axisymmetric (5 deg wedge), solidFoam.
 
 Geometry [mm] (axis = y, radial = x):
   shaft    r 0-25,  y 0-300
