@@ -55,7 +55,8 @@ NAMES = {"01_coolantCHT": "01 加工エリアのクーラントと熱（気液�
          "03_fumeExtraction": "03 切断ヒュームの吸い込み（流れ＋粒子）",
          "04_factoryAmbient": "04 工場の気温と機械の温度（流れ＋固体の熱連成）",
          "05_spindleBearingHeat": "05 主軸と軸受の発熱・冷却（固体の熱伝導）",
-         "06_mistChips": "06 加工室のミストと切りくず（流れ＋粒子）"}
+         "06_mistChips": "06 加工室のミストと切りくず（流れ＋粒子）",
+         "07_airbagTankTest": "07 【参考・テスト用】エアバッグ用インフレーターのタンク試験（燃焼ガスの湧き出し・チョーク・混合ガス）"}
 TIME = """## 計算時間の一覧
 
 計算環境：Intel Xeon Gold 6212U 2.40 GHz（WSL2）、OpenFOAM v2512。並列は `export HWLOC_COMPONENTS=-gl` を付けた `mpirun`。
@@ -72,6 +73,7 @@ TIME = """## 計算時間の一覧
 | 04 工場の気温 run001（流れ 120 s ＋ 温度 24 h） | chtMultiRegionFoam | 26,880 | 1 | 23 分 ＋ 3 分 |
 | 05 主軸の発熱 run001（1 h） | solidFoam | 1,584 | 1 | 18 秒 |
 | 06 ミスト・切りくず run001（流れ ＋ 粒子 2 種） | simpleFoam ＋ icoUncoupledKinematicParcelFoam | 73,728 | 1 | 約 25 分 ＋ 4 分 ＋ 3 分 |
+| 07 【参考】インフレーターのタンク試験 run001（50 ms、非定常） | reactingFoam（軸対称） | 10,700 | 4 | 約 5.6 時間 |
 
 - 2 万セル程度までは 1 並列でも数十分。3D で数十万セルになると、4 並列でも数時間かかる。
 - 02 の run004 の 4.0 / 8.0 MPa は、計算が途中で進まなくなったため条件を見直し中。

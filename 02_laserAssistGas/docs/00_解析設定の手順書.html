@@ -404,9 +404,18 @@ class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="
 <h3 id="41-ソルバreactingfoam-を燃焼なし混合ガスで使う">4.1
 ソルバ：<code>reactingFoam</code> を「燃焼なし・混合ガス」で使う</h3>
 <p><code>constant/thermophysicalProperties</code></p>
-<pre><code>thermoType { type hePsiThermo; mixture reactingMixture; transport const; thermo hConst;
-             energy sensibleEnthalpy; equationOfState perfectGas; specie specie; }
-inertSpecie N2;</code></pre>
+<pre><code>thermoType
+{
+    type            hePsiThermo;        // 密度 = ψ p（圧縮性が強い流れ向け）
+    mixture         reactingMixture;    // 複数の成分（N2, O2）を運ぶ
+    transport       const;              // 粘性一定
+    thermo          hConst;             // 比熱一定
+    energy          sensibleEnthalpy;
+    equationOfState perfectGas;
+    specie          specie;
+}
+
+inertSpecie     N2;</code></pre>
 <ul>
 <li><strong><code>hePsiThermo</code>（密度 = ψ
 p）</strong>：圧縮性が強い流れ（超音速）向けです。圧力方程式を「波が伝わる式」として解けます。</li>
@@ -428,13 +437,30 @@ K〜）から外れて計算が壊れたため、定比熱を選びました。
 <h3 id="42-時間の進め方lts局所時間刻みで定常解を早く出す">4.2
 時間の進め方：LTS（局所時間刻み）で定常解を早く出す</h3>
 <p><code>system/fvSchemes</code></p>
-<pre><code>ddtSchemes { default localEuler; }</code></pre>
+<pre><code>ddtSchemes
+{
+    default         localEuler;     // 局所時間刻み（LTS）
+}</code></pre>
 <p><code>system/fvSolution</code> の <code>PIMPLE</code></p>
-<pre><code>transonic yes;                 // 超音速・衝撃波を扱う圧力方程式にする（最重要）
-maxCo 0.2;                     // セルごとの Courant 数の上限。大きくすると速いが発散しやすい
-rDeltaTSmoothingCoeff 0.02;    // 隣のセルとの時間刻みの差をならす
-alphaTemp 0.05; alphaY 0.05;   // 温度・成分が 1 回で大きく変わらないように時間刻みを抑える
-nCorrectors 2; nNonOrthogonalCorrectors 1;</code></pre>
+<pre><code>PIMPLE
+{
+    momentumPredictor       yes;
+    transonic               yes;    // 超音速・衝撃波を扱う圧力方程式にする（最重要）
+    nOuterCorrectors        1;
+    nCorrectors             2;
+    nNonOrthogonalCorrectors 1;
+
+    maxCo                   0.2;    // セルごとの Courant 数の上限。大きくすると速いが発散しやすい
+    maxDeltaT               1e-6;
+    rDeltaTSmoothingCoeff   0.02;   // 隣のセルとの時間刻みの差をならす
+    rDeltaTDampingCoeff     1;
+    alphaTemp               0.05;   // 温度が 1 回で大きく変わらないように時間刻みを抑える
+    alphaY                  0.05;   // 成分の割合についても同じ
+    Yref
+    {
+        O2                  0.1;
+    }
+}</code></pre>
 <ul>
 <li><code>localEuler</code>
 は、セルごとに許される一番大きな時間刻みで進めます。時間の正確さを捨てて、定常の答えに早く近づける方法です。そのため

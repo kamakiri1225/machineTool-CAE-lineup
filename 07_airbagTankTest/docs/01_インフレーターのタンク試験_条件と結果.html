@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>01 火薬式インフレーターのタンク試験：条件と結果</title>
+  <style>
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      html {
+        background-color: white;
+      }
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+      font-size: 85%;
+      margin: 0;
+      hyphens: manual;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      background-color: #1a1a1a;
+      border: none;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+  </style>
+  <style>
+  body{font-family:'Noto Sans JP','Hiragino Sans','Meiryo',sans-serif;max-width:1100px;margin:2em auto;padding:0 1.2em;line-height:1.75;color:#222}
+  h1{border-bottom:3px solid #1F3A5F;padding-bottom:.3em;color:#1F3A5F} h2{border-left:6px solid #2F6FB0;padding-left:.5em;margin-top:2em;color:#1F3A5F}
+  h3{color:#2F6FB0} img{max-width:100%;height:auto;border:1px solid #ddd;margin:.5em 0}
+  table{border-collapse:collapse;margin:1em 0;font-size:.95em} th,td{border:1px solid #bbb;padding:.35em .7em} th{background:#E3ECF7}
+  code{background:#f4f4f4;padding:.1em .3em;border-radius:3px} pre{background:#f4f4f4;padding:1em;overflow-x:auto}
+  nav.top{font-size:.9em;margin-bottom:1em} nav.top a{color:#2F6FB0}
+  </style>
+  <nav class="top"><a href="../../index.html">← 一覧に戻る</a></nav>
+  <script
+  src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-chtml-full.js"
+  type="text/javascript"></script>
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">01 火薬式インフレーターのタンク試験：条件と結果</h1>
+</header>
+<h1 id="01-火薬式インフレーターのタンク試験条件と結果">01
+火薬式インフレーターのタンク試験：条件と結果</h1>
+<blockquote>
+<p>参考・テスト用のケースです。設定のしかたは
+<code>00_解析設定の手順書</code> を見てください。</p>
+</blockquote>
+<p>作成日：2026-11-04　OpenFOAM v2512　状態：<strong>CFD
+は計算中</strong>（run001：比熱一定、4 並列）（50 ms まで約 11
+時間の見込み、1 並列。ほかの計算 4 本と同時に実行中）</p>
+<h2 id="1-ねらい">1. ねらい</h2>
+<p>エアバッグのインフレーター（ガス発生器）の性能を確かめる「タンク試験」を計算で再現する。
+密閉した 60 L
+のタンク（空気）に、インフレーターの燃焼室からオリフィスを通して燃焼ガスを噴き出し、
+**タンクの圧力の時間変化（タンク圧力曲線）**を求める。</p>
+<ul>
+<li>CFD：燃焼室・オリフィス・タンクをまとめて解く（軸対称、多成分の圧縮性・非定常）</li>
+<li>0 次元モデル：同じ条件の簡単な式のモデル。CFD
+の<strong>答え合わせ（比較）用</strong></li>
+</ul>
+<h2 id="2-モデル">2. モデル</h2>
+<p><img src="img/geom_tank.png" alt="タンク試験モデル" /></p>
+<p><strong>軸対称モデル</strong>：円筒のタンクとインフレーターは中心軸のまわりで同じ形なので、5°
+のくさびだけを計算し（左の青）、 くさびの両面に <code>wedge</code>
+条件を付けて、360° 回した全体と同じ結果を得る。</p>
+<p><img src="img/geom_tank_axisym.png" alt="軸対称モデルの説明" /></p>
+<p>計算メッシュ（5° のくさび、10,700 セル。ParaView
+で見たときと同じ見え方）：</p>
+<img src="img/wedge_mesh.png" width="360">
+
+<p>インフレーターのまわりを斜め上から（270° 回し、切り口の 2
+面に計算メッシュ）：</p>
+<p><img src="img/inflator_closeup3d.png"
+alt="インフレーターの斜め拡大" /></p>
+<table>
+<thead>
+<tr class="header">
+<th>項目</th>
+<th>値</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>燃焼室</td>
+<td>半径 15 mm × 長さ 70 mm（50 cc）</td>
+</tr>
+<tr class="even">
+<td>オリフィス</td>
+<td>径 11 mm（インフレーターの複数のガス噴出口の合計面積に相当）、長さ 5
+mm</td>
+</tr>
+<tr class="odd">
+<td>タンク</td>
+<td>内径 340 mm × 高さ 660 mm（60 L）</td>
+</tr>
+<tr class="even">
+<td>初期状態</td>
+<td>すべて空気（N₂ 76.7 %・O₂ 23.3 %、質量割合）、101.3 kPa、20 ℃</td>
+</tr>
+<tr class="odd">
+<td>壁</td>
+<td>すべて断熱・すべりなし（0 次元モデルと条件をそろえるため）</td>
+</tr>
+<tr class="even">
+<td>メッシュ</td>
+<td>5° のくさび形（軸対称）、10,700 セル。オリフィスの半径方向に 10
+セル</td>
+</tr>
+</tbody>
+</table>
+<h2 id="3-ガス発生火薬の燃焼の与え方">3.
+ガス発生（火薬の燃焼）の与え方</h2>
+<p>ガス発生剤の燃焼そのもの（化学反応）は解かず、燃焼室の中に<strong>燃焼ガスが湧き出す</strong>ものとして与える
+（<code>constant/fvOptions</code> の
+<code>scalarSemiImplicitSource</code>、燃焼室のセルに一様）。</p>
+<p><span class="math display">\[\dot m_{\mathrm{gen}}(t) =
+M_{\mathrm{gas}}\,\frac{t}{\tau^2}\,e^{-t/\tau},\qquad M_{\mathrm{gas}}
+= 25\ \mathrm{g},\ \tau = 6\ \mathrm{ms}\]</span></p>
+<table>
+<thead>
+<tr class="header">
+<th>湧き出す量</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>質量（ρ）</td>
+<td><span class="math inline">\(\dot m_{\mathrm{gen}}\)</span></td>
+</tr>
+<tr class="even">
+<td>エネルギー（h）</td>
+<td><span class="math inline">\(\dot m_{\mathrm{gen}}\, c_p (T_c - 298\
+\mathrm{K})\)</span>、燃焼ガスの温度 <span
+class="math inline">\(T_c\)</span> = 1,000 K（フィルタで冷えた後）</td>
+</tr>
+<tr class="odd">
+<td>成分</td>
+<td>燃焼ガスの組成 N₂ 70 %・CO₂ 20 %・H₂O 10 %（質量割合）</td>
+</tr>
+</tbody>
+</table>
+<p>数値は、運転席用インフレーターの一般的な値（ガス 1 mol 前後、燃焼室
+10〜20 MPa、60 L タンクの最高圧 150〜250 kPa）になるように選んだ。</p>
+<h2 id="4-ソルバ">4. ソルバ</h2>
+<ul>
+<li><strong>reactingFoam</strong>（化学反応は切っている）：燃焼ガスとタンクの空気が混ざる<strong>多成分の圧縮性・非定常</strong>の流れを解く
+（成分ごとの輸送式＋混合物の物性、<code>transonic yes</code>
+でオリフィスのチョークに対応）</li>
+<li>時間刻みはクーラン数 0.5 で自動調整（約 4×10⁻⁷ s）。乱流は k-ω
+SST</li>
+<li>物性は比熱一定の理想気体（N₂ 1,170、O₂ 1,090、CO₂ 1,230、H₂O 2,290
+J/kgK）</li>
+</ul>
+<h2 id="5-0-次元モデル比較用">5. 0 次元モデル（比較用）</h2>
+<p>燃焼室とタンクを、それぞれ<strong>中が一様な 1
+つの部屋</strong>とみなし、オリフィスは<strong>等エントロピーのノズル</strong>として、
+質量とエネルギーのつり合いを時間で積分する（Δt = 2 µs）。壁は断熱。</p>
+<h3 id="51-燃焼室体積-v_c">5.1 燃焼室（体積 <span
+class="math inline">\(V_c\)</span>）</h3>
+<p><span class="math display">\[\frac{dm_c}{dt} = \dot
+m_{\mathrm{gen}}(t) - \dot m_o,\qquad \frac{dE_c}{dt} = \dot
+m_{\mathrm{gen}}\,h_{\mathrm{gas}}(T_{\mathrm{gen}}) - \dot
+m_o\,h_c,\qquad p_c = \frac{m_c R_c T_c}{V_c}\]</span></p>
+<p>（<span
+class="math inline">\(E_c\)</span>：燃焼室の内部エネルギー、<span
+class="math inline">\(h\)</span>：比エンタルピー、<span
+class="math inline">\(T_{\mathrm{gen}}\)</span> = 1,000
+K：湧き出す燃焼ガスの温度）</p>
+<h3 id="52-オリフィス面積-a_o流量係数-c_d--085比熱比-gamma">5.2
+オリフィス（面積 <span class="math inline">\(A_o\)</span>、流量係数
+<span class="math inline">\(C_d\)</span> = 0.85、比熱比 <span
+class="math inline">\(\gamma\)</span>）</h3>
+<p>チョーク（<span class="math inline">\(p_t/p_c \le
+(2/(\gamma+1))^{\gamma/(\gamma-1)}\)</span>）のとき</p>
+<p><span class="math display">\[\dot m_o = C_d
+A_o\,p_c\sqrt{\frac{\gamma}{R_c
+T_c}}\left(\frac{2}{\gamma+1}\right)^{\frac{\gamma+1}{2(\gamma-1)}}\]</span></p>
+<p>チョークしないとき</p>
+<p><span class="math display">\[\dot m_o = C_d
+A_o\,p_c\sqrt{\frac{2\gamma}{(\gamma-1)R_c
+T_c}\left[\left(\frac{p_t}{p_c}\right)^{2/\gamma}-\left(\frac{p_t}{p_c}\right)^{(\gamma+1)/\gamma}\right]}\]</span></p>
+<h3 id="53-タンク体積-v_t--60-l初期は空気">5.3 タンク（体積 <span
+class="math inline">\(V_t\)</span> = 60 L、初期は空気）</h3>
+<p><span class="math display">\[\frac{dm_t}{dt} = \dot m_o,\qquad
+\frac{dE_t}{dt} = \dot m_o\,h_c,\qquad p_t = \frac{m_t R_t
+T_t}{V_t}\]</span></p>
+<p><span class="math inline">\(R_t\)</span>
+と比熱は、空気と燃焼ガスの質量割合で混ぜた値。温度 <span
+class="math inline">\(T_t\)</span> は内部エネルギー <span
+class="math inline">\(E_t\)</span> から求める。</p>
+<h3 id="54-比熱の与え方2-種類">5.4 比熱の与え方（2 種類）</h3>
+<table>
+<thead>
+<tr class="header">
+<th></th>
+<th>比熱</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>① 比熱一定</td>
+<td>成分ごとに一定（N₂ 1,170、O₂ 1,090、CO₂ 1,230、H₂O 2,290
+J/kgK）。CFD の run001 と同じ値</td>
+<td>CFD（run001）との答え合わせ</td>
+</tr>
+<tr class="even">
+<td>② 温度依存あり（JANAF）</td>
+<td>下の 4 次式（0 次元モデルのみ）</td>
+<td>より正しい値の目安</td>
+</tr>
+</tbody>
+</table>
+<p><span class="math display">\[\frac{c_p(T)}{R_s} = a_1 + a_2 T + a_3
+T^2 + a_4 T^3 + a_5 T^4,\qquad \frac{h(T)}{R_s} = a_1 T +
+\frac{a_2}{2}T^2 + \frac{a_3}{3}T^3 + \frac{a_4}{4}T^4 +
+\frac{a_5}{5}T^5 + a_6\]</span></p>
+<p>係数 <span class="math inline">\(a_1 \sim a_6\)</span> は
+200（250）〜1,000 K と 1,000〜5,000 K で 2 組（OpenFOAM の
+<code>janaf</code> と同じデータ）。
+温度はエネルギーからニュートン法で逆算する。</p>
+<p><img src="img/cp_janaf.png" alt="比熱の温度依存性" /></p>
+<table>
+<thead>
+<tr class="header">
+<th>0 次元モデルの結果</th>
+<th>① 比熱一定</th>
+<th>② 温度依存あり</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>燃焼室の最高圧力</td>
+<td>14.6 MPa</td>
+<td>14.7 MPa</td>
+</tr>
+<tr class="even">
+<td>タンクの最高ゲージ圧</td>
+<td>169 kPa</td>
+<td>181 kPa</td>
+</tr>
+<tr class="odd">
+<td>タンクの最終温度</td>
+<td>580 K</td>
+<td>604 K</td>
+</tr>
+</tbody>
+</table>
+<p>②のほうが 12 kPa 高い。① は常温の空気の比熱を 1,000 K
+付近の値（1,151）で与えていて大きすぎ、
+同じエネルギーでも温度が上がりにくかったため。JANAF では常温の空気は
+1,009 J/kgK。</p>
+<p>（最初の版の 0 次元モデルは空気の比熱を 1,005
+にしていて、CFD（1,151）と条件がそろっていなかった。 これが「CFD が 1
+割低い」ずれの原因だった。今は①に直してある）</p>
+<h2 id="6-cfd-の結果">6. CFD の結果</h2>
+<h3 id="ガスの流れ">ガスの流れ</h3>
+<p><img src="../run001_pyroInflator_60Ltank/images/tank_flow.gif"
+alt="燃焼ガスがタンクに広がる様子" /></p>
+<p>斜め上から（270° 回して表示）：</p>
+<p><img src="../run001_pyroInflator_60Ltank/images/tank_flow3d.gif"
+alt="斜めから見た燃焼ガスと温度" /></p>
+<p>360° で見た燃焼ガスの雲（燃焼ガスの割合 0.3 の面、色は温度）：</p>
+<p><img src="../run001_pyroInflator_60Ltank/images/tank_flow360.gif"
+alt="360°" /></p>
+<p>理論式とソルバの向き不向きは
+<code>02_理論式とソルバの適性.md</code>。</p>
+<ul>
+<li>左：燃焼ガスの割合（空気の O₂
+が薄まった割合から計算）と流れの向き。右：温度。</li>
+<li>オリフィスから噴き出した燃焼ガスは、タンクの中心を柱のように上へ伸び、天井に当たって壁ぞいに戻る大きな渦を作る。</li>
+<li>オリフィスのすぐ上（y ≈ 0〜80
+mm）は、超音速で膨張して温度が下がる領域（不足膨張噴流）。y ≈ 80 mm
+あたりで衝撃波（マッハディスク）を通って再び高温になる。</li>
+<li>タンクの平均圧力は、7 ms までは 0
+次元モデルとほぼ重なっている。</li>
+</ul>
+<p><img src="img/pressure_history.png" alt="圧力の時刻歴" /></p>
+<h2 id="7-試行錯誤の記録">7. 試行錯誤の記録</h2>
+<table>
+<thead>
+<tr class="header">
+<th>回</th>
+<th>内容</th>
+<th>結果</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>1</td>
+<td>クーラン数を途中で 0.5 → 2 に上げた</td>
+<td>0.3 ms で温度が負になり発散</td>
+</tr>
+<tr class="even">
+<td>2</td>
+<td>メッシュを粗く（5,586 セル）</td>
+<td>0.24 ms で発散</td>
+</tr>
+<tr class="odd">
+<td>3</td>
+<td>圧力の許容誤差を緩めすぎて、圧力方程式が解かれていなかった（反復 0
+回）</td>
+<td>燃焼室にガスが増えても圧力が上がらず、温度が暴れて発散</td>
+</tr>
+<tr class="even">
+<td>4（今回）</td>
+<td>細かいメッシュ、クーラン数 0.5、圧力の許容誤差を厳しく（反復の上限
+200 回）、温度の上下限 150〜3,000 K</td>
+<td>安定して計算中</td>
+</tr>
+</tbody>
+</table>
+</body>
+</html>

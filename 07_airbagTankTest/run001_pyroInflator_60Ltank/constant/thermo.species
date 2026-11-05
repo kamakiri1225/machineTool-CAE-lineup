@@ -1,0 +1,80 @@
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      thermo.species;
+}
+
+N2
+{
+    specie
+    {
+        molWeight       28.0134;
+    }
+    thermodynamics
+    {
+        Cp              1170;
+        Hf              0;
+    }
+    transport
+    {
+        mu              3.2e-05;
+        Pr              0.72;
+    }
+}
+
+O2
+{
+    specie
+    {
+        molWeight       31.9988;
+    }
+    thermodynamics
+    {
+        Cp              1090;
+        Hf              0;
+    }
+    transport
+    {
+        mu              3.6e-05;
+        Pr              0.72;
+    }
+}
+
+CO2
+{
+    specie
+    {
+        molWeight       44.0095;
+    }
+    thermodynamics
+    {
+        Cp              1230;
+        Hf              0;
+    }
+    transport
+    {
+        mu              3e-05;
+        Pr              0.72;
+    }
+}
+
+H2O
+{
+    specie
+    {
+        molWeight       18.0153;
+    }
+    thermodynamics
+    {
+        Cp              2290;
+        Hf              0;
+    }
+    transport
+    {
+        mu              2.5e-05;
+        Pr              0.9;
+    }
+}
+

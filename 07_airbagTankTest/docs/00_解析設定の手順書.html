@@ -1,0 +1,810 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>00 解析設定の手順書：エアバッグ用インフレーターのタンク試験（参考・テスト用）</title>
+  <style>
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      html {
+        background-color: white;
+      }
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+      font-size: 85%;
+      margin: 0;
+      hyphens: manual;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      background-color: #1a1a1a;
+      border: none;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    /* CSS for syntax highlighting */
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      {   }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+    code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+    code span.at { color: #7d9029; } /* Attribute */
+    code span.bn { color: #40a070; } /* BaseN */
+    code span.bu { color: #008000; } /* BuiltIn */
+    code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #4070a0; } /* Char */
+    code span.cn { color: #880000; } /* Constant */
+    code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+    code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+    code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+    code span.dt { color: #902000; } /* DataType */
+    code span.dv { color: #40a070; } /* DecVal */
+    code span.er { color: #ff0000; font-weight: bold; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #40a070; } /* Float */
+    code span.fu { color: #06287e; } /* Function */
+    code span.im { color: #008000; font-weight: bold; } /* Import */
+    code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+    code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+    code span.op { color: #666666; } /* Operator */
+    code span.ot { color: #007020; } /* Other */
+    code span.pp { color: #bc7a00; } /* Preprocessor */
+    code span.sc { color: #4070a0; } /* SpecialChar */
+    code span.ss { color: #bb6688; } /* SpecialString */
+    code span.st { color: #4070a0; } /* String */
+    code span.va { color: #19177c; } /* Variable */
+    code span.vs { color: #4070a0; } /* VerbatimString */
+    code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+  <style>
+  body{font-family:'Noto Sans JP','Hiragino Sans','Meiryo',sans-serif;max-width:1100px;margin:2em auto;padding:0 1.2em;line-height:1.75;color:#222}
+  h1{border-bottom:3px solid #1F3A5F;padding-bottom:.3em;color:#1F3A5F} h2{border-left:6px solid #2F6FB0;padding-left:.5em;margin-top:2em;color:#1F3A5F}
+  h3{color:#2F6FB0} img{max-width:100%;height:auto;border:1px solid #ddd;margin:.5em 0}
+  table{border-collapse:collapse;margin:1em 0;font-size:.95em} th,td{border:1px solid #bbb;padding:.35em .7em} th{background:#E3ECF7}
+  code{background:#f4f4f4;padding:.1em .3em;border-radius:3px} pre{background:#f4f4f4;padding:1em;overflow-x:auto}
+  nav.top{font-size:.9em;margin-bottom:1em} nav.top a{color:#2F6FB0}
+  </style>
+  <nav class="top"><a href="../../index.html">← 一覧に戻る</a></nav>
+  <script
+  src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-chtml-full.js"
+  type="text/javascript"></script>
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">00
+解析設定の手順書：エアバッグ用インフレーターのタンク試験（参考・テスト用）</h1>
+</header>
+<h1
+id="00-解析設定の手順書エアバッグ用インフレーターのタンク試験参考テスト用">00
+解析設定の手順書：エアバッグ用インフレーターのタンク試験（参考・テスト用）</h1>
+<p>作成日：2026-11-06　OpenFOAM
+v2512（ESI）　ソルバ：<code>reactingFoam</code>（化学反応なし・非定常・圧縮性）</p>
+<p>火薬式インフレーターが燃焼ガスを出し、オリフィスから 60 L
+のタンクへ噴き出して、タンクの圧力が上がっていく様子を計算するケースです。
+エアバッグの「タンク試験（インフレーターの性能を、決まった容積のタンクの圧力の上がり方で評価する試験）」をまねています。</p>
+<blockquote>
+<p>このフォルダは工作機械とは別の<strong>参考・テスト用のケース</strong>です。
+「燃焼室で物を湧き出させる（質量・エネルギー・成分のソース項）」「音速で詰まるオリフィス」「多成分の気体が混ざる」という設定は、ほかの圧縮性の計算にも使い回せます。</p>
+</blockquote>
+<ul>
+<li>結果と 0
+次元モデルの式：<code>01_インフレーターのタンク試験_条件と結果</code></li>
+<li>理論式とソルバの向き不向き：<code>02_理論式とソルバの適性</code></li>
+</ul>
+<hr />
+<h2 id="1-計算のしくみ全体像">1. 計算のしくみ（全体像）</h2>
+<table>
+<thead>
+<tr class="header">
+<th>部分</th>
+<th>大きさ</th>
+<th>中で起きること</th>
+<th>設定する場所</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>燃焼室</td>
+<td>半径 15 mm × 長さ 70 mm（約 50 cc）</td>
+<td>燃焼ガスが湧き出す（火薬の燃焼の代わり）</td>
+<td><code>constant/fvOptions</code></td>
+</tr>
+<tr class="even">
+<td>オリフィス</td>
+<td>直径 11 mm × 長さ 5 mm</td>
+<td>音速で詰まる（チョーク）。超音速の噴流になる</td>
+<td><code>system/fvSolution</code>（<code>transonic yes</code>）</td>
+</tr>
+<tr class="odd">
+<td>タンク</td>
+<td>内径 340 mm × 高さ 660 mm（60 L）</td>
+<td>空気と燃焼ガスが混ざり、圧力が上がる</td>
+<td><code>constant/thermophysicalProperties</code></td>
+</tr>
+<tr class="even">
+<td>壁</td>
+<td>すべて</td>
+<td>断熱・すべりなし</td>
+<td><code>0.orig/*</code> の <code>walls</code></td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li><strong>軸対称モデル</strong>：形が中心軸のまわりで同じなので、5°
+のくさび形だけを計算します（10,700 セル）。</li>
+<li><strong>閉じた容器</strong>：入口も出口もありません。ガスは燃焼室の中で「湧き出す」だけです。</li>
+<li><strong>元にしたチュートリアルはありません</strong>。<code>tools/make_tank_case.py</code>
+で一から作っています。
+<ul>
+<li>ソルバと物性の組み合わせは、02
+レーザー切断のアシストガス（<code>reactingFoam</code>
+で反応なしの混合ガス）と同じ考え方です。</li>
+<li>時間の進め方は、定常（LTS）ではなく<strong>ふつうの時間進行</strong>です。</li>
+</ul></li>
+</ul>
+<hr />
+<h2 id="2-手順">2. 手順</h2>
+<h3 id="手順-1ケースを作る">手順 1：ケースを作る</h3>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> 07_airbagTankTest</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="ex">python3</span> tools/make_tank_case.py run_myTank</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co"># 条件を変えるとき（例：ガス 30 g、燃焼の時定数 5 ms）</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="ex">python3</span> tools/make_tank_case.py run_myTank <span class="st">&#39;{&quot;M_gas&quot;: 0.030, &quot;tau&quot;: 0.005}&#39;</span></span></code></pre></div>
+<p>スクリプトに渡せる条件</p>
+<table>
+<thead>
+<tr class="header">
+<th>名前</th>
+<th>意味</th>
+<th>既定値</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>M_gas</code></td>
+<td>出てくる燃焼ガスの総量 [kg]</td>
+<td>0.025（25 g）</td>
+</tr>
+<tr class="even">
+<td><code>tau</code></td>
+<td>ガスの出方の時定数 [s]。この時刻で発生量が最大になる</td>
+<td>0.006（6 ms）</td>
+</tr>
+<tr class="odd">
+<td><code>Tc</code></td>
+<td>燃焼ガスの温度（フィルタで冷えた後）[K]</td>
+<td>1000</td>
+</tr>
+<tr class="even">
+<td><code>YCO2</code>・<code>YH2O</code></td>
+<td>燃焼ガスの CO₂・H₂O の質量割合（残りは N₂）</td>
+<td>0.20・0.10</td>
+</tr>
+<tr class="odd">
+<td><code>tEnd</code></td>
+<td>計算する時間 [s]</td>
+<td>0.05（50 ms）</td>
+</tr>
+<tr class="even">
+<td><code>thermo</code></td>
+<td>物性。<code>hConst</code>（比熱一定）か
+<code>janaf</code>（比熱が温度で変わる）</td>
+<td><code>hConst</code></td>
+</tr>
+</tbody>
+</table>
+<p>形（燃焼室・オリフィス・タンクの寸法）は、スクリプトの先頭の
+<code>R</code>（半径方向の区切り [mm]）と <code>Y</code>（軸方向の区切り
+[mm]）で決めています。</p>
+<h3 id="手順-2メッシュを作って計算する4-並列">手順
+2：メッシュを作って計算する（4 並列）</h3>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> run_myTank</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">HWLOC_COMPONENTS</span><span class="op">=</span>-gl           <span class="co"># WSL2 で mpirun が止まらないようにする</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="fu">rm</span> <span class="at">-rf</span> 0 <span class="kw">&amp;&amp;</span> <span class="fu">cp</span> <span class="at">-r</span> 0.orig 0</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="ex">blockMesh</span> <span class="op">&gt;</span> log.blockMesh <span class="dv">2</span><span class="op">&gt;&amp;</span><span class="dv">1</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="ex">decomposePar</span> <span class="op">&gt;</span> log.decomposePar <span class="dv">2</span><span class="op">&gt;&amp;</span><span class="dv">1</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="ex">mpirun</span> <span class="at">-np</span> 4 reactingFoam <span class="at">-parallel</span> <span class="op">&gt;</span> log.reactingFoam <span class="dv">2</span><span class="op">&gt;&amp;</span><span class="dv">1</span></span></code></pre></div>
+<ul>
+<li>50 ms 分の計算に、4 並列で約 5.6 時間かかりました（10,700
+セル、時間刻み 約 4×10⁻⁷ s）。</li>
+<li>1 並列なら <code>./Allrun</code> だけで動きます。</li>
+</ul>
+<h3 id="手順-30-次元モデルと比べる図とアニメーションを作る">手順 3：0
+次元モデルと比べる・図とアニメーションを作る</h3>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="ex">python3</span> tools/zero_d_inflator.py zeroD_cpCFD                 <span class="co"># 0 次元モデル（CFD と同じ比熱）</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="ex">python3</span> tools/plot_pressure_history.py pressure.png run_myTank   <span class="co"># 圧力の時刻歴（CFD と 0 次元を重ねる）</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="ex">python3</span> tools/render_tank_flow.py   run_myTank zeroD_cpCFD   <span class="co"># 断面の GIF（燃焼ガスの割合・温度）</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="ex">python3</span> tools/render_tank_flow3d.py run_myTank               <span class="co"># 斜め上からの GIF（270° 回して表示）</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="ex">python3</span> tools/render_tank_flow360.py run_myTank 0.3          <span class="co"># 燃焼ガスの雲を 360° で表示した GIF</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="ex">python3</span> tools/render_wedge_mesh.py  run_myTank mesh.png      <span class="co"># くさび形のメッシュの図</span></span></code></pre></div>
+<hr />
+<h2 id="3-設定の肝">3. 設定の肝</h2>
+<h3 id="31-燃焼ガスを湧き出させるconstantfvoptions最重要">3.1
+燃焼ガスを「湧き出させる」：<code>constant/fvOptions</code>（最重要）</h3>
+<p>火薬の燃焼（化学反応）は解かず、<strong>燃焼室のセルに、質量・エネルギー・成分を時間の表で足し込みます</strong>。</p>
+<pre><code>gasGeneration
+{
+    type            scalarSemiImplicitSource;
+    selectionMode   cellZone;
+    cellZone        chamber;            // 燃焼室のセルだけに足す
+    volumeMode      specific;           // 値は「燃焼室 1 m³ あたり」
+
+    sources
+    {
+        rho                             // 質量 [kg/(m³·s)]
+        {
+            explicit        table
+                (
+                    (0      0)
+                    (0.006  30980)      // 6 ms で最大（実際は 401 点の表）
+                    (0.05   ...)
+                );
+            implicit        0;
+        }
+        h                               // エネルギー [W/m³] = 質量 × 燃焼ガスの顕エンタルピー
+        {
+            explicit        table ( ... );
+            implicit        0;
+        }
+        CO2                             // CO2 の質量 = 質量 × 0.20
+        {
+            explicit        table ( ... );
+            implicit        0;
+        }
+        H2O                             // H2O の質量 = 質量 × 0.10
+        {
+            explicit        table ( ... );
+            implicit        0;
+        }
+    }
+}</code></pre>
+<ul>
+<li><p>質量の湧き出しは、火薬の燃え方を近似した式で与えています。</p>
+<p><span class="math display">\[\dot m(t) =
+M_{\mathrm{gas}}\,\frac{t}{\tau^2}\,e^{-t/\tau}\]</span></p>
+<ul>
+<li>時刻 τ = 6 ms で最大の 1.53 kg/s になります。</li>
+<li>燃焼室の体積（4.95×10⁻⁵ m³）で割ると、30,980 kg/(m³·s) です。</li>
+</ul></li>
+<li><p>エネルギーは「湧き出す質量 ×
+燃焼ガスの顕エンタルピー」です。燃焼ガスが 1,000 K
+で出てくるようにしています。</p>
+<p><span class="math display">\[h_s = \sum_k Y_k\, c_{p,k}\,(T_c -
+298.15) = 9.08\times10^{5}\ \mathrm{J/kg}\]</span></p></li>
+<li><p><strong>N₂ のソースは書きません。</strong> N₂ は
+<code>inertSpecie</code>（残りの成分）なので、「1 −
+ほかの成分の和」で自動的に決まります。</p>
+<ul>
+<li>湧き出すガスのうち、CO₂ と H₂O を除いた残り（70 %）が N₂
+になります。</li>
+</ul></li>
+<li><p>表は <code>make_tank_case.py</code>
+が式から作ります。手で書く必要はありません。</p></li>
+<li><p><code>cellZone chamber</code> は、<code>blockMeshDict</code>
+のブロックに名前を付けて作っています（<code>hex (...) chamber (...)</code>）。</p>
+<ul>
+<li>タンクも <code>tank</code> という名前の cellZone
+にして、平均の圧力・温度を出すのに使います（3.5）。</li>
+</ul></li>
+</ul>
+<p>同じファイルに、温度の上下限も入れています。</p>
+<pre><code>limitT
+{
+    type            limitTemperature;
+    selectionMode   all;
+    min             150;        // 超音速で膨張して冷える所の下限 [K]
+    max             3000;
+}</code></pre>
+<p>起動直後に燃焼室へ急にエネルギーが入ると、一部のセルの温度が一瞬暴れます。上下限がないと、温度が負になって計算が止まりました（6
+章）。</p>
+<h3 id="32-物性constantthermophysicalproperties">3.2
+物性：<code>constant/thermophysicalProperties</code></h3>
+<pre><code>thermoType
+{
+    type            hePsiThermo;        // 密度 = ψ p（圧縮性が強い流れ向け）
+    mixture         reactingMixture;    // 複数の成分（N2, O2, CO2, H2O）を運ぶ
+    transport       const;              // 粘性一定
+    thermo          hConst;             // 比熱一定
+    energy          sensibleEnthalpy;
+    equationOfState perfectGas;
+    specie          specie;
+}
+
+inertSpecie     N2;
+chemistryReader foamChemistryReader;
+foamChemistryFile &quot;&lt;constant&gt;/reactions&quot;;
+foamChemistryThermoFile &quot;&lt;constant&gt;/thermo.species&quot;;</code></pre>
+<p>各成分の値（<code>constant/thermo.species</code>）。N₂ の例：</p>
+<pre><code>N2
+{
+    specie
+    {
+        molWeight       28.0134;
+    }
+    thermodynamics
+    {
+        Cp              1170;       // 定圧比熱 [J/(kg·K)]
+        Hf              0;
+    }
+    transport
+    {
+        mu              3.2e-05;
+        Pr              0.72;
+    }
+}</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th>成分</th>
+<th>定圧比熱 c<sub>p</sub> [J/(kg·K)]</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>N₂</td>
+<td>1,170</td>
+</tr>
+<tr class="even">
+<td>O₂</td>
+<td>1,090</td>
+</tr>
+<tr class="odd">
+<td>CO₂</td>
+<td>1,230</td>
+</tr>
+<tr class="even">
+<td>H₂O</td>
+<td>2,290</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>比熱は、300〜1,000 K の平均に近い値にしています。</li>
+<li>比熱が温度で変わる形（JANAF
+の多項式）にするときは、<code>'{"thermo": "janaf"}'</code> を渡します。
+<ul>
+<li><strong>JANAF にするときは、粘性も <code>sutherland</code>
+にする必要があります。</strong> <code>const</code>
+のままだと起動しません。スクリプトは自動でそうします。</li>
+</ul></li>
+<li>反応は解きません。
+<ul>
+<li><code>combustionProperties</code> は
+<code>combustionModel none;</code></li>
+<li><code>chemistryProperties</code> は <code>chemistry off;</code></li>
+</ul></li>
+</ul>
+<h3 id="33-時間の進め方systemcontroldict">3.3
+時間の進め方：<code>system/controlDict</code></h3>
+<pre><code>endTime         0.05;           // 50 ms
+deltaT          1e-08;          // 最初の時間刻み（すぐ自動で大きくなる）
+adjustTimeStep  yes;
+maxCo           0.5;            // Courant 数の上限
+maxDeltaT       1e-05;
+writeControl    adjustable;
+writeInterval   0.0005;         // 0.5 ms ごとに保存（GIF のコマ数になる）</code></pre>
+<p><strong><code>maxCo</code> は 0.5 より大きくしないこと。</strong>
+オリフィスは超音速なので、時間刻みは約 4×10⁻⁷ s
+とかなり小さくなります。2 に上げたら 0.3 ms で発散しました。</p>
+<h3 id="34-解き方systemfvschemessystemfvsolution">3.4
+解き方：<code>system/fvSchemes</code>・<code>system/fvSolution</code></h3>
+<p><code>system/fvSchemes</code>（抜粋）</p>
+<pre><code>ddtSchemes
+{
+    default         Euler;              // ふつうの時間進行（LTS ではない）
+}
+
+divSchemes
+{
+    default         none;
+    div(phi,U)      Gauss linearUpwindV grad(U);
+    div(phi,Yi_h)   Gauss upwind;
+    div(phid,p)     Gauss upwind;
+    ...
+}</code></pre>
+<p><code>system/fvSolution</code></p>
+<pre><code>solvers
+{
+    &quot;p.*&quot;
+    {
+        solver          GAMG;
+        smoother        GaussSeidel;
+        tolerance       1e-10;          // 厳しくする（下の注意）
+        relTol          0.01;
+        maxIter         200;
+    }
+    &quot;(U|h|k|omega|Yi).*&quot;
+    {
+        solver          PBiCGStab;
+        preconditioner  DILU;
+        tolerance       1e-9;
+        relTol          0;
+    }
+}
+
+PIMPLE
+{
+    momentumPredictor   yes;
+    transonic           yes;            // オリフィスのチョーク・衝撃波に必須
+    nOuterCorrectors    2;
+    nCorrectors         2;
+    nNonOrthogonalCorrectors 0;
+}</code></pre>
+<p><strong>圧力の <code>tolerance</code> は 1e-10
+まで厳しくします。</strong></p>
+<ul>
+<li>緩くすると、最初の残差がすでに許容誤差より小さいと判定され、圧力方程式が
+1 回も解かれなくなります（ログに <code>No Iterations 0</code>）。</li>
+<li>そうなると、燃焼室にガスが増えても圧力が上がらず、温度だけが上がって発散しました。</li>
+<li>理由は、タンクの圧力が 10⁵ Pa、燃焼室が 10⁷ Pa
+と、値の幅がとても広いことです。</li>
+</ul>
+<h3 id="35-境界条件と途中の値の取り出し">3.5
+境界条件と、途中の値の取り出し</h3>
+<table>
+<thead>
+<tr class="header">
+<th>境界</th>
+<th>p</th>
+<th>U</th>
+<th>T</th>
+<th>成分</th>
+<th>乱流（k-ω SST）</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>walls</code>（燃焼室・オリフィス・タンクの壁）</td>
+<td><code>zeroGradient</code></td>
+<td><code>noSlip</code></td>
+<td><code>zeroGradient</code>（断熱）</td>
+<td><code>zeroGradient</code></td>
+<td>壁関数</td>
+</tr>
+<tr class="even">
+<td><code>front</code>・<code>back</code>（くさびの両面）</td>
+<td><code>wedge</code></td>
+<td><code>wedge</code></td>
+<td><code>wedge</code></td>
+<td><code>wedge</code></td>
+<td><code>wedge</code></td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>初期状態は、すべて空気です（N₂ 0.767・O₂ 0.233、101,325 Pa、293.15
+K）。</li>
+<li>くさびの面は <code>blockMeshDict</code> でも
+<code>type wedge;</code>
+にしておきます。中心軸は辺がつぶれているので、境界はできません。</li>
+</ul>
+<p><code>system/controlDict</code> の <code>functions</code>
+で、途中の値をファイルに出しています。</p>
+<pre><code>tankAvg
+{
+    type            volFieldValue;
+    libs            (fieldFunctionObjects);
+    regionType      cellZone;
+    name            tank;               // タンク全体の
+    operation       volAverage;         // 体積平均
+    fields          (p T CO2);
+    writeFields     false;
+    writeControl    timeStep;
+    writeInterval   20;
+}</code></pre>
+<ul>
+<li>燃焼室の平均（<code>chamberAvg</code>）と、3
+点の圧力・温度（<code>probes</code>）も、同じように出しています。</li>
+<li>結果は <code>postProcessing/tankAvg/0/volFieldValue.dat</code>
+などに出ます。
+<ul>
+<li><code>plot_pressure_history.py</code> は、このファイルを読んで 0
+次元モデルと重ねます。</li>
+</ul></li>
+</ul>
+<hr />
+<h2 id="4-結果参考">4. 結果（参考）</h2>
+<h3 id="41-アニメーション">4.1 アニメーション</h3>
+<p>断面（左：燃焼ガスの割合と流れの向き、右：温度）：</p>
+<p><img src="../run001_pyroInflator_60Ltank/images/tank_flow.gif"
+alt="燃焼ガスがタンクに広がる様子" /></p>
+<p>斜め上から（中心軸のまわりに 270° 回して表示、手前 90°
+は切り欠き）：</p>
+<p><img src="../run001_pyroInflator_60Ltank/images/tank_flow3d.gif"
+alt="斜めから見た燃焼ガスと温度" /></p>
+<p>燃焼ガスの雲を 360° で表示（燃焼ガスの割合 0.3 の面、色は温度）：</p>
+<p><img src="../run001_pyroInflator_60Ltank/images/tank_flow360.gif"
+alt="360° 表示" /></p>
+<ul>
+<li>燃焼ガスは、タンクの中心を柱のように上へ伸びます。天井に当たると、壁ぞいに戻る大きな渦になります。</li>
+<li>オリフィスのすぐ上は、超音速で膨張して冷える領域です。80 mm
+あたりで衝撃波（マッハディスク）を通って、温度が戻ります。
+<ul>
+<li>実験式から見込む位置は 74 mm で、計算は約 80 mm でした。</li>
+</ul></li>
+</ul>
+<h3 id="42-圧力の時刻歴0-次元モデルとの比較">4.2 圧力の時刻歴（0
+次元モデルとの比較）</h3>
+<p><img src="img/pressure_history.png" alt="圧力の時刻歴" /></p>
+<ul>
+<li>タンクの平均圧力は、0 次元モデル（同じ比熱）と 1 %
+以内で合いました。</li>
+<li>最高は約 169 kPa（ゲージ）です。</li>
+<li>比熱が温度で変わる 0 次元モデル（JANAF）では、181 kPa
+になります。</li>
+</ul>
+<hr />
+<h2 id="5-条件を変えるときのチェックリスト">5.
+条件を変えるときのチェックリスト</h2>
+<ul class="task-list">
+<li><label><input
+type="checkbox" />燃焼室・オリフィス・タンクの寸法を、<code>make_tank_case.py</code>
+の <code>R</code>・<code>Y</code>
+に入れた（タンク容積が試験と同じか確かめる）</label></li>
+<li><label><input type="checkbox" />ガスの量 <code>M_gas</code>・時定数
+<code>tau</code>・温度
+<code>Tc</code>・組成を決めた（実機なら、燃焼室の圧力の測定値に合うように調整する）</label></li>
+<li><label><input type="checkbox" />オリフィスの半径方向に 10
+セル以上ある（粗いと発散する）</label></li>
+<li><label><input type="checkbox" /><code>maxCo</code> は 0.5
+以下、圧力の <code>tolerance</code> は 1e-10</label></li>
+<li><label><input type="checkbox" /><code>limitTemperature</code>
+を入れた</label></li>
+<li><label><input type="checkbox" />0
+次元モデル（<code>tools/zero_d_inflator.py</code>）と、タンクの平均圧力が合うか確かめた</label></li>
+<li><label><input
+type="checkbox" />壁は断熱にしている（実際のタンクは壁へ熱が逃げるので、圧力は計算より少し低くなる）と報告に書いた</label></li>
+</ul>
+<hr />
+<h2 id="6-試行錯誤の記録つまずいた点">6.
+試行錯誤の記録（つまずいた点）</h2>
+<table>
+<thead>
+<tr class="header">
+<th>症状</th>
+<th>原因</th>
+<th>対策</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>0.3 ms で温度が負になり発散</td>
+<td><code>maxCo</code> を途中で 0.5 → 2 に上げた</td>
+<td><code>maxCo</code> 0.5 に戻す</td>
+</tr>
+<tr class="even">
+<td>0.24 ms で発散</td>
+<td>メッシュが粗い（5,586 セル）</td>
+<td>オリフィスの半径方向を 10 セルにする（10,700 セル）</td>
+</tr>
+<tr class="odd">
+<td>燃焼室の圧力が上がらず、温度が暴れる</td>
+<td>圧力の許容誤差が緩く、圧力方程式が解かれていなかった</td>
+<td><code>tolerance 1e-10</code>、<code>maxIter 200</code></td>
+</tr>
+<tr class="even">
+<td>一瞬だけ温度が極端な値になる</td>
+<td>起動直後の急なエネルギーの湧き出し</td>
+<td><code>limitTemperature</code>（150〜3,000 K）</td>
+</tr>
+<tr class="odd">
+<td>JANAF にすると起動しない</td>
+<td><code>janaf</code> は <code>sutherland</code>
+の粘性と組み合わせる必要がある</td>
+<td><code>transport sutherland;</code>（As 1.512e-6、Ts 120）</td>
+</tr>
+<tr class="even">
+<td>CFD と 0 次元の圧力が 1 割ずれた</td>
+<td>0 次元モデルの空気の比熱（1,005）が、CFD（1,151）と違っていた</td>
+<td>0 次元モデルも CFD と同じ比熱にする（<code>zeroD_cpCFD</code>）</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="7-このフォルダの中身">7. このフォルダの中身</h2>
+<table>
+<thead>
+<tr class="header">
+<th>フォルダ・ファイル</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>run001_pyroInflator_60Ltank/</code></td>
+<td>本番のケースの設定（<code>0.orig/</code>・<code>constant/</code>・<code>system/</code>・<code>Allrun</code>）と、図・GIF（<code>images/</code>）、途中の値（<code>postProcessing/</code>）</td>
+</tr>
+<tr class="even">
+<td><code>tools/make_tank_case.py</code></td>
+<td>ケースを作るスクリプト</td>
+</tr>
+<tr class="odd">
+<td><code>tools/zero_d_inflator.py</code>・<code>zero_d_inflator_janaf.py</code>・<code>janaf_props.py</code></td>
+<td>0 次元モデル（比熱一定・比熱が温度で変わる）</td>
+</tr>
+<tr class="even">
+<td><code>tools/plot_pressure_history.py</code>・<code>render_*.py</code></td>
+<td>図とアニメーション（ParaView の pvbatch
+がこの環境で止まるため、python の VTK で描画）</td>
+</tr>
+<tr class="odd">
+<td><code>zeroD_cpCFD/</code>・<code>zeroD_janaf/</code></td>
+<td>0 次元モデルのまとめの値と図（大きな CSV
+は省略。スクリプトで作り直せる）</td>
+</tr>
+</tbody>
+</table>
+</body>
+</html>

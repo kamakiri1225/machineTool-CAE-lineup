@@ -1,0 +1,55 @@
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      fvSolution;
+}
+
+solvers
+{
+    "rho.*"
+    {
+        solver          diagonal;
+    }
+    "p.*"
+    {
+        solver          GAMG;
+        smoother        GaussSeidel;
+        tolerance       1e-10;      // strict: a loose tolerance leaves p unsolved in this case
+        relTol          0.01;
+        maxIter         200;
+    }
+    "pFinal"
+    {
+        solver          GAMG;
+        smoother        GaussSeidel;
+        tolerance       1e-10;
+        relTol          0.001;
+        maxIter         200;
+    }
+    "(U|h|k|omega|Yi).*"
+    {
+        solver          PBiCGStab;
+        preconditioner  DILU;
+        tolerance       1e-9;
+        relTol          0;
+    }
+}
+PIMPLE
+{
+    momentumPredictor   yes;
+    transonic           yes;
+    nOuterCorrectors    2;
+    nCorrectors         2;
+    nNonOrthogonalCorrectors 0;
+}
+
+relaxationFactors
+{
+    equations
+    {
+        ".*"            1;
+    }
+}
+

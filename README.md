@@ -14,6 +14,7 @@ documents (Japanese) and animations. Heavy results (time directories, meshes, lo
 | `04_factoryAmbient` | Factory ambient temperature and machine temperature with / without a cover | chtMultiRegionFoam (frozenFlow) |
 | `05_spindleBearingHeat` | Spindle bearing heat-up and cooling (axisymmetric solid) | solidFoam |
 | `06_mistChips` | Coolant mist and chips in the machining enclosure | simpleFoam + icoUncoupledKinematicParcelFoam |
+| `07_airbagTankTest` | (Reference / test) Pyrotechnic airbag inflator tank test: gas generation source, choked orifice, gas mixture (axisymmetric, transient) | reactingFoam |
 
 ### Compute time (Xeon Gold 6212U, WSL2)
 
@@ -26,6 +27,7 @@ documents (Japanese) and animations. Heavy results (time directories, meshes, lo
 | 04 factory ambient (flow 120 s + heat 24 h) | 26,880 | 1 | 23 + 3 min |
 | 05 spindle bearing heat (1 h) | 1,584 | 1 | 18 s |
 | 06 mist and chips (flow + 2 particle runs) | 73,728 | 1 | ~25 + 4 + 3 min |
+| 07 inflator tank test (50 ms, transient) | 10,700 | 4 | ~5.6 h |
 
 All models use generic dimensions or conditions taken from published papers; they are not the design data of any specific machine.
 

@@ -249,57 +249,77 @@ def write_fields(case, species, amb, P, C):
 
 
 # --------------------------------------------------------------------------- constant / system
+def foam(d, ind=0):
+    """python dict -> OpenFOAM dictionary text, one entry per line with indentation (readable output)."""
+    pad, out = " " * ind, ""
+    for k, v in d.items():
+        if isinstance(v, dict):
+            out += f"{pad}{k}\n{pad}{{\n{foam(v, ind + 4)}{pad}}}\n"
+        elif v is None:                       # blank line
+            out += "\n"
+        else:
+            out += f"{pad}{k:<{max(16, len(k) + 1)}}{v};\n"
+    return out
+
+
 def write_dicts(case, species, P, C):
     SV = C.get("solver", {})
     turb = C.get("turbulence", {}).get("model", "realizableKE")
     inert = "N2" if "N2" in species else species[0]
-    write(case, "constant/thermophysicalProperties",
-          "thermoType\n{\n    type hePsiThermo;\n    mixture reactingMixture;\n    transport const;\n    thermo hConst;\n"
-          "    energy sensibleEnthalpy;\n    equationOfState perfectGas;\n    specie specie;\n}\n\n"
-          f"inertSpecie {inert};\nchemistryReader foamChemistryReader;\n"
-          'foamChemistryFile "<constant>/reactions";\nfoamChemistryThermoFile "<constant>/thermo.hConst";\n')
+    write(case, "constant/thermophysicalProperties", foam({
+        "thermoType": {"type": "hePsiThermo", "mixture": "reactingMixture", "transport": "const", "thermo": "hConst",
+                       "energy": "sensibleEnthalpy", "equationOfState": "perfectGas", "specie": "specie"},
+        "_1": None, "inertSpecie": inert, "chemistryReader": "foamChemistryReader",
+        "foamChemistryFile": '"<constant>/reactions"', "foamChemistryThermoFile": '"<constant>/thermo.hConst"'}))
     write(case, "constant/reactions", "species\n(\n" + "".join(f"    {g}\n" for g in species) + ");\n\nreactions\n{\n}\n")
-    write(case, "constant/thermo.hConst", "".join(
-        f"{g}\n{{\n    specie {{ molWeight {GAS[g][0]}; }}\n    thermodynamics {{ Cp {GAS[g][1]}; Hf 0; }}\n"
-        f"    transport {{ mu {GAS[g][2]}; Pr {GAS[g][3]}; }}\n}}\n" for g in species))
-    write(case, "constant/combustionProperties", "combustionModel none;\n")
-    write(case, "constant/chemistryProperties", "chemistryType { solver none; }\nchemistry off;\ninitialChemicalTimeStep 1e-07;\n")
-    write(case, "constant/turbulenceProperties",
-          "simulationType laminar;\n" if turb == "laminar" else
-          f"simulationType RAS;\nRAS {{ RASModel {turb}; turbulence on; printCoeffs on; }}\n")
+    write(case, "constant/thermo.hConst", "\n".join(foam({g: {
+        "specie": {"molWeight": GAS[g][0]},
+        "thermodynamics": {"Cp": GAS[g][1], "Hf": 0},
+        "transport": {"mu": GAS[g][2], "Pr": GAS[g][3]}}}) for g in species))
+    write(case, "constant/combustionProperties", foam({"combustionModel": "none"}))
+    write(case, "constant/chemistryProperties", foam({"chemistryType": {"solver": "none"}, "chemistry": "off",
+                                                      "initialChemicalTimeStep": "1e-07"}))
+    write(case, "constant/turbulenceProperties", foam({"simulationType": "laminar"}) if turb == "laminar" else
+          foam({"simulationType": "RAS", "RAS": {"RASModel": turb, "turbulence": "on", "printCoeffs": "on"}}))
     it, wi = int(SV.get("iterations", 4000)), int(SV.get("write_interval", 500))
-    flows = "".join(f"    flow_{n} {{ type surfaceFieldValue; libs (fieldFunctionObjects); regionType patch; name {n}; "
-                    f"operation sum; fields (phi); writeFields false; writeControl timeStep; writeInterval 20; }}\n"
-                    for n, s in P.items() if s["type"] in ("inlet", "outlet"))
-    write(case, "system/controlDict",
-          f"application reactingFoam;\nstartFrom latestTime;\nstartTime 0;\nstopAt endTime;\n"
-          f"endTime {it};   // LTS: number of pseudo-time iterations\ndeltaT 1;\nwriteControl timeStep;\n"
-          f"writeInterval {wi};\npurgeWrite 0;\nwriteFormat ascii;\nwritePrecision 8;\ntimeFormat general;\n"
-          f"timePrecision 6;\nrunTimeModifiable true;\n\nfunctions\n{{\n"
-          "    MachNo { type MachNo; libs (fieldFunctionObjects); executeControl writeTime; writeControl writeTime; }\n"
-          + flows + "}\n")
+    funcs = {"MachNo": {"type": "MachNo", "libs": "(fieldFunctionObjects)", "executeControl": "writeTime", "writeControl": "writeTime"}}
+    for n, s_ in P.items():
+        if s_["type"] in ("inlet", "outlet"):
+            funcs[f"flow_{n}"] = {"type": "surfaceFieldValue", "libs": "(fieldFunctionObjects)", "regionType": "patch",
+                                  "name": n, "operation": "sum", "fields": "(phi)", "writeFields": "false",
+                                  "writeControl": "timeStep", "writeInterval": 20}
+    write(case, "system/controlDict", foam({
+        "application": "reactingFoam", "startFrom": "latestTime", "startTime": 0, "stopAt": "endTime",
+        "endTime": it,                                   # LTS: number of pseudo-time iterations
+        "deltaT": 1, "writeControl": "timeStep", "writeInterval": wi, "purgeWrite": 0, "writeFormat": "ascii",
+        "writePrecision": 8, "timeFormat": "general", "timePrecision": 6, "runTimeModifiable": "true",
+        "_1": None, "functions": funcs}))
     k = "omega" if turb in ("kOmegaSST", "kOmega") else "epsilon"
-    write(case, "system/fvSchemes",
-          "ddtSchemes { default localEuler; }\n"
-          "gradSchemes { default Gauss linear; grad(U) cellLimited Gauss linear 1; }\n"
-          "divSchemes\n{\n    default none;\n    div(phi,U) Gauss linearUpwindV grad(U);\n    div(phi,Yi_h) Gauss upwind;\n"
-          f"    div(phi,K) Gauss upwind;\n    div(phid,p) Gauss upwind;\n    div(phi,k) Gauss upwind;\n    div(phi,{k}) Gauss upwind;\n"
-          "    div(((rho*nuEff)*dev2(T(grad(U))))) Gauss linear;\n}\n"
-          "laplacianSchemes { default Gauss linear limited corrected 0.5; }\ninterpolationSchemes { default linear; }\n"
-          "snGradSchemes { default limited corrected 0.5; }\nwallDist { method meshWave; }\n")
-    write(case, "system/fvSolution",
-          'solvers\n{\n    "rho.*" { solver diagonal; }\n'
-          '    "p.*" { solver GAMG; smoother GaussSeidel; tolerance 1e-8; relTol 0.05; }\n'
-          f'    "(U|h|k|{k}|Yi).*" {{ solver PBiCGStab; preconditioner DILU; tolerance 1e-8; relTol 0.1; }}\n}}\n\n'
-          "PIMPLE\n{\n    momentumPredictor yes;\n    transonic yes;\n    nOuterCorrectors 1;\n    nCorrectors 2;\n"
-          f"    nNonOrthogonalCorrectors {int(SV.get('non_orthogonal_correctors', 1))};\n"
-          f"    maxCo {float(SV.get('maxCo', 0.2))};\n    maxDeltaT 1e-6;\n    alphaTemp 0.05;\n    alphaY 0.05;\n"
-          f"    Yref {{ {species[0]} 0.1; }}\n    rDeltaTSmoothingCoeff 0.02;\n    rDeltaTDampingCoeff 1;\n}}\n\n"
-          'relaxationFactors { equations { ".*" 1; } }\n')
+    write(case, "system/fvSchemes", foam({
+        "ddtSchemes": {"default": "localEuler"},
+        "gradSchemes": {"default": "Gauss linear", "grad(U)": "cellLimited Gauss linear 1"},
+        "divSchemes": {"default": "none", "div(phi,U)": "Gauss linearUpwindV grad(U)", "div(phi,Yi_h)": "Gauss upwind",
+                       "div(phi,K)": "Gauss upwind", "div(phid,p)": "Gauss upwind", "div(phi,k)": "Gauss upwind",
+                       f"div(phi,{k})": "Gauss upwind", "div(((rho*nuEff)*dev2(T(grad(U)))))": "Gauss linear"},
+        "laplacianSchemes": {"default": "Gauss linear limited corrected 0.5"},
+        "interpolationSchemes": {"default": "linear"},
+        "snGradSchemes": {"default": "limited corrected 0.5"},
+        "wallDist": {"method": "meshWave"}}))
+    write(case, "system/fvSolution", foam({
+        "solvers": {'"rho.*"': {"solver": "diagonal"},
+                    '"p.*"': {"solver": "GAMG", "smoother": "GaussSeidel", "tolerance": "1e-8", "relTol": 0.05},
+                    f'"(U|h|k|{k}|Yi).*"': {"solver": "PBiCGStab", "preconditioner": "DILU", "tolerance": "1e-8", "relTol": 0.1}},
+        "_1": None,
+        "PIMPLE": {"momentumPredictor": "yes", "transonic": "yes", "nOuterCorrectors": 1, "nCorrectors": 2,
+                   "nNonOrthogonalCorrectors": int(SV.get("non_orthogonal_correctors", 1)),
+                   "maxCo": float(SV.get("maxCo", 0.2)), "maxDeltaT": "1e-6", "alphaTemp": 0.05, "alphaY": 0.05,
+                   "Yref": {species[0]: 0.1}, "rDeltaTSmoothingCoeff": 0.02, "rDeltaTDampingCoeff": 1},
+        "_2": None,
+        "relaxationFactors": {"equations": {'".*"': 1}}}))
     lo, hi = SV.get("T_limits", [50, 3000])
-    write(case, "constant/fvOptions",
-          f"limitT\n{{\n    type limitTemperature;\n    active yes;\n    selectionMode all;\n    min {lo};\n    max {hi};\n}}\n")
-    write(case, "system/decomposeParDict", f"numberOfSubdomains {int(C.get('parallel', 1))};\nmethod scotch;\n")
+    write(case, "constant/fvOptions", foam({"limitT": {"type": "limitTemperature", "active": "yes",
+                                                       "selectionMode": "all", "min": lo, "max": hi}}))
+    write(case, "system/decomposeParDict", foam({"numberOfSubdomains": int(C.get("parallel", 1)), "method": "scotch"}))
 
 
 def write_allrun(case, C):

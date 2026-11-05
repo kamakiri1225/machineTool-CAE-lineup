@@ -475,7 +475,11 @@ class="sourceCode bash"><code class="sourceCode bash"><span id="cb4-1"><a href="
 <h2 id="4-設定の肝">4. 設定の肝</h2>
 <h3 id="41-領域の分け方regionproperties">4.1
 領域の分け方：<code>regionProperties</code></h3>
-<pre><code>regions ( fluid (water) solid (solid) );</code></pre>
+<pre><code>regions
+(
+    fluid       (water)     // 流体領域（空気とクーラントの 2 相）
+    solid       (solid)     // 固体領域（テーブル＋ワーク）
+);</code></pre>
 <ul>
 <li>流体領域の名前は <code>water</code>
 です。中に「空気（gas）」と「クーラント（liquid）」の 2
@@ -593,7 +597,10 @@ otherPhase  gas;</code></pre>
 <p><strong>肝</strong>：排出口がないと、加工エリアに液がたまり続けて計算が崩れます。必ず液が出られる境界（<code>drain</code>）を作ります。</p>
 <h3 id="45-時間刻みと解き方">4.5 時間刻みと解き方</h3>
 <p><code>system/controlDict</code></p>
-<pre><code>adjustTimeStep yes;  maxCo 0.5;  maxDi 10;  maxDeltaT 2e-3;</code></pre>
+<pre><code>adjustTimeStep  yes;
+maxCo           0.5;        // Courant 数の上限
+maxDi           10.0;       // 拡散数の上限（固体の熱伝導）
+maxDeltaT       2e-3;       // 時間刻みの上限 [s]</code></pre>
 <ul>
 <li>時間刻みは Courant 数 0.5
 に合わせて自動で決まります。噴流が速いところで刻みが小さくなります。</li>
