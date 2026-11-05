@@ -1,0 +1,60 @@
+# ---------------------------------------------------------------------------
+# Gas-jet case definition for make_case_from_yaml.py  (units: SI, pressure Pa, temperature K)
+# ---------------------------------------------------------------------------
+case: ../run_example_twoInlets        # case directory to create (relative to this file)
+
+mesh:
+  type: blockMesh                     # blockMesh | snappyHexMesh | polyMesh | fluent | gmsh | unv
+  blockMeshDict: blockMeshDict        # file for blockMesh  (dir: ... for snappyHexMesh / polyMesh, file: ... for fluent/gmsh/unv)
+  scale: 1.0                          # extra scale after meshing (e.g. 0.001 if the CAD mesh is in mm)
+
+gases: [N2, O2]                       # built-in: N2, O2, Ar, CO2, He, H2O
+
+ambient:                              # initial state and what flows back in at outlets
+  p: 101325
+  T: 300
+  composition: {N2: 79, O2: 21}
+  basis: mole                         # mole (%) or mass (%)
+
+boundaries:                           # patch name (regular expression allowed) -> condition
+  inlet1:
+    type: inlet
+    p_total_gauge: 0.2e6              # nozzle supply pressure; or  p_total: 401325 (absolute)  or  mass_flow: 0.002 (kg/s)
+    T_total: 300
+    composition: {N2: 100}
+    basis: mole
+    turbulent_intensity: 0.05
+    mixing_length: 1.0e-4
+  inlet2:
+    type: inlet
+    p_total_gauge: 0.02e6
+    T_total: 300
+    composition: {O2: 90, N2: 10}
+    basis: mole
+  outletEnd:                          # where the jet leaves: fix the static pressure
+    type: outlet
+    p: 101325
+    pressure_type: static             # static (fixedValue p) or total (totalPressure, default)
+  outletTop:                          # open side where ambient air is drawn in
+    type: outlet
+    p: 101325
+    pressure_type: total
+  axis:
+    type: symmetryPlane               # symmetryPlane | symmetry | wedge | empty
+  frontBack:
+    type: empty
+
+default: wall                         # every patch not listed above (here: defaultFaces) becomes an adiabatic wall
+# a wall with fixed temperature:  myWall: {type: wall, T: 350}
+
+turbulence:
+  model: realizableKE                 # realizableKE | kEpsilon | kOmegaSST | laminar
+
+solver:
+  iterations: 3000                    # LTS pseudo-time iterations
+  write_interval: 1000
+  maxCo: 0.2
+  pressure_ramp_iterations: 500       # inlet pressure rises from ambient to the target over these iterations
+  T_limits: [50, 3000]                # limitTemperature (K): keeps the start-up from blowing up
+
+parallel: 2                           # number of MPI processes (1 = serial)

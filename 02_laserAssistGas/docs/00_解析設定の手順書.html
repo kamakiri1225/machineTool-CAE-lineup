@@ -659,5 +659,239 @@ type="checkbox" />流量と局所時間刻みが落ち着いてから結果を�
 <li><label><input
 type="checkbox" />このモデルは<strong>溶けた金属・レーザーの熱・板の温度を入れていない</strong>（ガスの流れだけ）ことを、報告に書いた</label></li>
 </ul>
+<hr />
+<h2 id="9-yaml-に条件を書くだけでケースを作る別の-pc-でも使える">9. YAML
+に条件を書くだけでケースを作る（別の PC でも使える）</h2>
+<p>形状（メッシュ）は自由に作り、<strong>境界ごとの条件だけを YAML
+に書く</strong>と、ケース一式を作るスクリプトです。</p>
+<ul>
+<li>YAML
+に書くのは、入口の圧力とガスの割合、出口、対称面です。書かなかった境界はすべて壁になります。</li>
+<li>スクリプトは、境界の種類の書き換え、<code>0/</code>・<code>constant/</code>・<code>system/</code>
+の作成、<code>Allrun</code> の作成までを行います。</li>
+<li><code>--run</code> を付けると、そのまま計算まで実行します。</li>
+<li>場所は <code>02_laserAssistGas/yamlCase/</code> です。</li>
+</ul>
+<table>
+<thead>
+<tr class="header">
+<th>ファイル</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>make_case_from_yaml.py</code></td>
+<td>本体（Python 3、約 370 行）</td>
+</tr>
+<tr class="even">
+<td><code>example_twoInlets/case.yaml</code></td>
+<td>例題の YAML（入口 2 つ・出口 2 つ・対称面・壁）</td>
+</tr>
+<tr class="odd">
+<td><code>example_twoInlets/blockMeshDict</code></td>
+<td>例題のメッシュ（2 次元）</td>
+</tr>
+<tr class="even">
+<td><code>plot_slice2d.py</code></td>
+<td>2 次元の結果を図にする（マッハ数・O₂ 濃度）</td>
+</tr>
+<tr class="odd">
+<td><code>requirements.txt</code></td>
+<td>必要な Python ライブラリ（PyYAML）</td>
+</tr>
+</tbody>
+</table>
+<h3 id="91-別の-pc-で準備すること最初の-1-回だけ">9.1 別の PC
+で準備すること（最初の 1 回だけ）</h3>
+<div class="sourceCode" id="cb7"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 1) OpenFOAM v2512（ESI 版、openfoam.com）を入れる。Ubuntu / WSL2 の例：</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="ex">curl</span> <span class="at">-s</span> https://dl.openfoam.com/add-debian-repo.sh <span class="kw">|</span> <span class="fu">sudo</span> bash</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> apt-get install openfoam2512-default</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="co"># 2) このリポジトリを取ってくる</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> clone https://github.com/kamakiri1225/machineTool-CAE-lineup.git</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> machineTool-CAE-lineup/02_laserAssistGas/yamlCase</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="co"># 3) Python のライブラリ（PyYAML）</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span> install <span class="at">-r</span> requirements.txt</span></code></pre></div>
+<h3 id="92-毎回の手順3-コマンド">9.2 毎回の手順（3 コマンド）</h3>
+<div class="sourceCode" id="cb8"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="bu">source</span> /usr/lib/openfoam/openfoam2512/etc/bashrc     <span class="co"># OpenFOAM のコマンドを使えるようにする</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="ex">python3</span> make_case_from_yaml.py example_twoInlets/case.yaml <span class="at">--run</span>      <span class="co"># メッシュ → 設定 → 計算</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="ex">python3</span> plot_slice2d.py run_example_twoInlets result.png               <span class="co"># 図（2 次元のとき）</span></span></code></pre></div>
+<ul>
+<li><code>--run</code> を付けなければ、計算の直前まで作って止まります。
+<ul>
+<li>そのあとは <code>cd run_example_twoInlets &amp;&amp; ./Allrun</code>
+で計算します。</li>
+</ul></li>
+<li>同じ名前のケースがあると止まります。作り直すときは
+<code>--force</code> を付けます（古いケースは消えます）。</li>
+<li>実行すると、境界ごとに読み取った条件の一覧が表示されます。
+<ul>
+<li>圧力は絶対圧で表示されます。ガスの割合は質量分率に直した値です。</li>
+<li>YAML
+の書き間違い（存在しない境界名・ガス名）があると、ここで止まってエラーを出します。</li>
+</ul></li>
+</ul>
+<h3 id="93-yaml-の書き方">9.3 YAML の書き方</h3>
+<div class="sourceCode" id="cb9"><pre
+class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">case</span><span class="kw">:</span><span class="at"> ../run_example_twoInlets</span><span class="co">        # 作るケースのフォルダ（この YAML からの相対パス）</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="fu">mesh</span><span class="kw">:</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">type</span><span class="kw">:</span><span class="at"> blockMesh</span><span class="co">                     # blockMesh | snappyHexMesh | polyMesh | fluent | gmsh | unv</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">blockMeshDict</span><span class="kw">:</span><span class="at"> blockMeshDict</span><span class="co">        # snappyHexMesh / polyMesh は dir:、fluent / gmsh / unv は file:</span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">scale</span><span class="kw">:</span><span class="at"> </span><span class="fl">1.0</span><span class="co">                          # CAD のメッシュが mm なら 0.001</span></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a><span class="fu">gases</span><span class="kw">:</span><span class="at"> </span><span class="kw">[</span><span class="at">N2</span><span class="kw">,</span><span class="at"> O2</span><span class="kw">]</span><span class="co">                       # 使えるガス：N2, O2, Ar, CO2, He, H2O</span></span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a><span class="fu">ambient</span><span class="kw">:</span><span class="co">                              # 最初の状態と、出口から逆流して入ってくるガス</span></span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">p</span><span class="kw">:</span><span class="at"> </span><span class="dv">101325</span></span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">T</span><span class="kw">:</span><span class="at"> </span><span class="dv">300</span></span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">composition</span><span class="kw">:</span><span class="at"> </span><span class="kw">{</span><span class="fu">N2</span><span class="kw">:</span><span class="at"> </span><span class="dv">79</span><span class="kw">,</span><span class="at"> </span><span class="fu">O2</span><span class="kw">:</span><span class="at"> </span><span class="dv">21</span><span class="kw">}</span></span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">basis</span><span class="kw">:</span><span class="at"> mole</span><span class="co">                         # mole（モル %、体積 % と同じ）か mass（質量 %）</span></span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a><span class="fu">boundaries</span><span class="kw">:</span><span class="co">                           # メッシュの境界名（正規表現も可）→ 条件</span></span>
+<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">inlet1</span><span class="kw">:</span></span>
+<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">type</span><span class="kw">:</span><span class="at"> inlet</span></span>
+<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">p_total_gauge</span><span class="kw">:</span><span class="at"> </span><span class="fl">0.2e6</span><span class="co">              # 供給圧（ゲージ圧 Pa）。p_total（絶対圧）か mass_flow（kg/s）でもよい</span></span>
+<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">T_total</span><span class="kw">:</span><span class="at"> </span><span class="dv">300</span></span>
+<span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">composition</span><span class="kw">:</span><span class="at"> </span><span class="kw">{</span><span class="fu">N2</span><span class="kw">:</span><span class="at"> </span><span class="dv">100</span><span class="kw">}</span><span class="co">            # N2 100 %</span></span>
+<span id="cb9-22"><a href="#cb9-22" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">inlet2</span><span class="kw">:</span></span>
+<span id="cb9-23"><a href="#cb9-23" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">type</span><span class="kw">:</span><span class="at"> inlet</span></span>
+<span id="cb9-24"><a href="#cb9-24" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">p_total_gauge</span><span class="kw">:</span><span class="at"> </span><span class="fl">0.02e6</span></span>
+<span id="cb9-25"><a href="#cb9-25" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">composition</span><span class="kw">:</span><span class="at"> </span><span class="kw">{</span><span class="fu">O2</span><span class="kw">:</span><span class="at"> </span><span class="dv">90</span><span class="kw">,</span><span class="at"> </span><span class="fu">N2</span><span class="kw">:</span><span class="at"> </span><span class="dv">10</span><span class="kw">}</span><span class="co">     # O2 90 %、N2 10 %（モル %）</span></span>
+<span id="cb9-26"><a href="#cb9-26" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">outletEnd</span><span class="kw">:</span></span>
+<span id="cb9-27"><a href="#cb9-27" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">type</span><span class="kw">:</span><span class="at"> outlet</span></span>
+<span id="cb9-28"><a href="#cb9-28" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">p</span><span class="kw">:</span><span class="at"> </span><span class="dv">101325</span></span>
+<span id="cb9-29"><a href="#cb9-29" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">pressure_type</span><span class="kw">:</span><span class="at"> static</span><span class="co">             # 噴流が抜ける出口：静圧を固定</span></span>
+<span id="cb9-30"><a href="#cb9-30" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">outletTop</span><span class="kw">:</span></span>
+<span id="cb9-31"><a href="#cb9-31" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">type</span><span class="kw">:</span><span class="at"> outlet</span></span>
+<span id="cb9-32"><a href="#cb9-32" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">pressure_type</span><span class="kw">:</span><span class="at"> total</span><span class="co">              # 周りの空気が吸い込まれる開口：全圧を固定（既定）</span></span>
+<span id="cb9-33"><a href="#cb9-33" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">axis</span><span class="kw">:</span></span>
+<span id="cb9-34"><a href="#cb9-34" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">type</span><span class="kw">:</span><span class="at"> symmetryPlane</span><span class="co">               # symmetryPlane | symmetry | wedge（軸対称）| empty（2 次元）</span></span>
+<span id="cb9-35"><a href="#cb9-35" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">frontBack</span><span class="kw">:</span></span>
+<span id="cb9-36"><a href="#cb9-36" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">type</span><span class="kw">:</span><span class="at"> empty</span></span>
+<span id="cb9-37"><a href="#cb9-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-38"><a href="#cb9-38" aria-hidden="true" tabindex="-1"></a><span class="fu">default</span><span class="kw">:</span><span class="at"> wall</span><span class="co">                         # 上に書かなかった境界はすべて断熱の壁</span></span>
+<span id="cb9-39"><a href="#cb9-39" aria-hidden="true" tabindex="-1"></a><span class="co"># 温度を固定した壁：  myWall: {type: wall, T: 350}</span></span>
+<span id="cb9-40"><a href="#cb9-40" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-41"><a href="#cb9-41" aria-hidden="true" tabindex="-1"></a><span class="fu">turbulence</span><span class="kw">:</span></span>
+<span id="cb9-42"><a href="#cb9-42" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">model</span><span class="kw">:</span><span class="at"> realizableKE</span><span class="co">                 # realizableKE | kEpsilon | kOmegaSST | laminar</span></span>
+<span id="cb9-43"><a href="#cb9-43" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-44"><a href="#cb9-44" aria-hidden="true" tabindex="-1"></a><span class="fu">solver</span><span class="kw">:</span></span>
+<span id="cb9-45"><a href="#cb9-45" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">iterations</span><span class="kw">:</span><span class="at"> </span><span class="dv">3000</span><span class="co">                    # LTS の反復回数</span></span>
+<span id="cb9-46"><a href="#cb9-46" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">write_interval</span><span class="kw">:</span><span class="at"> </span><span class="dv">1000</span></span>
+<span id="cb9-47"><a href="#cb9-47" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">maxCo</span><span class="kw">:</span><span class="at"> </span><span class="fl">0.2</span></span>
+<span id="cb9-48"><a href="#cb9-48" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">pressure_ramp_iterations</span><span class="kw">:</span><span class="at"> </span><span class="dv">500</span><span class="co">       # 入口の圧力をこの回数かけて上げる</span></span>
+<span id="cb9-49"><a href="#cb9-49" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">T_limits</span><span class="kw">:</span><span class="at"> </span><span class="kw">[</span><span class="dv">50</span><span class="kw">,</span><span class="at"> </span><span class="dv">3000</span><span class="kw">]</span><span class="co">                # 温度の上下限（limitTemperature）</span></span>
+<span id="cb9-50"><a href="#cb9-50" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-51"><a href="#cb9-51" aria-hidden="true" tabindex="-1"></a><span class="fu">parallel</span><span class="kw">:</span><span class="at"> </span><span class="dv">2</span><span class="co">                           # 並列数（1 なら並列なし）</span></span></code></pre></div>
+<p>YAML の各項目が、OpenFOAM の何になるか</p>
+<table>
+<thead>
+<tr class="header">
+<th>YAML</th>
+<th>OpenFOAM の設定</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>type: inlet</code> ＋ <code>p_total_gauge</code></td>
+<td>p：<code>uniformTotalPressure</code>（<code>psi</code>・<code>gamma</code>
+付きの圧縮性の全圧、<code>pressure_ramp_iterations</code>
+回で上げる）、U：<code>pressureInletOutletVelocity</code>、T：<code>totalTemperature</code></td>
+</tr>
+<tr class="even">
+<td><code>type: inlet</code> ＋ <code>mass_flow</code></td>
+<td>U：<code>flowRateInletVelocity</code>（<code>massFlowRate</code>）、p：<code>zeroGradient</code>、T：<code>fixedValue</code></td>
+</tr>
+<tr class="odd">
+<td><code>composition</code> ＋ <code>basis</code></td>
+<td>各ガスの <code>fixedValue</code>（モル %
+は分子量で質量分率に直す）</td>
+</tr>
+<tr class="even">
+<td><code>type: outlet</code></td>
+<td>p：<code>totalPressure</code>（<code>pressure_type: static</code>
+なら <code>fixedValue</code>）。U は
+<code>pressureInletOutletVelocity</code>、T とガスは
+<code>inletOutlet</code>（逆流は <code>ambient</code> か
+<code>composition_backflow</code> のガス）</td>
+</tr>
+<tr class="odd">
+<td><code>type: wall</code></td>
+<td>U：<code>noSlip</code>、T：<code>zeroGradient</code>（断熱）か
+<code>fixedValue</code>、乱流は壁関数。メッシュの境界の種類も
+<code>wall</code> に書き換える</td>
+</tr>
+<tr class="even">
+<td><code>symmetryPlane</code> など</td>
+<td>全部の場で同じ種類にし、メッシュの境界の種類も書き換える</td>
+</tr>
+<tr class="odd">
+<td><code>solver</code>・<code>turbulence</code></td>
+<td>4
+章の設定（<code>localEuler</code>、<code>transonic yes</code>、<code>maxCo</code>、定比熱の混合ガス）をそのまま使う</td>
+</tr>
+</tbody>
+</table>
+<h3 id="94-例題の結果2-次元11850-セル2-並列で約-3-分">9.4 例題の結果（2
+次元、11,850 セル、2 並列で約 3 分）</h3>
+<p><img src="img/yaml_example_twoInlets.png"
+alt="YAML の例題の結果" /></p>
+<ul>
+<li>先細りのノズル（左下）から N₂ が出ます（0.2 MPa
+ゲージ）。音速を超えて、衝撃波のセルが並んでいます（左図）。</li>
+<li>上の入口から O₂ 90 %
+のガスがゆっくり流れ、主噴流に巻き込まれて混ざります（右図）。</li>
+<li>ノズル流量は 0.76 g/s（奥行き 1 mm あたり）です。一次元の理論値 0.69
+g/s より約 10 % 多くなりました。
+<ul>
+<li>メッシュを細かくすると 0.79 → 0.76 g/s
+と理論値に近づいたので、差の一部はメッシュの粗さによるものです。</li>
+</ul></li>
+</ul>
+<h3 id="95-条件を決めるときの注意例題で実際につまずいたこと">9.5
+条件を決めるときの注意（例題で実際につまずいたこと）</h3>
+<table>
+<thead>
+<tr class="header">
+<th>注意</th>
+<th>理由</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>圧力で与える入口は、流れの遅いところ（ノズルの上流の太い部分）に置く</strong></td>
+<td>入口のすぐ先で超音速になる形だと、入口から入る流量が決まらない。最初の例題ではノズルなしの開口を入口にしたため、理論の何倍もの流量になり、温度・圧力が壊れた</td>
+</tr>
+<tr class="even">
+<td><strong>圧力の低い入口を、圧力の高い噴流のすぐそばに置かない</strong></td>
+<td>噴流がぶつかって圧力が上がり、低圧の入口から逆に流れ出す（逆流）。その入口に
+<code>totalTemperature</code> が付いていると、温度が壊れやすい</td>
+</tr>
+<tr class="odd">
+<td>噴流が抜ける出口は
+<code>pressure_type: static</code>、周りの空気を吸う開口は
+<code>total</code></td>
+<td>噴流が全圧固定の境界にぶつかると、真空に近いセルができて計算が止まる（6
+章と同じ現象）</td>
+</tr>
+<tr class="even">
+<td>出口の流量は揺れてもよい。入口の流量が落ち着いたかで収束を判断する</td>
+<td>2 次元の噴流は渦が出て、出口の流量が揺れ続ける</td>
+</tr>
+<tr class="odd">
+<td>2 次元は前後の面を <code>empty</code>、軸対称は <code>wedge</code>
+と YAML に書く</td>
+<td>書かないと <code>default: wall</code> で壁になる</td>
+</tr>
+<tr class="even">
+<td>書かなかった境界はすべて壁になる</td>
+<td>blockMesh
+で面を指定しなかったところ（<code>defaultFaces</code>）も壁になる</td>
+</tr>
+</tbody>
+</table>
 </body>
 </html>
