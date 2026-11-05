@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>00 解析設定の手順書：加工エリアのクーラントと熱（chtMultiRegionTwoPhaseEulerFoam）</title>
+  <style>
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      html {
+        background-color: white;
+      }
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+      font-size: 85%;
+      margin: 0;
+      hyphens: manual;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      background-color: #1a1a1a;
+      border: none;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    /* CSS for syntax highlighting */
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      {   }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+    code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+    code span.at { color: #7d9029; } /* Attribute */
+    code span.bn { color: #40a070; } /* BaseN */
+    code span.bu { color: #008000; } /* BuiltIn */
+    code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #4070a0; } /* Char */
+    code span.cn { color: #880000; } /* Constant */
+    code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+    code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+    code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+    code span.dt { color: #902000; } /* DataType */
+    code span.dv { color: #40a070; } /* DecVal */
+    code span.er { color: #ff0000; font-weight: bold; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #40a070; } /* Float */
+    code span.fu { color: #06287e; } /* Function */
+    code span.im { color: #008000; font-weight: bold; } /* Import */
+    code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+    code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+    code span.op { color: #666666; } /* Operator */
+    code span.ot { color: #007020; } /* Other */
+    code span.pp { color: #bc7a00; } /* Preprocessor */
+    code span.sc { color: #4070a0; } /* SpecialChar */
+    code span.ss { color: #bb6688; } /* SpecialString */
+    code span.st { color: #4070a0; } /* String */
+    code span.va { color: #19177c; } /* Variable */
+    code span.vs { color: #4070a0; } /* VerbatimString */
+    code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+  <style>
+  body{font-family:'Noto Sans JP','Hiragino Sans','Meiryo',sans-serif;max-width:1100px;margin:2em auto;padding:0 1.2em;line-height:1.75;color:#222}
+  h1{border-bottom:3px solid #1F3A5F;padding-bottom:.3em;color:#1F3A5F} h2{border-left:6px solid #2F6FB0;padding-left:.5em;margin-top:2em;color:#1F3A5F}
+  h3{color:#2F6FB0} img{max-width:100%;height:auto;border:1px solid #ddd;margin:.5em 0}
+  table{border-collapse:collapse;margin:1em 0;font-size:.95em} th,td{border:1px solid #bbb;padding:.35em .7em} th{background:#E3ECF7}
+  code{background:#f4f4f4;padding:.1em .3em;border-radius:3px} pre{background:#f4f4f4;padding:1em;overflow-x:auto}
+  nav.top{font-size:.9em;margin-bottom:1em} nav.top a{color:#2F6FB0}
+  </style>
+  <nav class="top"><a href="../../index.html">← 一覧に戻る</a></nav>
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">00
+解析設定の手順書：加工エリアのクーラントと熱（chtMultiRegionTwoPhaseEulerFoam）</h1>
+</header>
+<h1
+id="00-解析設定の手順書加工エリアのクーラントと熱chtmultiregiontwophaseeulerfoam">00
+解析設定の手順書：加工エリアのクーラントと熱（chtMultiRegionTwoPhaseEulerFoam）</h1>
+<p>作成日：2026-11-05　OpenFOAM v2512（ESI）</p>
+<p>加工エリアの天井のノズルから温かいクーラントがワークにかかり、テーブルとワーク（固体）が温まる様子を計算する手順書です。
+流体は<strong>空気とクーラントの二相</strong>（オイラー–オイラー法）として解き、<strong>固体の熱伝導</strong>を同時に解きます。
+この手順書では次の 3 点をまとめます。</p>
+<ul>
+<li>どのチュートリアルから持ってきたか</li>
+<li>どこを書き換えたか</li>
+<li>設定の肝</li>
+</ul>
+<p>ソルバの式は 01、結果は 02、VOF との違いは 03 を見てください。</p>
+<hr />
+<h2 id="1-元にしたチュートリアル">1. 元にしたチュートリアル</h2>
+<table>
+<thead>
+<tr class="header">
+<th>項目</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>元のチュートリアル</td>
+<td><code>$FOAM_TUTORIALS/heatTransfer/chtMultiRegionTwoPhaseEulerFoam/solidQuenching2D</code></td>
+</tr>
+<tr class="even">
+<td>実際の場所（この PC）</td>
+<td><code>/usr/lib/openfoam/openfoam2512/tutorials/heatTransfer/chtMultiRegionTwoPhaseEulerFoam/solidQuenching2D</code></td>
+</tr>
+<tr class="odd">
+<td>例題の内容</td>
+<td>1123 K（850 ℃）に熱した 2
+次元の固体を水のプールに入れて冷やす（焼入れ）。沸騰も扱う。5 秒</td>
+</tr>
+<tr class="even">
+<td>そのまま動かしたもの</td>
+<td><code>run001_tutorial_solidQuenching2D</code>（例題を 0.2
+秒まで。動作確認用）</td>
+</tr>
+<tr class="odd">
+<td>書き換えて作ったもの</td>
+<td><code>run004_workspace_coolant_work3D</code>（加工エリアの 3
+次元モデル）</td>
+</tr>
+</tbody>
+</table>
+<p>例題をそのまま試すときは、例題のフォルダを丸ごとコピーして
+<code>./Allrun</code> を実行します（中身は <code>Allrun.pre</code> →
+ソルバ）。</p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cp</span> <span class="at">-r</span> <span class="va">$FOAM_TUTORIALS</span>/heatTransfer/chtMultiRegionTwoPhaseEulerFoam/solidQuenching2D run001</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> run001 <span class="kw">&amp;&amp;</span> <span class="ex">./Allrun</span></span></code></pre></div>
+<hr />
+<h2 id="2-作業の手順run004">2. 作業の手順（run004）</h2>
+<h3 id="手順-1例題をコピーして書き換えるスクリプト-1-本">手順
+1：例題をコピーして書き換える（スクリプト 1 本）</h3>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> 01_coolantCHT/run004_workspace_coolant_work3D</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="ex">python3</span> make_case.py      <span class="co"># 例題の 0.orig / constant / system と Tsat_water_1_2bar.csv をコピーし、下の 3 章のとおり書き換える</span></span></code></pre></div>
+<p><code>make_case.py</code> の先頭の 3
+つの値が、よく変える条件です。</p>
+<table>
+<thead>
+<tr class="header">
+<th>変数</th>
+<th>意味</th>
+<th>値</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>T_AIR</code></td>
+<td>空気・テーブル・ワーク・壁の初期温度</td>
+<td>293 K（20 ℃）</td>
+</tr>
+<tr class="even">
+<td><code>T_COOL</code></td>
+<td>ノズルから出るクーラントの温度</td>
+<td>308 K（35 ℃）</td>
+</tr>
+<tr class="odd">
+<td><code>U_IN</code></td>
+<td>ノズル出口の流速（下向き）</td>
+<td>1.0 m/s（40 × 40 mm で約 96 L/min）</td>
+</tr>
+</tbody>
+</table>
+<h3 id="手順-2メッシュを作って計算する">手順
+2：メッシュを作って計算する</h3>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="ex">./Allrun</span></span></code></pre></div>
+<p><code>Allrun</code> の中身と、それぞれの役割</p>
+<table>
+<thead>
+<tr class="header">
+<th>順番</th>
+<th>コマンド</th>
+<th>何をするか</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>1</td>
+<td><code>blockMesh</code></td>
+<td>600 × 600 × 400 mm の箱を 20 mm 角で切る（30 × 30 × 20）</td>
+</tr>
+<tr class="even">
+<td>2</td>
+<td><code>topoSet</code></td>
+<td>固体にするセル（テーブル＋ワーク）、ノズル面、排出口の面を選ぶ</td>
+</tr>
+<tr class="odd">
+<td>3</td>
+<td><code>createPatch -overwrite</code></td>
+<td>選んだ面を <code>inlet</code>（ノズル）と
+<code>drain</code>（排出口）の境界にする</td>
+</tr>
+<tr class="even">
+<td>4</td>
+<td><code>restore0Dir</code></td>
+<td><code>0.orig</code> を <code>0</code> にコピー</td>
+</tr>
+<tr class="odd">
+<td>5</td>
+<td><code>splitMeshRegions -cellZonesOnly -overwrite</code></td>
+<td>メッシュを流体 <code>water</code> と固体 <code>solid</code> の 2
+領域に分け、境目に <code>water_to_solid</code> /
+<code>solid_to_water</code> を作る</td>
+</tr>
+<tr class="even">
+<td>6</td>
+<td><code>setFields -region water</code></td>
+<td>最初の液の分布を入れる（run004 は空気だけで始める）</td>
+</tr>
+<tr class="odd">
+<td>7</td>
+<td><code>checkMesh -region water</code></td>
+<td>メッシュの確認</td>
+</tr>
+<tr class="even">
+<td>8</td>
+<td><code>chtMultiRegionTwoPhaseEulerFoam</code></td>
+<td>計算（1 並列で約 12 分、3 秒分）</td>
+</tr>
+</tbody>
+</table>
+<h3 id="手順-3図を作る">手順 3：図を作る</h3>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="ex">python3</span> ../tools/render_workspace.py .           <span class="co"># クーラントの形（液の割合の等値面）と温度</span></span></code></pre></div>
+<hr />
+<h2 id="3-例題から書き換えたところファイル別">3.
+例題から書き換えたところ（ファイル別）</h2>
+<table>
+<thead>
+<tr class="header">
+<th>ファイル</th>
+<th>例題</th>
+<th>run004</th>
+<th>理由</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>system/blockMeshDict</code></td>
+<td>2 次元の細長い水槽</td>
+<td>3 次元の囲い（600 × 600 × 400 mm、20 mm 角）。天井 <code>maxY</code>
+は開放、側面 <code>maxX</code> と床 <code>minY</code> は壁</td>
+<td>加工エリアの大きさにする</td>
+</tr>
+<tr class="even">
+<td><code>system/topoSetDict</code></td>
+<td>左下の小さな箱を固体にする</td>
+<td>固体＝テーブル（x 140〜460、y 240〜300、z 100〜300 mm）＋ワーク（x
+240〜360、y 300〜360、z 140〜260 mm）。ノズル面と排出口の面を追加</td>
+<td>形状を作る</td>
+</tr>
+<tr class="odd">
+<td><code>system/createPatchDict</code></td>
+<td>なし</td>
+<td>新しく作成（<code>inlet</code>、<code>drain</code>）</td>
+<td>箱の面の一部を入口・出口にするため</td>
+</tr>
+<tr class="even">
+<td><code>system/water/setFieldsDict</code></td>
+<td>下 75 mm を水で満たす</td>
+<td>何も入れない（全部空気）</td>
+<td>加工エリアは最初は空気だけ</td>
+</tr>
+<tr class="odd">
+<td><code>system/controlDict</code></td>
+<td>5 秒、Δt ≤ 1 ms、0.1 秒ごとに保存</td>
+<td>3 秒、Δt ≤ 2 ms、0.25 秒ごとに保存</td>
+<td>セルが大きいので刻みを広げ、時間を短縮</td>
+</tr>
+<tr class="even">
+<td><code>constant/water/thermophysicalProperties.gas</code></td>
+<td>水蒸気</td>
+<td>空気（分子量 28.96、c<sub>p</sub> 1007、μ 1.81×10⁻⁵、Pr 0.71）</td>
+<td>気相を空気にする</td>
+</tr>
+<tr class="odd">
+<td><code>constant/water/thermophysicalProperties.liquid</code></td>
+<td>水</td>
+<td>そのまま（水溶性クーラントを水で近似）</td>
+<td>—</td>
+</tr>
+<tr class="even">
+<td><code>constant/solid/thermophysicalProperties</code></td>
+<td>鋼に近い値（ρ 8000、c<sub>p</sub> 450、κ 60）</td>
+<td>そのまま</td>
+<td>テーブル・ワークも鋼</td>
+</tr>
+<tr class="odd">
+<td><code>0.orig/water/*</code>、<code>0.orig/solid/T</code></td>
+<td>固体 1123 K、水 333 K など</td>
+<td>すべて 293 K。<code>inlet</code> と <code>drain</code>
+の条件を各ファイルに追加。固体の床側 <code>minY</code> は 293 K
+固定</td>
+<td>室温から始める</td>
+</tr>
+<tr class="even">
+<td><code>constant/water/phaseProperties</code></td>
+<td>沸騰・気泡の大きさの分布つき</td>
+<td><strong>そのまま</strong>（<code>phaseChange off</code>、気泡径・抗力などの例題の値）</td>
+<td>35 ℃ では沸騰しないので触らない</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="4-設定の肝">4. 設定の肝</h2>
+<h3 id="41-領域の分け方regionproperties">4.1
+領域の分け方：<code>regionProperties</code></h3>
+<pre><code>regions ( fluid (water) solid (solid) );</code></pre>
+<ul>
+<li>流体領域の名前は <code>water</code>
+です。中に「空気（gas）」と「クーラント（liquid）」の 2
+相が入っています。</li>
+<li>固体領域は <code>solid</code> で、テーブルとワークを 1
+つにまとめています。接触熱抵抗はありません。</li>
+<li>設定ファイルも領域ごとに分かれます：<code>system/water/</code>、<code>system/solid/</code>、<code>constant/water/</code>、<code>constant/solid/</code>、<code>0.orig/water/</code>、<code>0.orig/solid/</code>。</li>
+</ul>
+<h3 id="42-二相の扱いconstantwaterphaseproperties">4.2
+二相の扱い：<code>constant/water/phaseProperties</code></h3>
+<table>
+<thead>
+<tr class="header">
+<th>設定</th>
+<th>値</th>
+<th>意味</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>type</code></td>
+<td><code>thermalPhaseChangeTwoPhaseSystem</code></td>
+<td>2 つの相それぞれに速度・温度を持たせる（オイラー–オイラー法）</td>
+</tr>
+<tr class="even">
+<td><code>phaseChange</code></td>
+<td><code>off</code></td>
+<td>蒸発・沸騰はしない（35 ℃ なので不要）</td>
+</tr>
+<tr class="odd">
+<td>液の <code>diameterModel</code></td>
+<td><code>constant</code>、<code>d 0.00045</code></td>
+<td>空気中に散ったクーラントを直径 0.45 mm の滴として扱う</td>
+</tr>
+<tr class="even">
+<td><code>drag</code></td>
+<td><code>IshiiZuber</code></td>
+<td>相の間の抵抗</td>
+</tr>
+<tr class="odd">
+<td><code>blending</code></td>
+<td>割合 0.3〜0.7 で切り替え</td>
+<td>「空気の中の滴」と「液の中の泡」を、割合によってなめらかにつなぐ</td>
+</tr>
+</tbody>
+</table>
+<p><strong>肝</strong>：オイラー–オイラー法は、液面（水と空気の境目）をくっきりとは描けません。液がどのあたりにどれだけあるか（割合）を求める方法です。液面の形そのものが大事な場合は
+VOF を使います（03 を参照）。</p>
+<h3 id="43-流体と固体の熱のやりとり最重要">4.3
+流体と固体の熱のやりとり（最重要）</h3>
+<p>流体側 <code>0.orig/water/T.liquid</code> の
+<code>water_to_solid</code></p>
+<pre><code>type        compressible::turbulentTemperatureTwoPhaseRadCoupledMixed;
+Tnbr        T;              // 相手（固体）の温度の場の名前
+kappaMethod phaseSystem;
+region      fluid;
+otherPhase  gas;            // 同じ流体領域のもう一つの相</code></pre>
+<p>固体側 <code>0.orig/solid/T</code> の <code>solid_to_water</code></p>
+<pre><code>type        compressible::turbulentTemperatureTwoPhaseRadCoupledMixed;
+Tnbr        T.liquid;       // 相手（流体）の液の温度
+kappaMethod solidThermo;
+region      solid;
+otherPhase  gas;</code></pre>
+<ul>
+<li>液と空気が両方触れている壁でも、それぞれの割合に応じて熱を受け渡します。</li>
+<li>気相の温度 <code>T.gas</code> の壁の条件は
+<code>copiedFixedValue</code>（<code>T.liquid</code> の値を写す）。</li>
+<li>液の壁の乱流熱拡散 <code>alphat.liquid</code> の
+<code>water_to_solid</code> は
+<code>alphatWallBoilingWallFunction</code>（例題のまま）。沸騰しない温度では、ふつうの壁関数と同じように働きます。</li>
+</ul>
+<h3 id="44-入口と出口の条件make_casepy-で追加">4.4
+入口と出口の条件（<code>make_case.py</code> で追加）</h3>
+<table>
+<thead>
+<tr class="header">
+<th>境界</th>
+<th>液の割合</th>
+<th>速度（液・気）</th>
+<th>温度</th>
+<th>圧力 <code>p_rgh</code></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>inlet</code>（天井のノズル 40 × 40 mm）</td>
+<td><code>alpha.liquid</code> = 1（液だけ）</td>
+<td>下向き 1.0 m/s</td>
+<td>308 K</td>
+<td><code>fixedFluxPressure</code></td>
+</tr>
+<tr class="even">
+<td><code>drain</code>（床の左右の帯 x &lt; 100、x &gt; 500 mm）</td>
+<td>出入り自由（入るのは空気）</td>
+<td><code>pressureInletOutletVelocity</code></td>
+<td><code>inletOutlet</code></td>
+<td><code>prghTotalPressure</code>（大気圧）</td>
+</tr>
+<tr class="odd">
+<td><code>maxY</code>（天井のノズル以外＝換気口）</td>
+<td>例題のまま（入るのは空気）</td>
+<td><code>pressureInletOutletVelocity</code></td>
+<td><code>inletOutlet</code> 293 K</td>
+<td><code>prghTotalPressure</code></td>
+</tr>
+<tr class="even">
+<td><code>maxX</code>（囲いの側面）・<code>minY</code>（床）</td>
+<td>—</td>
+<td>止まっている壁</td>
+<td>293 K 一定</td>
+<td><code>fixedFluxPressure</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>肝</strong>：排出口がないと、加工エリアに液がたまり続けて計算が崩れます。必ず液が出られる境界（<code>drain</code>）を作ります。</p>
+<h3 id="45-時間刻みと解き方">4.5 時間刻みと解き方</h3>
+<p><code>system/controlDict</code></p>
+<pre><code>adjustTimeStep yes;  maxCo 0.5;  maxDi 10;  maxDeltaT 2e-3;</code></pre>
+<ul>
+<li>時間刻みは Courant 数 0.5
+に合わせて自動で決まります。噴流が速いところで刻みが小さくなります。</li>
+<li><code>system/water/fvSolution</code> の
+<code>PIMPLE</code>（<code>nOuterCorrectors 2</code>、<code>nEnergyCorrectors 4</code>、<code>faceMomentum yes</code>）は例題のままです。二相流で安定させる設定なので、まず変えないでください。</li>
+<li><code>constant/water/fvOptions</code> の
+<code>limitTemperature</code>（300〜2000
+K）は例題のままです。<strong>下限 300 K（27 ℃）が室温 293 K
+より高い</strong>ので、流体の温度は 27 ℃
+未満にはなりません。室温付近の流体の温度を細かく見たい場合は、下限を 273
+K などに下げてください。</li>
+</ul>
+<h3 id="46-熱伝達率の出力例題のまま使える便利機能">4.6
+熱伝達率の出力（例題のまま使える便利機能）</h3>
+<p><code>system/controlDict</code> の <code>functions</code></p>
+<ul>
+<li><code>htc</code>（<code>reactingEulerHtcModel</code>）：壁
+<code>water_to_solid</code> の熱伝達率を、基準温度 <code>TRef 373</code>
+K で計算します。</li>
+<li><code>htcSurfaceFieldValue</code>：その面平均をログと
+<code>postProcessing/</code> に出します。</li>
+</ul>
+<p>基準温度は沸騰の例題に合わせた 373 K
+のままです。クーラントの温度で評価したい場合は <code>TRef</code> を 308
+にします。</p>
+<hr />
+<h2 id="5-業務で使うときのチェックリスト">5.
+業務で使うときのチェックリスト</h2>
+<ul class="task-list">
+<li><label><input type="checkbox" />囲い・テーブル・ワークの寸法を
+<code>blockMeshDict</code> と <code>topoSetDict</code> に入れた（セル 20
+mm より小さい形は表せない）</label></li>
+<li><label><input
+type="checkbox" />ノズルの位置・大きさ（<code>topoSetDict</code> の
+<code>inletFaces</code>）と流速 <code>U_IN</code>（流量 ÷
+面積）を実機に合わせた</label></li>
+<li><label><input type="checkbox" />排出口 <code>drain</code>
+を作った</label></li>
+<li><label><input
+type="checkbox" />クーラントの物性：水で近似している。油性なら
+<code>thermophysicalProperties.liquid</code> の ρ・c<sub>p</sub>・μ・Pr
+を変えた</label></li>
+<li><label><input type="checkbox" />固体の物性：鋳鉄・アルミなどなら
+<code>constant/solid/thermophysicalProperties</code>
+を変えた</label></li>
+<li><label><input type="checkbox" /><code>fvOptions</code>
+の温度の下限（300 K）が、見たい温度範囲に合っている</label></li>
+<li><label><input type="checkbox" />計算時間：3 秒で約 12 分（1
+並列、1.8 万セル）。セルを半分の大きさにするとセル数 8 倍・刻み 1/2
+で、約 16 倍かかる</label></li>
+<li><label><input
+type="checkbox" />このモデルは<strong>切削熱を入れていない</strong>。クーラントでテーブル・ワークがどう温まるかを見るモデルだと報告に書いた</label></li>
+</ul>
+</body>
+</html>

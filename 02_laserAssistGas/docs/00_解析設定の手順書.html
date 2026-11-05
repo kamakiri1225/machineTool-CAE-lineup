@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>00 解析設定の手順書：レーザー切断のアシストガス（reactingFoam・LTS）</title>
+  <style>
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      html {
+        background-color: white;
+      }
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+      font-size: 85%;
+      margin: 0;
+      hyphens: manual;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      background-color: #1a1a1a;
+      border: none;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    /* CSS for syntax highlighting */
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      {   }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+    code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+    code span.at { color: #7d9029; } /* Attribute */
+    code span.bn { color: #40a070; } /* BaseN */
+    code span.bu { color: #008000; } /* BuiltIn */
+    code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #4070a0; } /* Char */
+    code span.cn { color: #880000; } /* Constant */
+    code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+    code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+    code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+    code span.dt { color: #902000; } /* DataType */
+    code span.dv { color: #40a070; } /* DecVal */
+    code span.er { color: #ff0000; font-weight: bold; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #40a070; } /* Float */
+    code span.fu { color: #06287e; } /* Function */
+    code span.im { color: #008000; font-weight: bold; } /* Import */
+    code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+    code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+    code span.op { color: #666666; } /* Operator */
+    code span.ot { color: #007020; } /* Other */
+    code span.pp { color: #bc7a00; } /* Preprocessor */
+    code span.sc { color: #4070a0; } /* SpecialChar */
+    code span.ss { color: #bb6688; } /* SpecialString */
+    code span.st { color: #4070a0; } /* String */
+    code span.va { color: #19177c; } /* Variable */
+    code span.vs { color: #4070a0; } /* VerbatimString */
+    code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+  <style>
+  body{font-family:'Noto Sans JP','Hiragino Sans','Meiryo',sans-serif;max-width:1100px;margin:2em auto;padding:0 1.2em;line-height:1.75;color:#222}
+  h1{border-bottom:3px solid #1F3A5F;padding-bottom:.3em;color:#1F3A5F} h2{border-left:6px solid #2F6FB0;padding-left:.5em;margin-top:2em;color:#1F3A5F}
+  h3{color:#2F6FB0} img{max-width:100%;height:auto;border:1px solid #ddd;margin:.5em 0}
+  table{border-collapse:collapse;margin:1em 0;font-size:.95em} th,td{border:1px solid #bbb;padding:.35em .7em} th{background:#E3ECF7}
+  code{background:#f4f4f4;padding:.1em .3em;border-radius:3px} pre{background:#f4f4f4;padding:1em;overflow-x:auto}
+  nav.top{font-size:.9em;margin-bottom:1em} nav.top a{color:#2F6FB0}
+  </style>
+  <nav class="top"><a href="../../index.html">← 一覧に戻る</a></nav>
+  <script
+  src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-chtml-full.js"
+  type="text/javascript"></script>
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">00
+解析設定の手順書：レーザー切断のアシストガス（reactingFoam・LTS）</h1>
+</header>
+<h1 id="00-解析設定の手順書レーザー切断のアシストガスreactingfoamlts">00
+解析設定の手順書：レーザー切断のアシストガス（reactingFoam・LTS）</h1>
+<p>作成日：2026-11-05　OpenFOAM v2512（ESI）</p>
+<p>ノズルから吹き出す高圧ガス（N₂・O₂・空気）が、切断溝の中をどう流れ、周りの空気をどれだけ巻き込むかを計算するための手順書です。
+ここでは「どのファイルの、どの行が肝か」と「なぜその値にしたか」をまとめます。
+結果は 02・04、基礎式は 03、ソルバの選び方は 01 を見てください。</p>
+<hr />
+<h2 id="1-全体の流れどのケースを元にすればよいか">1.
+全体の流れ（どのケースを元にすればよいか）</h2>
+<table>
+<thead>
+<tr class="header">
+<th>やりたいこと</th>
+<th>元にするケース</th>
+<th>作り方</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>まず傾向を早く見たい（数十分）</td>
+<td><code>run002_O2cut_mildSteel6mm</code>（酸素切断）、<code>run003_airCut_highPressure_t2mm</code>（空気切断）</td>
+<td><code>tools/make_laser_case.py</code>：軸対称（くさび形）、丸穴で溝を近似</td>
+</tr>
+<tr class="even">
+<td>溝の形（細長いスリット）と、切断の最前面を見たい（数時間）</td>
+<td><code>run004_kerf3D_N2_p*MPa</code></td>
+<td><code>tools/make_kerf3d_mix.py</code>：3 次元、半分モデル（z = 0
+が対称面）</td>
+</tr>
+</tbody>
+</table>
+<p>作業の順番は次の 5 段階です。</p>
+<ol type="1">
+<li>ケースを作る（Python スクリプトに寸法・圧力・ガスを渡す）</li>
+<li>メッシュを作る（<code>Allrun</code> の前半）</li>
+<li>計算する（<code>reactingFoam</code>、4 並列）</li>
+<li>収束を確かめる（残差・流量・局所時間刻み）</li>
+<li>図を作る（<code>tools/</code> の描画スクリプト）</li>
+</ol>
+<h3 id="11-どのチュートリアルを元にしたか">1.1
+どのチュートリアルを元にしたか</h3>
+<table>
+<thead>
+<tr class="header">
+<th>項目</th>
+<th>元にしたもの</th>
+<th>変えたところ</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>ソルバと時間の進め方（<code>fvSchemes</code> の
+<code>localEuler</code>、<code>fvSolution</code> の
+<code>maxCo</code>・<code>alphaTemp</code>・<code>alphaY</code>・<code>Yref</code>・<code>rDeltaTSmoothingCoeff</code>）</td>
+<td><code>$FOAM_TUTORIALS/combustion/reactingFoam/RAS/SandiaD_LTS</code>（メタン火炎を
+LTS で定常にする例題）</td>
+<td>燃焼をなくす、<code>transonic yes</code> を追加、<code>maxCo</code>
+を 0.15 → 0.2、物性を定比熱に、化学種を N₂・O₂ だけに</td>
+</tr>
+<tr class="even">
+<td>圧縮性の境界条件（<code>totalPressure</code>、<code>totalTemperature</code>、<code>pressureInletOutletVelocity</code>）</td>
+<td>圧縮性の例題で標準的な組み合わせ（参考：<code>$FOAM_TUTORIALS/compressible/rhoPimpleFoam/RAS/aerofoilNACA0012</code>）</td>
+<td>入口を <code>uniformTotalPressure</code>
+にして、圧力を少しずつ上げる</td>
+</tr>
+<tr class="odd">
+<td>形状・メッシュ</td>
+<td>例題は使わず、スクリプトで一から作成</td>
+<td>軸対称：<code>blockMesh</code> のくさび。3
+次元：<code>blockMesh</code> ＋ <code>snappyHexMesh</code>（ノズル・板は
+STL を自作）</td>
+</tr>
+</tbody>
+</table>
+<p>例題の場所は
+<code>ls $FOAM_TUTORIALS/combustion/reactingFoam/RAS/SandiaD_LTS</code>
+で確認できます。</p>
+<hr />
+<h2 id="2-手順-1ケースを作る">2. 手順 1：ケースを作る</h2>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> 02_laserAssistGas</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="co"># 軸対称（例：酸素切断、ゲージ圧 0.1 MPa）</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="ex">python3</span> tools/make_laser_case.py run_myO2 <span class="st">&#39;{&quot;p0_gauge&quot;:0.1e6, &quot;YO2_in&quot;:1.0, &quot;T&quot;:6.0}&#39;</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co"># 3 次元（例：N2、2.0 MPa）</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="ex">python3</span> tools/make_kerf3d_mix.py run_myN2 <span class="st">&#39;{&quot;p0&quot;:2.0e6, &quot;gas&quot;:&quot;N2&quot;}&#39;</span></span></code></pre></div>
+<p>変えることの多いパラメータ（単位は mm と Pa）</p>
+<table>
+<thead>
+<tr class="header">
+<th>名前</th>
+<th>意味</th>
+<th>run004 の値</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>p0</code>（3D）／<code>p0_gauge</code>（軸対称）</td>
+<td>ノズルの供給圧（3D はゲージ圧として大気圧に足す）</td>
+<td>0.5〜8.0 MPa</td>
+</tr>
+<tr class="even">
+<td><code>gas</code>、<code>YO2_in</code></td>
+<td>アシストガスの種類（N₂ なら O₂ 質量分率 0、酸素なら 1、空気なら
+0.233）</td>
+<td>N₂（0）</td>
+</tr>
+<tr class="odd">
+<td><code>DE</code>、<code>DIN</code>、<code>LN</code></td>
+<td>ノズルの出口径・入口径・長さ</td>
+<td>1.5、3.0、3.0</td>
+</tr>
+<tr class="even">
+<td><code>H</code></td>
+<td>ノズルと板のすき間（スタンドオフ）</td>
+<td>1.0</td>
+</tr>
+<tr class="odd">
+<td><code>T</code>、<code>W</code></td>
+<td>板厚、切断溝の幅</td>
+<td>1.2、0.3</td>
+</tr>
+<tr class="even">
+<td><code>XOFF</code></td>
+<td>ノズル中心と切断の最前面のずれ</td>
+<td>0</td>
+</tr>
+<tr class="odd">
+<td><code>dx0</code></td>
+<td>背景メッシュの大きさ（細かくすると時間が増える）</td>
+<td>0.5</td>
+</tr>
+<tr class="even">
+<td><code>endTime</code></td>
+<td>反復回数（LTS では時間ではなく回数）</td>
+<td>4000</td>
+</tr>
+</tbody>
+</table>
+<p>スクリプトの中の <code>XMIN, XMAX, ZMAX = -10, 10, 10</code> と
+<code>YMIN = -T - 10</code>
+が計算領域です。<strong>これを小さくしないこと</strong>（4
+章の注意を参照）。</p>
+<hr />
+<h2 id="3-手順-23メッシュと計算">3. 手順 2・3：メッシュと計算</h2>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> run_myN2</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">HWLOC_COMPONENTS</span><span class="op">=</span>-gl        <span class="co"># WSL2 で mpirun が止まらないようにするおまじない</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="ex">./Allrun</span>                           <span class="co"># blockMesh → snappyHexMesh → topoSet → createPatch → checkMesh</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="ex">decomposePar</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="ex">mpirun</span> <span class="at">-np</span> 4 reactingFoam <span class="at">-parallel</span> <span class="op">&gt;</span> log.reactingFoam <span class="dv">2</span><span class="op">&gt;&amp;</span><span class="dv">1</span> <span class="kw">&amp;</span></span></code></pre></div>
+<ul>
+<li>3 次元（58.9 万セル）は 4 並列で 1 本 約 7.5 時間（4,000 回）。</li>
+<li>軸対称（1 万セル）は 1 並列で 20〜40 分。</li>
+</ul>
+<hr />
+<h2 id="4-設定の肝ここだけは理解してから変える">4.
+設定の肝（ここだけは理解してから変える）</h2>
+<h3 id="41-ソルバreactingfoam-を燃焼なし混合ガスで使う">4.1
+ソルバ：<code>reactingFoam</code> を「燃焼なし・混合ガス」で使う</h3>
+<p><code>constant/thermophysicalProperties</code></p>
+<pre><code>thermoType { type hePsiThermo; mixture reactingMixture; transport const; thermo hConst;
+             energy sensibleEnthalpy; equationOfState perfectGas; specie specie; }
+inertSpecie N2;</code></pre>
+<ul>
+<li><strong><code>hePsiThermo</code>（密度 = ψ
+p）</strong>：圧縮性が強い流れ（超音速）向けです。圧力方程式を「波が伝わる式」として解けます。</li>
+<li><strong><code>reactingMixture</code></strong>：N₂ と O₂
+を別々の成分として運び、混ざり具合（周りの空気の巻き込み）を計算します。</li>
+<li><code>combustionProperties</code> は
+<code>none</code>、<code>chemistryProperties</code> は
+<code>chemistry off</code>。反応は解きません。</li>
+<li><strong><code>hConst</code>（比熱一定）と
+<code>const</code>（粘性一定）</strong>：超音速で膨張すると −150 ℃
+近くまで冷えます。JANAF の温度範囲（200
+K〜）から外れて計算が壊れたため、定比熱を選びました。
+<ul>
+<li>N₂：c<sub>p</sub> 1040 J/(kg·K)</li>
+<li>O₂：c<sub>p</sub> 918 J/(kg·K)</li>
+<li>値は <code>constant/thermo.hConst</code> にあります。</li>
+</ul></li>
+</ul>
+<h3 id="42-時間の進め方lts局所時間刻みで定常解を早く出す">4.2
+時間の進め方：LTS（局所時間刻み）で定常解を早く出す</h3>
+<p><code>system/fvSchemes</code></p>
+<pre><code>ddtSchemes { default localEuler; }</code></pre>
+<p><code>system/fvSolution</code> の <code>PIMPLE</code></p>
+<pre><code>transonic yes;                 // 超音速・衝撃波を扱う圧力方程式にする（最重要）
+maxCo 0.2;                     // セルごとの Courant 数の上限。大きくすると速いが発散しやすい
+rDeltaTSmoothingCoeff 0.02;    // 隣のセルとの時間刻みの差をならす
+alphaTemp 0.05; alphaY 0.05;   // 温度・成分が 1 回で大きく変わらないように時間刻みを抑える
+nCorrectors 2; nNonOrthogonalCorrectors 1;</code></pre>
+<ul>
+<li><code>localEuler</code>
+は、セルごとに許される一番大きな時間刻みで進めます。時間の正確さを捨てて、定常の答えに早く近づける方法です。そのため
+<code>endTime</code> は「反復回数」として読みます。</li>
+<li><strong><code>transonic yes</code>
+がないと、ノズル出口のチョーク（音速で詰まる）や衝撃波が出ません。</strong>
+超音速の計算では必ず入れます。</li>
+</ul>
+<h3 id="43-境界条件入口は全圧出口は大気圧で出入り自由">4.3
+境界条件：入口は「全圧」、出口は「大気圧で出入り自由」</h3>
+<table>
+<thead>
+<tr class="header">
+<th>境界</th>
+<th>p</th>
+<th>U</th>
+<th>T</th>
+<th>O₂ / N₂</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>inlet</code>（ノズル入口）</td>
+<td><code>uniformTotalPressure</code>（全圧を 500
+回かけて大気圧→設定圧に上げる）</td>
+<td><code>pressureInletOutletVelocity</code></td>
+<td><code>totalTemperature</code>（300 K）</td>
+<td>指定したガス（N₂ なら O₂ = 0）</td>
+</tr>
+<tr class="even">
+<td><code>top</code>・<code>bottom</code>・<code>ambient</code>（周り）</td>
+<td><code>totalPressure</code>（大気圧）</td>
+<td><code>pressureInletOutletVelocity</code></td>
+<td><code>inletOutlet</code> 300 K</td>
+<td><code>inletOutlet</code>（入ってくるのは空気：O₂ 0.233）</td>
+</tr>
+<tr class="odd">
+<td><code>nozzle</code>・<code>plate</code>（壁）</td>
+<td><code>zeroGradient</code></td>
+<td><code>noSlip</code></td>
+<td><code>zeroGradient</code>（断熱）</td>
+<td><code>zeroGradient</code></td>
+</tr>
+<tr class="even">
+<td><code>symmetryPlane</code>（3D の z = 0）</td>
+<td>対称</td>
+<td>対称</td>
+<td>対称</td>
+<td>対称</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li><strong>入口の圧力は一気に上げない</strong>：<code>p0 table ((0 101325) (500 2101325) (1e9 2101325))</code>
+のように、最初の 500
+回で上げます。いきなり高圧にすると初回で発散します。</li>
+<li><strong>流量ではなく圧力で与える</strong>：実機の設定値はガス圧なので、これがそのまま入力になります。流量は結果として出てきます（理論値との比較は
+5 章）。</li>
+<li><strong>周りの境界はガスが逆流しても空気が入るようにする</strong>：<code>inletOutlet</code>
+にしておくと、巻き込まれる空気の O₂ を正しく運べます。</li>
+</ul>
+<h3 id="44-メッシュ溝とすき間だけ細かく">4.4
+メッシュ：溝とすき間だけ細かく</h3>
+<p><code>system/snappyHexMeshDict</code> の
+<code>refinementRegions</code></p>
+<table>
+<thead>
+<tr class="header">
+<th>領域</th>
+<th>細かさ（背景 0.5 mm に対して）</th>
+<th>セルの大きさ</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>slot</code>（切断溝の中）</td>
+<td>レベル 4</td>
+<td>約 0.03 mm（溝幅 0.3 mm に 約 10 セル）</td>
+</tr>
+<tr class="even">
+<td><code>jet</code>（ノズルの真下の円柱）</td>
+<td>レベル 3</td>
+<td>約 0.06 mm</td>
+</tr>
+<tr class="odd">
+<td><code>gap</code>（ノズルと板のすき間）</td>
+<td>レベル 2</td>
+<td>約 0.125 mm</td>
+</tr>
+<tr class="even">
+<td>板の表面</td>
+<td>レベル 3〜4</td>
+<td>—</td>
+</tr>
+</tbody>
+</table>
+<p>溝の幅に 10
+セル程度ないと、溝の中の速度分布が出ません。メッシュを粗くして時間を短くしたい場合は、<code>slot</code>
+を最後に粗くします。</p>
+<h3 id="45-乱流">4.5 乱流</h3>
+<p><code>constant/turbulenceProperties</code>：<code>realizableKE</code>（3D）、<code>kOmegaSST</code>（軸対称）。壁は壁関数です。</p>
+<p>入口の値：</p>
+<ul>
+<li>乱れの強さ：5 %</li>
+<li>混合長：0.1 mm（ノズル径の 1 割弱）</li>
+</ul>
+<hr />
+<h2 id="5-手順-4収束の確かめ方3-つ全部見る">5. 手順 4：収束の確かめ方（3
+つ全部見る）</h2>
+<table>
+<thead>
+<tr class="header">
+<th>何を見るか</th>
+<th>どこにあるか</th>
+<th>合格の目安</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>ノズル流量</td>
+<td><code>postProcessing/inletFlow/0/surfaceFieldValue.dat</code>（20
+回ごと）</td>
+<td>最後の 1,000 回で変化が 1 % 以内</td>
+</tr>
+<tr class="even">
+<td>溝の下を抜ける流量</td>
+<td><code>postProcessing/slotFlow/0/...</code></td>
+<td>同上</td>
+</tr>
+<tr class="odd">
+<td>局所時間刻み</td>
+<td><code>log.reactingFoam</code> の <code>deltaT = min max</code></td>
+<td>最小値が 10⁻⁹ s 程度より大きいまま</td>
+</tr>
+<tr class="even">
+<td>残差</td>
+<td><code>python3 tools/plot_residuals.py res.png &lt;ケース&gt;</code></td>
+<td>10⁻³〜10⁻⁴ で横ばい（LTS では下がりきらない）</td>
+</tr>
+</tbody>
+</table>
+<p>ノズル流量は、一次元の理論（チョーク流）とも比べます。2
+割以内なら妥当です。</p>
+<p><span class="math display">\[\dot m = A\,p_0\sqrt{\frac{\gamma}{R
+T_0}}\left(\frac{2}{\gamma+1}\right)^{\frac{\gamma+1}{2(\gamma-1)}}\]</span></p>
+<ul>
+<li>A：ノズル出口の面積、p<sub>0</sub>：供給圧（絶対圧）、T<sub>0</sub>：供給温度</li>
+<li>γ = 1.4、R = 296.8 J/(kg·K)（N₂）</li>
+<li>3D は半分モデルなので、出てきた流量を 2 倍して比べます。</li>
+</ul>
+<hr />
+<h2 id="6-つまずきやすい点実際に起きたこと">6.
+つまずきやすい点（実際に起きたこと）</h2>
+<table>
+<thead>
+<tr class="header">
+<th>症状</th>
+<th>原因</th>
+<th>対策</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>局所時間刻みの最小値が 10⁻¹² s 台まで落ち、計算が進まなくなる</td>
+<td>超音速の噴流が、勢いを保ったまま圧力境界にぶつかる。境界の手前で真空に近いセルができる</td>
+<td>計算領域を広げる。板の下は 10 mm、横（x・z）は ±10 mm
+にした（0.5・2.0 MPa は解決）</td>
+</tr>
+<tr class="even">
+<td>4.0・8.0 MPa だけ止まる</td>
+<td>高圧ほど噴流が遠くまで届く。±10 mm でもまだ足りない可能性がある</td>
+<td>未解決。領域をさらに広げる、<code>maxCo</code>
+を下げる、圧力を上げる回数を増やす、を検討中</td>
+</tr>
+<tr class="odd">
+<td>低温で物性エラー</td>
+<td>JANAF の温度範囲外（200 K 未満）</td>
+<td><code>hConst</code> にする（4.1）</td>
+</tr>
+<tr class="even">
+<td>圧力の表を書き換えても効かない</td>
+<td><code>p0Coeffs</code> の古い指定が残っていて優先された</td>
+<td><code>0/p</code> の入口から <code>p0Coeffs</code> を消す</td>
+</tr>
+<tr class="odd">
+<td><code>mpirun</code> が返ってこない（WSL2）</td>
+<td>hwloc が画面の情報を取りに行って止まる</td>
+<td><code>export HWLOC_COMPONENTS=-gl</code></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="7-手順-5図を作る">7. 手順 5：図を作る</h2>
+<div class="sourceCode" id="cb6"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="ex">python3</span> tools/plot_kerf_slice.py out.png run_myN2            <span class="co"># 溝の中心面：速度・静圧・O2 濃度</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="ex">python3</span> tools/kerf_metrics.py run_myN2                       <span class="co"># 流量・せん断応力の数値</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="ex">python3</span> tools/render_kerf3d_result.py run_myN2 out3d.png     <span class="co"># 斜め上からの 3D 図</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="ex">python3</span> tools/plot_residuals.py res.png run_myN2             <span class="co"># 残差</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="ex">python3</span> tools/plot_axisym.py run_myO2                        <span class="co"># 軸対称ケースの分布</span></span></code></pre></div>
+<p>ParaView の <code>pvbatch</code> はこの環境で止まるため、描画は
+python の VTK で行っています。</p>
+<hr />
+<h2 id="8-業務で使うときのチェックリスト">8.
+業務で使うときのチェックリスト</h2>
+<ul class="task-list">
+<li><label><input
+type="checkbox" />ノズル寸法（<code>DE</code>・<code>DIN</code>・<code>LN</code>）、スタンドオフ
+<code>H</code>、板厚 <code>T</code>、溝幅 <code>W</code>
+を実機に合わせた</label></li>
+<li><label><input
+type="checkbox" />ガスの種類（<code>gas</code>・<code>YO2_in</code>）と供給圧
+<code>p0</code>
+を実機の設定値にした（ゲージ圧か絶対圧かに注意）</label></li>
+<li><label><input type="checkbox" />計算領域を小さくしていない（板の下
+10 mm、横 ±10 mm 以上）</label></li>
+<li><label><input type="checkbox" /><code>transonic yes</code> と
+<code>localEuler</code> が入っている</label></li>
+<li><label><input type="checkbox" />ノズル流量を理論値と比べた（2
+割以内）</label></li>
+<li><label><input
+type="checkbox" />流量と局所時間刻みが落ち着いてから結果を読んだ</label></li>
+<li><label><input
+type="checkbox" />このモデルは<strong>溶けた金属・レーザーの熱・板の温度を入れていない</strong>（ガスの流れだけ）ことを、報告に書いた</label></li>
+</ul>
+</body>
+</html>
