@@ -59,8 +59,8 @@ for j, (P, t, tri, V, ps) in enumerate(data):
         lev = np.linspace(lo, hi, 21)
         cs = ax.tricontourf(tri, np.clip(f, lo, hi), levels=lev, cmap="jet")
         solids(ax, P); ax.set_xlim(*XL); ax.set_ylim(*YL); ax.set_aspect("equal"); ax.set_xticks([]); ax.set_yticks([])
-        ax.set_title(f"今回：{lab}（p₀ = {p0:g} MPa）" if paper else f"{lab}　p₀ = {p0:g} MPa", fontsize=15)
+        ax.set_title(f"今回：{lab}（p₀ = {p0:g} MPa）" if paper else f"今回の計算：{lab}　p₀ = {p0:g} MPa", fontsize=15)
         cb = fig.colorbar(cs, ax=ax, fraction=0.04, pad=0.02, ticks=[lo, (lo + hi) / 2, hi]); cb.ax.tick_params(labelsize=14)
 fig.suptitle("切断溝の中心面（z = 0）の速度と静圧：論文（松村ら 2017、空気、Fluent）と今回（N₂、OpenFOAM）" if paper else
-             "切断溝の中心面（z = 0）の速度と静圧（論文の図 3 と同じ色・範囲）", fontsize=19)
+             "今回の計算（N₂、OpenFOAM）だけの図：切断溝の中心面（z = 0）の速度と静圧\n（論文の図は含まない。論文の図 3 と見比べやすいよう、同じ色・同じ範囲で描いた）", fontsize=19)
 fig.tight_layout(rect=(0, 0, 1, 0.97)); fig.savefig(out, dpi=90, facecolor="white", bbox_inches="tight"); print(out)
