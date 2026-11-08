@@ -1,0 +1,165 @@
+{
+  "modal_vs_solver_FRF_relative_errors": [
+    9.77613532814163e-07,
+    9.366077298656927e-07,
+    1.054353670457259e-06,
+    5.545520432447756e-06,
+    1.030190301065299e-06
+  ],
+  "selected_conditions": [
+    {
+      "rpm": 3010.0166944908183,
+      "depth_mm": 14.607230890120187,
+      "chatter_hz": 934.5794448538948,
+      "kt": 1000.0,
+      "teeth": 4,
+      "B0": [
+        [
+          0.3,
+          1.0
+        ],
+        [
+          -1.0,
+          0.3
+        ]
+      ],
+      "loop_residual": 1.1564409420219597e-12,
+      "modal_reconstruction_error": 8.242040816488364e-17,
+      "dominant_modes": [
+        {
+          "mode_number": 18,
+          "natural_frequency_hz": 910.2936776,
+          "relative_amplitude_share": 0.49857551541039385,
+          "modal_kinetic_share": 0.6672444674284561
+        },
+        {
+          "mode_number": 20,
+          "natural_frequency_hz": 996.4470681,
+          "relative_amplitude_share": 0.183114186310458,
+          "modal_kinetic_share": 0.13985296953588053
+        },
+        {
+          "mode_number": 19,
+          "natural_frequency_hz": 927.3672006,
+          "relative_amplitude_share": 0.09147696273183051,
+          "modal_kinetic_share": 0.15934181445316148
+        },
+        {
+          "mode_number": 22,
+          "natural_frequency_hz": 1171.10731,
+          "relative_amplitude_share": 0.06840013414697849,
+          "modal_kinetic_share": 0.01389835704322449
+        },
+        {
+          "mode_number": 23,
+          "natural_frequency_hz": 1204.677863,
+          "relative_amplitude_share": 0.03402585026860112,
+          "modal_kinetic_share": 0.005004691683544494
+        }
+      ]
+    },
+    {
+      "rpm": 6011.686143572621,
+      "depth_mm": 20.67072461334864,
+      "chatter_hz": 990.0037314905716,
+      "kt": 1000.0,
+      "teeth": 4,
+      "B0": [
+        [
+          0.3,
+          1.0
+        ],
+        [
+          -1.0,
+          0.3
+        ]
+      ],
+      "loop_residual": 7.127724052341017e-16,
+      "modal_reconstruction_error": 4.212266113560372e-16,
+      "dominant_modes": [
+        {
+          "mode_number": 18,
+          "natural_frequency_hz": 910.2936776,
+          "relative_amplitude_share": 0.3448817306401272,
+          "modal_kinetic_share": 0.36704597017137297
+        },
+        {
+          "mode_number": 20,
+          "natural_frequency_hz": 996.4470681,
+          "relative_amplitude_share": 0.32129140278712826,
+          "modal_kinetic_share": 0.4949745996560086
+        },
+        {
+          "mode_number": 23,
+          "natural_frequency_hz": 1204.677863,
+          "relative_amplitude_share": 0.0712410994855507,
+          "modal_kinetic_share": 0.02522188700798784
+        },
+        {
+          "mode_number": 22,
+          "natural_frequency_hz": 1171.10731,
+          "relative_amplitude_share": 0.06768252913458409,
+          "modal_kinetic_share": 0.015644428741027602
+        },
+        {
+          "mode_number": 19,
+          "natural_frequency_hz": 927.3672006,
+          "relative_amplitude_share": 0.05941119711101395,
+          "modal_kinetic_share": 0.07726803825542657
+        }
+      ]
+    },
+    {
+      "rpm": 9996.661101836395,
+      "depth_mm": 20.049154789174324,
+      "chatter_hz": 986.9422639291553,
+      "kt": 1000.0,
+      "teeth": 4,
+      "B0": [
+        [
+          0.3,
+          1.0
+        ],
+        [
+          -1.0,
+          0.3
+        ]
+      ],
+      "loop_residual": 1.9285106718498778e-15,
+      "modal_reconstruction_error": 5.592493459867541e-16,
+      "dominant_modes": [
+        {
+          "mode_number": 18,
+          "natural_frequency_hz": 910.2936776,
+          "relative_amplitude_share": 0.3523813738771135,
+          "modal_kinetic_share": 0.3828018958589099
+        },
+        {
+          "mode_number": 20,
+          "natural_frequency_hz": 996.4470681,
+          "relative_amplitude_share": 0.31556062766484827,
+          "modal_kinetic_share": 0.4770000616319575
+        },
+        {
+          "mode_number": 23,
+          "natural_frequency_hz": 1204.677863,
+          "relative_amplitude_share": 0.0692774991123496,
+          "modal_kinetic_share": 0.02382697235196816
+        },
+        {
+          "mode_number": 22,
+          "natural_frequency_hz": 1171.10731,
+          "relative_amplitude_share": 0.06712247861562698,
+          "modal_kinetic_share": 0.015371301148931624
+        },
+        {
+          "mode_number": 19,
+          "natural_frequency_hz": 927.3672006,
+          "relative_amplitude_share": 0.061131546644185866,
+          "modal_kinetic_share": 0.08172635993486102
+        }
+      ]
+    }
+  ],
+  "display": "Right top: feedback boundary shape. Right middle/bottom: individual FE eigenmodes."
+}

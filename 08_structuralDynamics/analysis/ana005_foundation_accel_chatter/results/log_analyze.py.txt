@@ -1,0 +1,70 @@
+{
+  "M": 1930.8747999999543,
+  "mt": 125.12200000000067,
+  "fn": 22.907256037462428,
+  "zeta": 0.10538115635352972,
+  "chatter": {
+    "fixed_FRF_checks": {
+      "reciprocity_relative_error": 5.4025916820509424e-08
+    },
+    "foundation_FRF_checks": {
+      "reciprocity_relative_error": 5.154013493970427e-08
+    },
+    "foundation_table_stiff_FRF_checks": {
+      "reciprocity_relative_error": 7.708576609125131e-08
+    },
+    "fixed_1": {
+      "root_grid_relative_error": 1.717512606232516e-11,
+      "minimum_width_mm": 8.373042564473527,
+      "frequency_band_Hz": [
+        5,
+        3000
+      ]
+    },
+    "foundation_1": {
+      "root_grid_relative_error": 2.6114084369021763e-11,
+      "minimum_width_mm": 4.9994710240294875,
+      "frequency_band_Hz": [
+        5,
+        3000
+      ]
+    },
+    "foundation_table_stiff_1": {
+      "root_grid_relative_error": 1.924906256541676e-11,
+      "minimum_width_mm": 14.195273272089082,
+      "frequency_band_Hz": [
+        5,
+        3000
+      ]
+    },
+    "fixed_2": {
+      "root_grid_relative_error": 3.255100231824975e-12,
+      "minimum_width_mm": 13.502119127439277,
+      "frequency_band_Hz": [
+        5,
+        3000
+      ]
+    },
+    "foundation_2": {
+      "root_grid_relative_error": 1.1324050432803708e-11,
+      "minimum_width_mm": 11.086497916649865,
+      "frequency_band_Hz": [
+        5,
+        3000
+      ]
+    },
+    "foundation_table_stiff_2": {
+      "root_grid_relative_error": 2.403487798525963e-11,
+      "minimum_width_mm": 12.813253065394417,
+      "frequency_band_Hz": [
+        5,
+        3000
+      ]
+    },
+    "single_DOF_check": {
+      "b_mm": 0.40800000000000003,
+      "analytical_b_mm": 0.408,
+      "characteristic_residual": 2.7755575615628914e-16
+    }
+  }
+}

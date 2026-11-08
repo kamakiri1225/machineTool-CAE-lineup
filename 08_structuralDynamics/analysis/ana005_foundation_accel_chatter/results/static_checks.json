@@ -1,0 +1,38 @@
+{
+  "fixed": {
+    "static_diagonal_mm_N": [
+      1.9841279e-05,
+      1.1746435999999998e-05,
+      5.000723e-06
+    ],
+    "dynamic_5Hz_diagonal_mm_N": [
+      1.9433774e-05,
+      1.1391009000000001e-05,
+      4.831408e-06
+    ]
+  },
+  "foundation": {
+    "static_diagonal_mm_N": [
+      2.025722e-05,
+      1.2172493e-05,
+      5.171547e-06
+    ],
+    "dynamic_5Hz_diagonal_mm_N": [
+      1.9417264e-05,
+      1.1328368e-05,
+      4.872399e-06
+    ]
+  },
+  "foundation_table_stiff": {
+    "static_diagonal_mm_N": [
+      1.540327e-05,
+      1.1371705e-05,
+      4.6953285e-06
+    ],
+    "dynamic_5Hz_diagonal_mm_N": [
+      1.4853539e-05,
+      1.0525001e-05,
+      4.3972058e-06
+    ]
+  }
+}

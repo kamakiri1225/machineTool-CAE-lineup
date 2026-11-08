@@ -1,0 +1,65 @@
+{
+  "fixed": {
+    "minimum_axial_depth_mm": 11.978711924467913,
+    "maximum_characteristic_relative_residual": 0.00038940902063430634,
+    "frequency_grid_refinement_relative_error": 0.00013327116759241495,
+    "finite_points": 600,
+    "at_3000_rpm": {
+      "evaluated_rpm": 3010.0166944908183,
+      "axial_depth_mm": 13.199253483452468,
+      "chatter_frequency_Hz": 339.1797489732654
+    },
+    "at_6000_rpm": {
+      "evaluated_rpm": 6011.686143572621,
+      "axial_depth_mm": 19.076556039567578,
+      "chatter_frequency_Hz": 334.91018758329005
+    },
+    "at_10000_rpm": {
+      "evaluated_rpm": 9996.661101836395,
+      "axial_depth_mm": 18.491095863990736,
+      "chatter_frequency_Hz": 479.5069765229318
+    }
+  },
+  "foundation": {
+    "minimum_axial_depth_mm": 9.360783612794412,
+    "maximum_characteristic_relative_residual": 0.0008313490865744714,
+    "frequency_grid_refinement_relative_error": 5.656297406238925e-06,
+    "finite_points": 600,
+    "at_3000_rpm": {
+      "evaluated_rpm": 3010.0166944908183,
+      "axial_depth_mm": 14.617124378522236,
+      "chatter_frequency_Hz": 934.6103283274252
+    },
+    "at_6000_rpm": {
+      "evaluated_rpm": 6011.686143572621,
+      "axial_depth_mm": 20.675532758856235,
+      "chatter_frequency_Hz": 990.0001433521101
+    },
+    "at_10000_rpm": {
+      "evaluated_rpm": 9996.661101836395,
+      "axial_depth_mm": 20.052106748205766,
+      "chatter_frequency_Hz": 986.9338717292832
+    }
+  },
+  "foundation_table_stiff": {
+    "minimum_axial_depth_mm": 16.428111537838745,
+    "maximum_characteristic_relative_residual": 0.0002407595835035416,
+    "frequency_grid_refinement_relative_error": 1.4538629919117881e-05,
+    "finite_points": 600,
+    "at_3000_rpm": {
+      "evaluated_rpm": 3010.0166944908183,
+      "axial_depth_mm": 16.530893655718817,
+      "chatter_frequency_Hz": 933.1619152701187
+    },
+    "at_6000_rpm": {
+      "evaluated_rpm": 6011.686143572621,
+      "axial_depth_mm": 26.735195351216,
+      "chatter_frequency_Hz": 997.5749156898979
+    },
+    "at_10000_rpm": {
+      "evaluated_rpm": 9996.661101836395,
+      "axial_depth_mm": 23.289559706204102,
+      "chatter_frequency_Hz": 395.16701024427965
+    }
+  }
+}

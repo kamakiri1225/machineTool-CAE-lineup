@@ -1,0 +1,7 @@
+Running /mnt/d/work/001_deepflow/002_multiPhysics/analysis/ana005_foundation_accel_chatter/fixed solve.log
+fixed 31286 nodes {'total_kg': np.float64(1930.8747999999543), 'moving_kg': np.float64(125.12200000000067)}
+Running /mnt/d/work/001_deepflow/002_multiPhysics/analysis/ana005_foundation_accel_chatter/foundation solve.log
+foundation 31302 nodes {'total_kg': np.float64(1930.8747999999543), 'moving_kg': np.float64(125.12200000000067)}
+Running /mnt/d/work/001_deepflow/002_multiPhysics/analysis/ana005_foundation_accel_chatter/foundation_table_stiff solve.log
+foundation_table_stiff 31302 nodes {'total_kg': np.float64(1930.8747999999543), 'moving_kg': np.float64(125.12200000000067)}
+VMC force-pair FRFs completed.

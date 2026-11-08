@@ -1,0 +1,32 @@
+[
+  {
+    "dof": 1,
+    "selected_frequency_Hz": 23.0,
+    "max_normalized_MPC_residual": 6.015656280065427e-08,
+    "selected_components_um_per_N": [
+      0.1205947729568991,
+      2.442590843824151e-06,
+      7.668183089399005e-08
+    ]
+  },
+  {
+    "dof": 2,
+    "selected_frequency_Hz": 23.0,
+    "max_normalized_MPC_residual": 6.756540819988853e-08,
+    "selected_components_um_per_N": [
+      2.442591765804369e-06,
+      0.13169775438037243,
+      0.003603966060853677
+    ]
+  },
+  {
+    "dof": 3,
+    "selected_frequency_Hz": 78.0,
+    "max_normalized_MPC_residual": 7.003814214678014e-08,
+    "selected_components_um_per_N": [
+      7.944873818871957e-09,
+      0.005452590776834515,
+      0.04197256059285274
+    ]
+  }
+]

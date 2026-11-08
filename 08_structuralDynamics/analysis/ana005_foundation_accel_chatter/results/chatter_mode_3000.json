@@ -1,0 +1,90 @@
+{
+  "input_condition": {
+    "rpm": 3010.0166944908183,
+    "depth_mm": 14.617124378522236,
+    "chatter_hz": 934.6103283274252,
+    "kt": 1000.0,
+    "teeth": 4,
+    "B0": [
+      [
+        0.3,
+        1.0
+      ],
+      [
+        -1.0,
+        0.3
+      ]
+    ]
+  },
+  "condition": {
+    "rpm": 3010.0166944908183,
+    "depth_mm": 14.607230890120187,
+    "chatter_hz": 934.5794448538948,
+    "kt": 1000.0,
+    "teeth": 4,
+    "B0": [
+      [
+        0.3,
+        1.0
+      ],
+      [
+        -1.0,
+        0.3
+      ]
+    ]
+  },
+  "refined": true,
+  "loop_relative_residual": 1.1564409420219597e-12,
+  "relative_reconstruction_error": 8.242040816488364e-17,
+  "force_xy_real": [
+    -0.48915459792283067,
+    0.9270809626202908
+  ],
+  "force_xy_imag": [
+    0.6795919805964277,
+    -0.37486115929372427
+  ],
+  "relative_xyz_real": [
+    4.351678892146451e-05,
+    1.6225680203272588e-05,
+    -8.078396761734296e-07
+  ],
+  "relative_xyz_imag": [
+    -9.059017370884742e-19,
+    -1.4238233704926108e-05,
+    1.6738976970099147e-06
+  ],
+  "normalization": "max(abs(force_x),abs(force_y))=1; shape amplitude is arbitrary",
+  "dominant_modes": [
+    {
+      "mode_number": 18,
+      "natural_frequency_hz": 910.2936776,
+      "relative_amplitude_share": 0.49857551541039385,
+      "modal_kinetic_share": 0.6672444674284561
+    },
+    {
+      "mode_number": 20,
+      "natural_frequency_hz": 996.4470681,
+      "relative_amplitude_share": 0.183114186310458,
+      "modal_kinetic_share": 0.13985296953588053
+    },
+    {
+      "mode_number": 19,
+      "natural_frequency_hz": 927.3672006,
+      "relative_amplitude_share": 0.09147696273183051,
+      "modal_kinetic_share": 0.15934181445316148
+    },
+    {
+      "mode_number": 22,
+      "natural_frequency_hz": 1171.10731,
+      "relative_amplitude_share": 0.06840013414697849,
+      "modal_kinetic_share": 0.01389835704322449
+    },
+    {
+      "mode_number": 23,
+      "natural_frequency_hz": 1204.677863,
+      "relative_amplitude_share": 0.03402585026860112,
+      "modal_kinetic_share": 0.005004691683544494
+    }
+  ]
+}

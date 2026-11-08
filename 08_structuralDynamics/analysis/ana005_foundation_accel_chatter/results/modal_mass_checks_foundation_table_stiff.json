@@ -1,0 +1,7 @@
+{
+  "consistent_solid_mass_kg": 1930.8747999999998,
+  "modal_mass_min": 0.9999994903334205,
+  "modal_mass_max": 1.0000005923841437,
+  "nmodes": 80,
+  "integration": "Hex20 consistent mass, 3x3x3 Gauss, density per material"
+}

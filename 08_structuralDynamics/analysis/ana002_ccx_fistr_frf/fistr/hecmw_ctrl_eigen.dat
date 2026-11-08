@@ -1,0 +1,8 @@
+!MESH, NAME=fstrMSH, TYPE=HECMW-ENTIRE
+machine.msh
+!CONTROL, NAME=fstrCNT
+eigen.cnt
+!RESULT, NAME=fstrRES, IO=OUT
+eigen.res
+!RESULT, NAME=vis_out, IO=OUT
+eigen_vis

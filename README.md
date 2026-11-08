@@ -2,7 +2,7 @@
 
 A lineup of simple CFD / heat-transfer models around machine tools, built with **OpenFOAM v2512 (ESI)**.
 Each case contains the analysis setup (`system/`, `constant/`, `0.orig/`, or a Python case generator in `tools/`),
-documents (Japanese) and animations. Heavy results (time directories, meshes, logs) are not included; run the case to regenerate them.
+documents (Japanese) and animations. Heavy results (time directories, meshes, logs, CalculiX .frd/.eig, FrontISTR .res) are not included; run the case to regenerate them.
 
 **Browse the documents with figures:** https://kamakiri1225.github.io/machineTool-CAE-lineup/
 
@@ -15,6 +15,7 @@ documents (Japanese) and animations. Heavy results (time directories, meshes, lo
 | `05_spindleBearingHeat` | Spindle bearing heat-up and cooling (axisymmetric solid) | solidFoam |
 | `06_mistChips` | Coolant mist and chips in the machining enclosure | simpleFoam + icoUncoupledKinematicParcelFoam |
 | `07_airbagTankTest` | (Reference / test) Pyrotechnic airbag inflator tank test: gas generation source, choked orifice, gas mixture (axisymmetric, transient) | reactingFoam |
+| `08_structuralDynamics` | Machine-tool structural dynamics with CalculiX / FrontISTR: modal & FRF of a simple machining center, spring/MPC joints, foundation springs and regenerative chatter, spindle-head height / column position study; study notes (Japanese) incl. topology optimization survey | CalculiX, FrontISTR, Python |
 
 ### Compute time (Xeon Gold 6212U, WSL2)
 

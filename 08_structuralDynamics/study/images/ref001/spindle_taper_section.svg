@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 780 390" font-family="Meiryo, 'Yu Gothic', 'Hiragino Sans', 'Noto Sans CJK JP', sans-serif" font-size="13">
+  <rect width="780" height="390" fill="#ffffff"/>
+  <defs>
+    <pattern id="hatch" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+      <rect width="8" height="8" fill="#d9dee5"/><line x1="0" y1="0" x2="0" y2="8" stroke="#9aa5b1" stroke-width="2"/>
+    </pattern>
+    <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#c0392b"/></marker>
+  </defs>
+  <!-- centerline -->
+  <line x1="20" y1="180" x2="740" y2="180" stroke="#888" stroke-dasharray="12 4 2 4"/>
+  <!-- spindle (cut section) top & bottom -->
+  <polygon points="40,70 380,70 380,110 220,133 220,160 40,160" fill="#cfd6de" stroke="#34495e" stroke-width="1.5"/>
+  <polygon points="40,290 380,290 380,250 220,227 220,200 40,200" fill="#cfd6de" stroke="#34495e" stroke-width="1.5"/>
+  <!-- drawbar -->
+  <rect x="40" y="166" width="132" height="28" fill="#f5cba7" stroke="#a04000"/>
+  <path d="M172,166 L190,158 L190,166 M172,194 L190,202 L190,194" fill="none" stroke="#a04000" stroke-width="2"/>
+  <!-- disc springs -->
+  <g stroke="#a04000" stroke-width="1.5" fill="none">
+    <path d="M70,160 l6,6 l6,-6 l6,6 l6,-6 l6,6 l6,-6 l6,6 l6,-6 l6,6 l6,-6"/>
+    <path d="M70,200 l6,-6 l6,6 l6,-6 l6,6 l6,-6 l6,6 l6,-6 l6,6 l6,-6 l6,6"/>
+  </g>
+  <!-- tool holder taper -->
+  <polygon points="383,111 222,134 222,226 383,249" fill="#aed6f1" stroke="#1f618d" stroke-width="1.5"/>
+  <!-- pull stud -->
+  <rect x="196" y="171" width="26" height="18" fill="#85c1e9" stroke="#1f618d"/>
+  <rect x="180" y="163" width="16" height="34" rx="4" fill="#85c1e9" stroke="#1f618d"/>
+  <!-- flange (gap to spindle face = 1-face contact) -->
+  <polygon points="386,85 418,85 418,275 386,275" fill="#aed6f1" stroke="#1f618d" stroke-width="1.5"/>
+  <path d="M386,100 l8,6 l-8,6 M386,248 l8,6 l-8,6" fill="none" stroke="#1f618d"/>
+  <!-- chuck & end mill -->
+  <polygon points="418,135 560,148 560,212 418,225" fill="#aed6f1" stroke="#1f618d" stroke-width="1.5"/>
+  <rect x="560" y="164" width="150" height="32" fill="#d5d8dc" stroke="#566573"/>
+  <path d="M580,164 l10,32 M605,164 l10,32 M630,164 l10,32 M655,164 l10,32 M680,164 l10,32" stroke="#566573"/>
+  <!-- pull arrow -->
+  <line x1="200" y1="370" x2="60" y2="370" stroke="#c0392b" stroke-width="3" marker-end="url(#ar)"/>
+  <text x="210" y="375" fill="#c0392b" font-weight="bold">皿ばねの力でホルダを引き込む</text>
+  <!-- labels -->
+  <g fill="#222">
+    <text x="60" y="55">主軸（回転する軸。周りは軸受で支持）</text>
+    <text x="40" y="318">ドローバー</text><line x1="70" y1="304" x2="60" y2="194" stroke="#555"/>
+    <text x="130" y="318">皿ばね</text><line x1="145" y1="304" x2="112" y2="202" stroke="#555"/>
+    <text x="160" y="125">プルスタッド</text><line x1="200" y1="130" x2="190" y2="162" stroke="#555"/>
+    <text x="250" y="30">テーパ部 7/24（ここで主軸と密着）</text><line x1="300" y1="36" x2="300" y2="125" stroke="#555"/>
+    <text x="400" y="55">フランジ（ATCが掴むV溝）</text><line x1="420" y1="60" x2="405" y2="85" stroke="#555"/>
+    <text x="440" y="122">ツールホルダ（例: コレットチャック）</text>
+    <text x="590" y="150">工具（エンドミル）</text>
+    <text x="300" y="336" fill="#1f618d">ゲージ径 = テーパの太い側の直径</text>
+    <text x="300" y="354" fill="#1f618d">30番: 31.75 mm / 40番: 44.45 mm / 50番: 69.85 mm</text>
+    <text x="440" y="290" fill="#7d3c98">BT（1面拘束）: フランジと主軸端面に</text>
+    <text x="440" y="307" fill="#7d3c98">わずかなすき間。2面拘束はここも密着</text>
+    <line x1="438" y1="286" x2="385" y2="262" stroke="#7d3c98" stroke-dasharray="3 2"/>
+  </g>
+</svg>

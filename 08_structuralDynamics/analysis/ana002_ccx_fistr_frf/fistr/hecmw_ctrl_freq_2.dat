@@ -1,0 +1,12 @@
+!MESH, NAME=fstrMSH, TYPE=HECMW-ENTIRE
+machine.msh
+!CONTROL, NAME=fstrCNT
+freq_2.cnt
+!RESULT, NAME=fstrRES, IO=OUT
+freq_2.res
+!RESULT, NAME=vis_out, IO=OUT
+freq_2_vis
+!RESULT, NAME=fstrDYNA, IO=OUT
+freq_2_dyna.res
+!RESULT, NAME=result-in, IO=IN
+eigen.res

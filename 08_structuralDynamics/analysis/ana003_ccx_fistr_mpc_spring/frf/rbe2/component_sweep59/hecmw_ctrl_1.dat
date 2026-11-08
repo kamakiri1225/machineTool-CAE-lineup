@@ -1,0 +1,12 @@
+!MESH, NAME=fstrMSH, TYPE=HECMW-ENTIRE
+machine.msh
+!CONTROL, NAME=fstrCNT
+component_1.cnt
+!RESULT, NAME=fstrRES, IO=OUT
+component_1.res
+!RESULT, NAME=vis_out, IO=OUT
+component_1_vis
+!RESULT, NAME=fstrDYNA, IO=OUT
+component_1_dyna.res
+!RESULT, NAME=result-in, IO=IN
+/mnt/d/work/001_deepflow/002_multiPhysics/analysis/ana003_ccx_fistr_mpc_spring/frf/rbe2/fistr/eigen.res

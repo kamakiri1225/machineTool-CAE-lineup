@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 780 260" font-family="Meiryo, 'Yu Gothic', 'Hiragino Sans', 'Noto Sans CJK JP', sans-serif" font-size="13">
+  <rect width="780" height="260" fill="#ffffff"/>
+  <!-- 1 material -->
+  <text x="20" y="28" font-weight="bold" fill="#222">① 素材（四角いブロック）</text>
+  <rect x="30" y="60" width="200" height="140" fill="#d5d8dc" stroke="#566573"/>
+  <rect x="80" y="60" width="100" height="70" fill="none" stroke="#c0392b" stroke-dasharray="5 3"/>
+  <text x="40" y="225" fill="#c0392b" font-size="12">赤点線 = 削りたい完成形のポケット</text>
+  <!-- 2 rough -->
+  <text x="280" y="28" font-weight="bold" fill="#222">② 粗加工（荒加工）</text>
+  <polygon points="290,60 348,60 348,122 432,122 432,60 490,60 490,200 290,200" fill="#d5d8dc" stroke="#566573"/>
+  <rect x="340" y="60" width="8" height="70" fill="#f5b041"/><rect x="432" y="60" width="8" height="70" fill="#f5b041"/>
+  <rect x="340" y="122" width="100" height="8" fill="#f5b041"/>
+  <rect x="340" y="60" width="100" height="70" fill="none" stroke="#c0392b" stroke-dasharray="5 3"/>
+  <text x="290" y="225" font-size="12" fill="#222">大きく速く削る。表面はガタガタ</text>
+  <text x="290" y="243" font-size="12" fill="#b9770e">黄 = 取り代（0.2〜0.5mm 残す）</text>
+  <!-- 3 finish -->
+  <text x="540" y="28" font-weight="bold" fill="#222">③ 仕上げ加工</text>
+  <polygon points="550,60 600,60 600,130 700,130 700,60 750,60 750,200 550,200" fill="#d5d8dc" stroke="#566573"/>
+  <polyline points="600,60 600,130 700,130 700,60" fill="none" stroke="#1e8449" stroke-width="3"/>
+  <text x="550" y="225" font-size="12" fill="#222">少しずつ削って寸法・面をきれいに</text>
+  <text x="550" y="243" font-size="12" fill="#1e8449">緑 = μm精度・面粗さが要る面</text>
+  <g fill="#888" font-size="22"><text x="245" y="138">→</text><text x="505" y="138">→</text></g>
+</svg>

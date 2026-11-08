@@ -1,0 +1,15 @@
+/mnt/d/work/001_deepflow/002_multiPhysics/analysis/ana005_foundation_accel_chatter/chatter_point_anim.py:29: UserWarning: Tight layout not applied. The bottom and top margins cannot be made large enough to accommodate all Axes decorations.
+  fig.tight_layout(); buf = BytesIO(); fig.savefig(buf, format="png", dpi=95); plt.close(fig); top = Image.open(buf).convert("RGB")
+| 回転数 [min⁻¹] | 切込み限界 [mm] | びびり周波数 [Hz] | 1 番目のモード | 2 番目のモード |
+|---:|---:|---:|---|---|
+| 992 | 10.15 | 184 | モード 8（182 Hz） 80 % | モード 11（431 Hz） 5 % |
+| 2001 | 15.97 | 353 | モード 10（346 Hz） 58 % | モード 11（431 Hz） 15 % |
+| 3010 | 14.61 | 935 | モード 18（910 Hz） 50 % | モード 20（996 Hz） 18 % |
+| 3993 | 9.27 | 186 | モード 8（182 Hz） 78 % | モード 11（431 Hz） 5 % |
+| 6012 | 20.67 | 990 | モード 18（910 Hz） 35 % | モード 20（996 Hz） 32 % |
+| 8004 | 15.42 | 352 | モード 10（346 Hz） 59 % | モード 11（431 Hz） 15 % |
+| 9997 | 20.05 | 987 | モード 18（910 Hz） 36 % | モード 20（996 Hz） 31 % |
+| 11989 | 21.33 | 1199 | モード 22（1171 Hz） 36 % | モード 23（1205 Hz） 30 % |
+| 14008 | 43.44 | 1254 | モード 22（1171 Hz） 28 % | モード 23（1205 Hz） 24 % |
+| 16000 | 26.20 | 907 | モード 18（910 Hz） 57 % | モード 20（996 Hz） 15 % |
+ok

@@ -1,0 +1,42 @@
+
+                        S T E P       1
+
+
+                                INCREMENT     1
+
+
+ displacements (vx,vy,vz) for set WORK and time  0.1000000E+01
+
+     31301  7.438390E-06  1.414547E-17 -1.313948E-18
+
+ displacements (vx,vy,vz) for set TOOL and time  0.1000000E+01
+
+     31299 -1.281883E-05  1.918396E-17  2.176193E-18
+
+                        S T E P       2
+
+
+                                INCREMENT     1
+
+
+ displacements (vx,vy,vz) for set WORK and time  0.2000000E+01
+
+     31301  2.041978E-17  2.138303E-06 -4.954688E-07
+
+ displacements (vx,vy,vz) for set TOOL and time  0.2000000E+01
+
+     31299  2.546530E-17 -1.003419E-05  7.814765E-07
+
+                        S T E P       3
+
+
+                                INCREMENT     1
+
+
+ displacements (vx,vy,vz) for set WORK and time  0.3000000E+01
+
+     31301  3.714777E-17 -3.357620E-07  1.177976E-06
+
+ displacements (vx,vy,vz) for set TOOL and time  0.3000000E+01
+
+     31299  4.066764E-17  9.411833E-07 -3.993571E-06

@@ -1,0 +1,21 @@
+!VERSION
+ 3
+!SOLUTION, TYPE=STATIC
+!BOUNDARY
+!SPRING
+ SPRN, 1, 1000.0
+ SPRN, 2, 1000.0
+ SPRN, 3, 1000.0
+!CLOAD
+ 5, 3, -250.0
+ 6, 3, -250.0
+ 7, 3, -250.0
+ 8, 3, -250.0
+!SOLVER, METHOD=DIRECT
+!WRITE,RESULT
+!WRITE,VISUAL
+!VISUAL, method=PSR
+!surface_num=1
+!surface 1
+!output_type=VTK
+!END
