@@ -1,0 +1,24 @@
+FoamFile
+{
+    format      ascii;
+    class       dictionary;
+    location    "constant/nozzle";
+    object      physicalProperties;
+}
+
+thermoType      constSolidThermo;
+rho
+{
+    type            uniform;
+    value           8960.0;
+}
+Cv
+{
+    type            uniform;
+    value           385.0;
+}
+kappa
+{
+    type            uniform;
+    value           400.0;
+}

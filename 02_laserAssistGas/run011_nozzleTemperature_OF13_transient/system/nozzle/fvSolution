@@ -1,0 +1,31 @@
+FoamFile
+{
+    format      ascii;
+    class       dictionary;
+    location    "system/plate";
+    object      fvSolution;
+}
+
+solvers
+{
+    "e.*"
+    {
+        solver          PCG;
+        preconditioner  DIC;
+        tolerance       1e-9;
+        relTol          0;
+    }
+}
+
+PIMPLE
+{
+    nNonOrthogonalCorrectors 0;
+}
+
+relaxationFactors
+{
+    equations
+    {
+        ".*"            1;
+    }
+}

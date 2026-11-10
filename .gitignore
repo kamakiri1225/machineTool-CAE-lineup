@@ -35,3 +35,5 @@ __pycache__/
 **/_stopped_*/
 07_airbagTankTest/run002_CHT_wall_outsideAir/postProcessing/gas/heatToWall/
 02_laserAssistGas/run009_N2cut_t2mm_CHT/postProcessing/air/heatToGas/
+02_laserAssistGas/HANDOFF_*.md
+**/visualization/*.vtp

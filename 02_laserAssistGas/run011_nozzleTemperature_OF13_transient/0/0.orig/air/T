@@ -1,0 +1,42 @@
+FoamFile
+{
+    format      ascii;
+    class       volScalarField;
+    location    "0.orig/air";
+    object      T;
+}
+
+dimensions      [0 0 0 1 0 0 0];
+
+internalField   uniform 300.0;
+
+boundaryField
+{
+    inlet
+    {
+        type            totalTemperature;
+        gamma           1.4;
+        T0              uniform 300.0;
+        value           uniform 300.0;
+    }
+    ambient
+    {
+        type            inletOutlet;
+        inletValue      uniform 300.0;
+        value           uniform 300.0;
+    }
+    air_to_nozzle
+    {
+        type            coupledTemperature;
+        value           uniform 300;
+    }
+    air_to_plate
+    {
+        type            coupledTemperature;
+        value           uniform 300.0;
+    }
+    "(front|back)"
+    {
+        type            wedge;
+    }
+}

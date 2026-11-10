@@ -1,0 +1,60 @@
+{
+  "RK": 0.15,
+  "RN": 1.0,
+  "RIN": 2.0,
+  "RNOZ": 3.0,
+  "ROUT": 8.0,
+  "H": 0.8,
+  "LN": 3.0,
+  "T": 2.0,
+  "LB": 4.0,
+  "p0_gauge": 800000.0,
+  "TFRONT": 1800.0,
+  "DFRONT": 0.04,
+  "endTime": 0.05,
+  "ramp": 0.0002,
+  "solver": "foamMultiRun Foundation13; Euler all regions; actual solid density",
+  "YO2_in": 0.0,
+  "maxCo": 0.2,
+  "nProc": 1,
+  "nozzleRho": 8960.0,
+  "nozzleCp": 385.0,
+  "nozzleKappa": 400.0,
+  "mountT": 300.0,
+  "materialAssumption": "Copper nozzle: provisional; not user-confirmed",
+  "thermalAssumptions": "Nozzle mounting face fixed 300 K; kerf-front plate cells fixed 1800 K. Convection/conduction only; no radiation, direct laser absorption, oxidation, or moving cut.",
+  "probes": [
+    {
+      "name": "P1_tip",
+      "position_m": [
+        0.00115,
+        0.0009000000000000001,
+        0
+      ]
+    },
+    {
+      "name": "P2_inner_mid",
+      "position_m": [
+        0.00165,
+        0.0023,
+        0
+      ]
+    },
+    {
+      "name": "P3_outer_mid",
+      "position_m": [
+        0.00285,
+        0.0023,
+        0
+      ]
+    },
+    {
+      "name": "P4_upper",
+      "position_m": [
+        0.0022,
+        0.0035,
+        0
+      ]
+    }
+  ]
+}

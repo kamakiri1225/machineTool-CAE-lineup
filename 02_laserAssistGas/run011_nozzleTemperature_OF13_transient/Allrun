@@ -1,0 +1,10 @@
+#!/bin/bash
+set -e
+cd "$(dirname "$0")"
+if [ -d constant/air/polyMesh ]; then echo "Already initialized; refusing reset"; exit 1; fi
+blockMesh > log.blockMesh 2>&1
+splitMeshRegions -cellZones -overwrite > log.splitMeshRegions 2>&1
+topoSet -region plate > log.topoSet 2>&1
+cp -r 0.orig 0
+for region in air plate nozzle; do checkMesh -region "$region" > "log.checkMesh.$region" 2>&1; done
+foamMultiRun > log.foamMultiRun 2>&1

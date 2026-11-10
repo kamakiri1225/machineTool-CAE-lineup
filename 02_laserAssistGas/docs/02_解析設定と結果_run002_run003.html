@@ -743,6 +743,60 @@ class="sourceCode bash"><code class="sourceCode bash"><span id="cb6-1"><a href="
 <li><code>YO2_in</code> で吹くガスを変えられる：0 は窒素切断、1
 は酸素切断、0.233 は空気切断。</li>
 </ul>
+<h3 id="58-ノズルも固体として解くrun011計算途中">5.8
+ノズルも固体として解く（<code>run011</code>、計算途中）</h3>
+<p>5.5 までの <code>run010</code>
+では、ノズルは「断熱の壁」で、ノズルの温度は解いていない。
+ノズルの温度上昇を見るために、<strong>ノズルも固体の領域にした 3
+領域のモデル</strong>（<code>run011_nozzleTemperature_OF13_transient</code>）を作った。</p>
+<p><img src="img/run011_cht_regions_3d.png"
+alt="CHT の領域分け（斜め 3D）" /></p>
+<ul>
+<li>計算は 5° のくさび（軸対称）。図は中心軸のまわりに 270°
+回して表示し、2 つの切り口に実際の計算メッシュを描いている（python の
+VTK で描画。ParaView のスクリーンショットではない）。</li>
+<li><strong>青＝流体</strong>（ガス）：ノズルの中と周りの空気・切断溝・板の下に抜ける部分が、1
+つの流体の領域。</li>
+<li><strong>橙＝固体</strong>（ノズル）、<strong>灰＝固体</strong>（加工する板、鋼）。青と接する面で、熱を受け渡す（<code>coupledTemperature</code>）。</li>
+<li>赤い点 P1〜P4
+は、ノズルの中の温度を記録する点（先端・内壁側・外壁側・取り付け側）。</li>
+</ul>
+<table>
+<thead>
+<tr class="header">
+<th>領域</th>
+<th>部品（OpenFOAM 13）</th>
+<th>設定</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>ガス</td>
+<td><code>multicomponentFluid</code></td>
+<td>N₂/O₂ の混合ガス、<code>transonic yes</code></td>
+</tr>
+<tr class="even">
+<td>板</td>
+<td><code>solid</code></td>
+<td>鋼（7,850 kg/m³、460 J/(kg·K)、45 W/(m·K)）。切断面は 1,800 K
+に固定</td>
+</tr>
+<tr class="odd">
+<td>ノズル</td>
+<td><code>solid</code></td>
+<td><strong>仮に銅</strong>（8,960 kg/m³、385 J/(kg·K)、400
+W/(m·K)）。取り付け面は 300 K に固定（仮定）</td>
+</tr>
+</tbody>
+</table>
+<p>現在の状況（2026-11-11）</p>
+<ul>
+<li>温度の時刻歴を出すため、3 つの領域を同じ本当の時間で進めている。0.04
+ms まで計算して保存した段階で、ノズルの温度上昇はまだ 0.001 K
+程度。</li>
+<li>ノズルの温度が落ち着くには秒単位の時間がかかる。全部を本当の時間で解くと計算時間が足りないので、流れの定常解から壁の熱の受け渡しを求め、ノズルと板だけを時間で解く方法を検討中。</li>
+<li>ノズルの材質・実際の寸法・取り付け部の冷え方・レーザーの反射光や放射は、まだ決まっていない（仮定）。</li>
+</ul>
 <hr />
 <h2 id="6-再現手順run002run003">6. 再現手順（run002・run003）</h2>
 <div class="sourceCode" id="cb7"><pre
