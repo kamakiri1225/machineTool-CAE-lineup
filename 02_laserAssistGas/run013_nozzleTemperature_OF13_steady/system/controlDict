@@ -1,0 +1,122 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+  =========                 |
+  \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Version:  13
+     \\/     M anipulation  |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    format          ascii;
+    class           dictionary;
+    location        "system";
+    object          controlDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+application     foamMultiRun;
+
+regionSolvers
+{
+    air             multicomponentFluid;
+    plate           solid;
+    nozzle          solid;
+}
+
+startFrom       latestTime;
+
+startTime       0;
+
+stopAt          endTime;
+
+endTime         12000;
+
+deltaT          1;
+
+writeControl    timeStep;
+
+writeInterval   2000;
+
+purgeWrite      0;
+
+writeFormat     ascii;
+
+writePrecision  10;
+
+timeFormat      general;
+
+timePrecision   6;
+
+runTimeModifiable true;
+
+adjustTimeStep  no;
+
+maxCo           0.3;
+
+maxDeltaT       1e-06;
+
+functions
+{
+    nozzleProbes
+    {
+        type            probes;
+        libs            ( "libsampling.so" );
+        region          nozzle;
+        fields          ( T );
+        interpolationScheme cellPoint;
+        writeControl    timeStep;
+        writeInterval   20;
+        probeLocations  ( ( 0.00115 0.0009 0 ) ( 0.00165 0.0023 0 ) ( 0.00285 0.0023 0 ) ( 0.0022 0.0035 0 ) );
+    }
+    nozzleAverage
+    {
+        type            volFieldValue;
+        libs            ( "libfieldFunctionObjects.so" );
+        region          nozzle;
+        cellZone        all;
+        operation       volAverage;
+        fields          ( T );
+        writeFields     false;
+        writeControl    timeStep;
+        writeInterval   20;
+    }
+    fieldBounds
+    {
+        type            volFieldValue;
+        cellZone        all;
+        operation       min;
+        writeFields     false;
+        libs            ( "libfieldFunctionObjects.so" );
+        region          air;
+        fields          ( p T );
+        writeControl    timeStep;
+        writeInterval   20;
+    }
+    inletFlow
+    {
+        type            surfaceFieldValue;
+        libs            ( "libfieldFunctionObjects.so" );
+        region          air;
+        select          patch;
+        patch           inlet;
+        operation       sum;
+        fields          ( phi );
+        writeFields     false;
+        writeControl    timeStep;
+        writeInterval   20;
+    }
+    heatNozzle
+    {
+        type            wallHeatFlux;
+        libs            ( "libfieldFunctionObjects.so" );
+        region          nozzle;
+        patches         ( nozzle_to_air nozzleMount );
+        executeControl  runTime;
+        executeInterval 1e-05;
+        writeControl    timeStep;
+        writeInterval   20;
+    }
+}
+
+
+// ************************************************************************* //

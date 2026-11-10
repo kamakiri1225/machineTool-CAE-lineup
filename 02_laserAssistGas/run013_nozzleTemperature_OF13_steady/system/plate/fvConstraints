@@ -1,0 +1,15 @@
+FoamFile
+{
+    format      ascii;
+    class       dictionary;
+    location    "system/plate";
+    object      fvConstraints;
+}
+
+laserFront
+{
+    type            fixedTemperature;
+    cellZone        laserFront;
+    mode            uniform;
+    temperature     constant 1800.0;
+}
