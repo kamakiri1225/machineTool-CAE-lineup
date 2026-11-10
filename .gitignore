@@ -31,3 +31,5 @@ __pycache__/
 **/_old_*/
 **/yamlCase/run_*/
 **/docs/img_local/
+**/_failed_*/
+**/_stopped_*/

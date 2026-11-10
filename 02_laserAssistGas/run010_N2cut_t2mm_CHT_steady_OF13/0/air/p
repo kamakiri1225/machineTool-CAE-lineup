@@ -1,0 +1,35 @@
+FoamFile
+{
+    format      ascii;
+    class       volScalarField;
+    location    "0.orig/air";
+    object      p;
+}
+
+dimensions      [1 -1 -2 0 0 0 0];
+
+internalField   uniform 101325.0;
+
+boundaryField
+{
+    inlet
+    {
+        type            uniformTotalPressure;
+        p0              table ((0 101325.0) (1500 901325.0) (1e9 901325.0));
+        value           uniform 101325.0;
+    }
+    ambient
+    {
+        type            totalPressure;
+        p0              uniform 101325.0;
+        value           uniform 101325.0;
+    }
+    "(nozzle|air_to_plate)"
+    {
+        type            zeroGradient;
+    }
+    "(front|back)"
+    {
+        type            wedge;
+    }
+}

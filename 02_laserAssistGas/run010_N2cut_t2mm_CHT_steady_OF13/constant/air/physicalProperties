@@ -1,0 +1,62 @@
+FoamFile
+{
+    format      ascii;
+    class       dictionary;
+    location    "constant/air";
+    object      physicalProperties;
+}
+
+thermoType
+{
+    type            heRhoThermo;
+    mixture         multicomponentMixture;
+    transport       const;
+    thermo          hConst;
+    energy          sensibleEnthalpy;
+    equationOfState perfectGas;
+    specie          specie;
+}
+
+defaultSpecie   N2;
+
+species
+(
+    O2
+    N2
+);
+
+O2
+{
+    specie
+    {
+        molWeight       31.9988;
+    }
+    thermodynamics
+    {
+        Cp              918;
+        hf              0;
+    }
+    transport
+    {
+        mu              2.06e-05;
+        Pr              0.72;
+    }
+}
+
+N2
+{
+    specie
+    {
+        molWeight       28.0134;
+    }
+    thermodynamics
+    {
+        Cp              1040;
+        hf              0;
+    }
+    transport
+    {
+        mu              1.79e-05;
+        Pr              0.71;
+    }
+}

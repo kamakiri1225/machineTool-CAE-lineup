@@ -1,0 +1,89 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+  =========                 |
+  \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Version:  13
+     \\/     M anipulation  |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    format          ascii;
+    class           dictionary;
+    location        "system";
+    object          controlDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+application     foamMultiRun;
+
+regionSolvers
+{
+    air             multicomponentFluid;
+    plate           solid;
+}
+
+startFrom       latestTime;
+
+startTime       0;
+
+stopAt          endTime;
+
+endTime         12000;
+
+deltaT          1;
+
+writeControl    timeStep;
+
+writeInterval   1000;
+
+purgeWrite      0;
+
+writeFormat     ascii;
+
+writePrecision  8;
+
+timeFormat      general;
+
+timePrecision   6;
+
+runTimeModifiable true;
+
+functions
+{
+    massFlow
+    {
+        type            surfaceFieldValue;
+        libs            ( "libfieldFunctionObjects.so" );
+        region          air;
+        fields          ( phi );
+        operation       sum;
+        select          patch;
+        patch           inlet;
+        writeFields     false;
+        writeControl    timeStep;
+        writeInterval   20;
+    }
+    plateT
+    {
+        type            volFieldValue;
+        libs            ( "libfieldFunctionObjects.so" );
+        region          plate;
+        fields          ( T );
+        operation       volAverage;
+        cellZone        all;
+        writeFields     false;
+        writeControl    timeStep;
+        writeInterval   20;
+    }
+    heatToGas
+    {
+        type            wallHeatFlux;
+        libs            ( "libfieldFunctionObjects.so" );
+        region          air;
+        patches         ( air_to_plate );
+        writeControl    writeTime;
+    }
+}
+
+
+// ************************************************************************* //

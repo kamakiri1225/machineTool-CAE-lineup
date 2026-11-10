@@ -1,0 +1,36 @@
+FoamFile
+{
+    format      ascii;
+    class       volScalarField;
+    location    "0.orig/air";
+    object      omega;
+}
+
+dimensions      [0 0 -1 0 0 0 0];
+
+internalField   uniform 1e4;
+
+boundaryField
+{
+    inlet
+    {
+        type            turbulentMixingLengthFrequencyInlet;
+        mixingLength    1e-4;
+        value           uniform 1e4;
+    }
+    ambient
+    {
+        type            inletOutlet;
+        inletValue      uniform 100;
+        value           uniform 1e4;
+    }
+    "(nozzle|air_to_plate)"
+    {
+        type            omegaWallFunction;
+        value           uniform 1e4;
+    }
+    "(front|back)"
+    {
+        type            wedge;
+    }
+}

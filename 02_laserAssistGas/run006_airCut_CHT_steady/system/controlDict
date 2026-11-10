@@ -1,0 +1,80 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  2512                                  |
+|   \\  /    A nd           | Website:  www.openfoam.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+FoamFile
+{
+    version         2;
+    format          ascii;
+    class           dictionary;
+    location        "system";
+    object          controlDict;
+}
+
+application     chtMultiRegionSimpleFoam;
+
+startFrom       latestTime;
+
+startTime       0;
+
+stopAt          endTime;
+
+endTime         8000;
+
+deltaT          1;
+
+writeControl    timeStep;
+
+writeInterval   1000;
+
+purgeWrite      0;
+
+writeFormat     ascii;
+
+writePrecision  8;
+
+timeFormat      general;
+
+timePrecision   6;
+
+runTimeModifiable true;
+
+functions
+{
+    massFlow
+    {
+        type            surfaceFieldValue;
+        libs            ( fieldFunctionObjects );
+        region          air;
+        regionType      patch;
+        name            inlet;
+        operation       sum;
+        fields          ( phi );
+        writeFields     false;
+        writeControl    timeStep;
+        writeInterval   20;
+    }
+    heatToGas
+    {
+        type            wallHeatFlux;
+        libs            ( fieldFunctionObjects );
+        region          air;
+        patches         ( air_to_plate );
+        writeControl    writeTime;
+    }
+    MachNo
+    {
+        type            MachNo;
+        libs            ( fieldFunctionObjects );
+        region          air;
+        executeControl  writeTime;
+        writeControl    writeTime;
+    }
+}
+
+
+// ************************************************************************* //

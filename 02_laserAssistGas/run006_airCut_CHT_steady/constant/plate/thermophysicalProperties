@@ -1,0 +1,40 @@
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "constant/plate";
+    object      thermophysicalProperties;
+}
+
+thermoType
+{
+    type            heSolidThermo;
+    mixture         pureMixture;
+    transport       constIso;
+    thermo          hConst;
+    equationOfState rhoConst;
+    specie          specie;
+    energy          sensibleEnthalpy;
+}
+
+mixture
+{
+    specie
+    {
+        molWeight       55.85;
+    }
+    transport
+    {
+        kappa           45;
+    }
+    thermodynamics
+    {
+        Hf              0;
+        Cp              460;
+    }
+    equationOfState
+    {
+        rho             7850;
+    }
+}

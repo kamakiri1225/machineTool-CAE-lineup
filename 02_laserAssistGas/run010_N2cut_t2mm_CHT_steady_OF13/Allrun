@@ -1,0 +1,13 @@
+#!/bin/sh
+# OpenFOAM 13 (Foundation): source /opt/openfoam13/etc/bashrc ParaView_TYPE=none   (ParaView check hangs on WSL)
+cd "${0%/*}" || exit
+. $WM_PROJECT_DIR/bin/tools/RunFunctions
+export HWLOC_COMPONENTS=-gl        # WSL2: keeps mpirun from hanging
+rm -rf 0 constant/polyMesh constant/air/polyMesh constant/plate/polyMesh processor*
+runApplication blockMesh
+runApplication splitMeshRegions -cellZones -overwrite
+runApplication topoSet -region plate
+rm -rf 0 && cp -r 0.orig 0
+runApplication decomposePar -allRegions -force
+runParallel foamMultiRun
+touch post.foam

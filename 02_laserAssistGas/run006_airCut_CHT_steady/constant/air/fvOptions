@@ -1,0 +1,17 @@
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "constant/air";
+    object      fvOptions;
+}
+
+limitT
+{
+    type            limitTemperature;
+    active          yes;
+    selectionMode   all;
+    min             80;
+    max             2500;
+}

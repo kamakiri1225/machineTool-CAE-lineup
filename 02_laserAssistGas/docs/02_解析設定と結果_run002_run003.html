@@ -413,12 +413,332 @@ bar）、<strong>板の上面に沿ってマッハ 2
 <li>この環境では mpirun が止まるため、1 並列で計算している。</li>
 </ol>
 <hr />
-<h2 id="5-再現手順">5. 再現手順</h2>
-<div class="sourceCode" id="cb1"><pre
-class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> /mnt/d/work/002_CAE/openfoam/20261103_laserAssistGas</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="ex">python3</span> tools/make_laser_case.py run002_O2cut_mildSteel6mm <span class="st">&#39;{&quot;RK&quot;:0.25,&quot;RN&quot;:0.75,&quot;RIN&quot;:1.5,&quot;H&quot;:1.0,&quot;T&quot;:6.0,&quot;p0_gauge&quot;:0.1e6,&quot;YO2_in&quot;:1.0}&#39;</span></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="ex">openfoam2512</span> <span class="at">-c</span> <span class="st">&#39;./run002_O2cut_mildSteel6mm/Allrun&#39;</span></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="ex">python3</span> tools/plot_axisym.py run002_O2cut_mildSteel6mm      <span class="co"># images/axisym_Mach_&lt;反復&gt;.png</span></span></code></pre></div>
+<h2 id="5-板固体も同時に解く混合ガス固体連成chtの定常解析">5.
+板（固体）も同時に解く：混合ガス＋固体連成（CHT）の定常解析</h2>
+<p>作成日：2026-11-10　ケース：<code>run010_N2cut_t2mm_CHT_steady_OF13</code>（比べる相手：<code>run008_N2cut_t2mm_reactingFoam</code>）</p>
+<h3 id="51-ねらい">5.1 ねらい</h3>
+<p>ここまでの計算は、板を「温度一定の壁」として流れだけを解いていた。
+実際の切断では、レーザーで切断面が溶け、その熱が板の中を伝わりながらアシストガスに奪われる。
+そこで、<strong>アシストガス（混合ガス・超音速）と板（鋼）を同時に解く</strong>。
+板とガスのあいだの熱の受け渡しは計算で決まるので、熱伝達率を仮定しなくてよい。</p>
+<h3 id="52-どのソルバで解けるか調べた結果">5.2
+どのソルバで解けるか（調べた結果）</h3>
+<table>
+<thead>
+<tr class="header">
+<th>ソルバ（版）</th>
+<th>定常</th>
+<th>混合ガス</th>
+<th>超音速（<code>transonic</code>）</th>
+<th>固体連成</th>
+<th>結果</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>chtMultiRegionSimpleFoam</code>（ESI v2512）</td>
+<td>○</td>
+<td><strong>×</strong>（<code>rhoThermo</code>＝1 種類のガス）</td>
+<td><strong>×</strong>（圧縮性の項もない）</td>
+<td>○</td>
+<td>空気（1 種類のガス）で試したら、ノズルが音速に達した反復 278
+回目で発散（<code>run006</code>）</td>
+</tr>
+<tr class="even">
+<td><code>chtMultiRegionSimpleFoam</code>（ESI v2606）</td>
+<td>○</td>
+<td><strong>×</strong>（v2512 と同じ。リリースノートにも変更なし）</td>
+<td>×</td>
+<td>○</td>
+<td>試していない</td>
+</tr>
+<tr class="odd">
+<td><code>chtMultiRegionFoam</code>（ESI v2512）</td>
+<td><strong>×</strong>（LTS なし。<code>localEuler</code>
+にすると「<code>rDeltaT</code> が見つからない」で停止）</td>
+<td>○（<code>rhoReactionThermo</code>）</td>
+<td><strong>×</strong>（圧縮性の項はある）</td>
+<td>○</td>
+<td>本当の時間で進めると、空気の 1 回目は 0.18 ms
+で停止（<code>_failed_run007</code>）。安定化して窒素で計算中（<code>run009</code>）</td>
+</tr>
+<tr class="even">
+<td><code>chtMultiRegionSimpleFoam</code>（Foundation）</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>v5 までで廃止。v6 以降は <code>chtMultiRegionFoam</code>
+が定常も兼ねる</td>
+</tr>
+<tr class="odd">
+<td><strong><code>foamMultiRun</code>（Foundation OpenFOAM
+13）</strong></td>
+<td><strong>○</strong>（流体は LTS、固体は
+<code>steadyState</code>）</td>
+<td><strong>○</strong>（<code>multicomponentFluid</code>）</td>
+<td><strong>○</strong></td>
+<td><strong>○</strong></td>
+<td><strong>計算できた</strong>（<code>run010</code>、12,000 回、4
+並列で 23 分）</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>ESI 版の CHT ソルバは、「定常」「混合ガス」「超音速」の 3
+つを同時に満たせない。</li>
+<li>Foundation 版の OpenFOAM 13
+では、領域ごとに別の部品（モジュール）を割り当てる
+<code>foamMultiRun</code> に作り直されている。
+<ul>
+<li>流体の部品 <code>multicomponentFluid</code>
+は、<code>reactingFoam</code> と同じく
+<strong>混合ガス・<code>transonic</code>・LTS</strong>
+に対応している。</li>
+<li>固体の部品 <code>solid</code> は LTS
+には対応していないが、ソースに「LTS のときは <code>steadyState</code>
+を使って」とある。固体は定常の熱伝導として解く。</li>
+<li>起動時のログに <code>Using LTS</code> と
+<code>PIMPLE: Operating solver in mixed steady-state/transient mode</code>
+と出て、この組み合わせが受け付けられることを確かめた。</li>
+</ul></li>
+</ul>
+<h3 id="53-設定openfoam-13-の書き方">5.3 設定（OpenFOAM 13
+の書き方）</h3>
+<p><code>system/controlDict</code>：領域ごとに使う部品を書く</p>
+<pre><code>application     foamMultiRun;
+
+regionSolvers
+{
+    air             multicomponentFluid;    // 混合ガス（O2/N2）、LTS、transonic
+    plate           solid;                  // 鋼の板、定常の熱伝導
+}
+
+endTime         12000;          // LTS の反復回数
+deltaT          1;</code></pre>
+<p>流体（<code>system/air/fvSchemes</code> と
+<code>system/air/fvSolution</code>）は、<code>reactingFoam</code> の
+run003 と同じ設定</p>
+<pre><code>ddtSchemes
+{
+    default         localEuler;     // LTS（局所時間刻み）
+}
+
+PIMPLE
+{
+    transonic               yes;    // 超音速
+    maxCo                   0.2;
+    rDeltaTSmoothingCoeff   0.02;
+    alphaTemp               1;
+    nCorrectors             2;
+    nNonOrthogonalCorrectors 1;
+}</code></pre>
+<p>固体（<code>system/plate/fvSchemes</code>）は定常</p>
+<pre><code>ddtSchemes
+{
+    default         steadyState;
+}</code></pre>
+<p>切断面（板の、溝に接する 2 列のセル）を、鋼の融点に近い 1,800 K
+に固定する（<code>system/plate/fvConstraints</code>）</p>
+<pre><code>laserFront
+{
+    type            fixedTemperature;
+    cellZone        laserFront;         // topoSet で作る
+    mode            uniform;
+    temperature     constant 1800;
+}</code></pre>
+<p>ガスと板の境目は、両側とも
+<code>coupledTemperature</code>（温度と熱流束が等しくなる）</p>
+<pre><code>air_to_plate
+{
+    type            coupledTemperature;
+    value           uniform 300;
+}</code></pre>
+<p>ESI 版との書き方の主な違い</p>
+<table>
+<thead>
+<tr class="header">
+<th>項目</th>
+<th>ESI v2512</th>
+<th>Foundation OpenFOAM 13</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>ソルバの指定</td>
+<td><code>application chtMultiRegionFoam;</code> と
+<code>constant/regionProperties</code></td>
+<td><code>application foamMultiRun;</code> と
+<code>regionSolvers</code></td>
+</tr>
+<tr class="even">
+<td>物性のファイル</td>
+<td><code>thermophysicalProperties</code></td>
+<td><code>physicalProperties</code></td>
+</tr>
+<tr class="odd">
+<td>乱流のファイル</td>
+<td><code>turbulenceProperties</code>（<code>RASModel</code>）</td>
+<td><code>momentumTransport</code>（<code>model</code>）</td>
+</tr>
+<tr class="even">
+<td>境目の温度</td>
+<td><code>compressible::turbulentTemperatureCoupledBaffleMixed</code></td>
+<td><code>coupledTemperature</code></td>
+</tr>
+<tr class="odd">
+<td>温度の固定・上下限</td>
+<td><code>fvOptions</code></td>
+<td><code>fvConstraints</code>（<code>fixedTemperature</code>・<code>limitTemperature</code>）</td>
+</tr>
+<tr class="even">
+<td>環境の読み込み</td>
+<td><code>source /usr/lib/openfoam/openfoam2512/etc/bashrc</code></td>
+<td><code>source /opt/openfoam13/etc/bashrc ParaView_TYPE=none</code>（この
+WSL では ParaView の確認で止まるため）</td>
+</tr>
+</tbody>
+</table>
+<h3 id="54-条件">5.4 条件</h3>
+<table>
+<thead>
+<tr class="header">
+<th>項目</th>
+<th>値</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>形</td>
+<td>run003 と同じ（軸対称、ノズル出口 2 mm、すき間 0.8 mm、板厚 2
+mm、溝は半径 0.15 mm の穴で近似）</td>
+</tr>
+<tr class="even">
+<td>アシストガス</td>
+<td><strong>窒素（N₂ 100 %）</strong>、0.8 MPa（ゲージ）。周りは空気（O₂
+21 %）</td>
+</tr>
+<tr class="odd">
+<td>板</td>
+<td>鋼（密度 7,850 kg/m³、熱伝導率 45 W/(m·K)）。外周（半径 8 mm）は 300
+K</td>
+</tr>
+<tr class="even">
+<td>切断面</td>
+<td>1,800 K に固定（レーザーで溶けている状態の代わり）</td>
+</tr>
+<tr class="odd">
+<td>比べる相手</td>
+<td><code>run008</code>：同じ条件を <code>reactingFoam</code>
+で解き、板は 300 K 一定の壁</td>
+</tr>
+<tr class="even">
+<td>メッシュ</td>
+<td>ガス 12,270 セル＋板 5,000 セル</td>
+</tr>
+<tr class="odd">
+<td>計算時間</td>
+<td><code>run010</code>：4 並列で 23 分（12,000
+回）／<code>run008</code>：4 並列で 18 分</td>
+</tr>
+</tbody>
+</table>
+<h3 id="55-結果">5.5 結果</h3>
+<p>左半分が <code>reactingFoam</code>（板は 300 K の壁）、右半分が
+CHT（板を同時に解く）。</p>
+<p><img src="img/run010_cht_vs_run008_fields.png"
+alt="reactingFoam と CHT の比較" /></p>
+<p>中心軸の上のマッハ数と静圧：</p>
+<p><img src="img/run010_cht_vs_run008_axis.png"
+alt="中心軸上の比較" /></p>
+<table>
+<thead>
+<tr class="header">
+<th>量</th>
+<th>reactingFoam（run008）</th>
+<th>CHT（run010）</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>ノズル流量</td>
+<td>6.61 g/s</td>
+<td>6.60 g/s</td>
+</tr>
+<tr class="even">
+<td>中心軸上の最高マッハ数（溝の下）</td>
+<td>2.06</td>
+<td>2.07</td>
+</tr>
+<tr class="odd">
+<td>板からガスへ移る熱（360°）</td>
+<td>—（板は 300 K）</td>
+<td><strong>90.6 W</strong></td>
+</tr>
+<tr class="even">
+<td>板の温度</td>
+<td>300 K（固定）</td>
+<td>切断面 1,800 K → 半径 4 mm で約 600 K</td>
+</tr>
+<tr class="odd">
+<td>溝の出口の O₂ 濃度</td>
+<td>0 %</td>
+<td>0 %</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li><strong>流れ（マッハ数・圧力・ノズル流量）は、2
+つでほぼ同じ</strong>。CHT
+でも超音速の噴流・壁噴流・溝の下のショックセルが同じように出る。
+<ul>
+<li>混合ガス＋<code>transonic</code>＋LTS
+の組み合わせが、<code>reactingFoam</code>
+と同じように働いていることが確かめられた。</li>
+</ul></li>
+<li><strong>溝の中の流れだけ少し違う</strong>。CHT
+では切断面からガスが温められ、音速が上がるので、溝の中のマッハ数が少し下がり、静圧が少し上がる（中心軸の図の
+y = −2〜0 mm）。</li>
+<li><strong>板の温度分布が出た</strong>。切断面の 1,800 K
+から、半径方向に下がる。熱は主に板の中を外へ伝わり、ガスへ移る熱は 90.6
+W。
+<ul>
+<li>この 90.6 W
+は、熱伝達率を仮定せずに、流れの計算から出てきた値。</li>
+</ul></li>
+<li><strong>窒素は溝を完全に満たしている</strong>（O₂ 0
+%）。周りの空気は、ノズルの外側と板の下の噴流の外縁でだけ混ざる。切断面が温まっても、この傾向は変わらない。</li>
+</ul>
+<h3 id="56-限界">5.6 限界</h3>
+<ul>
+<li>切断面の温度を 1,800 K
+に固定している。実際には、レーザーの入熱・溶けた金属の流れ・溶融潜熱で決まる。</li>
+<li>溝を丸い穴で近似している（軸対称）。3
+次元の溝（run004）で同じことをするには、OpenFOAM 13
+用にメッシュを作り直す必要がある。</li>
+<li>ESI 版の <code>chtMultiRegionFoam</code>
+で時間を進める方法（<code>run009</code>）も並行して計算中。終わったら同じ表に加える。</li>
+</ul>
+<h3 id="57-再現手順">5.7 再現手順</h3>
+<div class="sourceCode" id="cb6"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="bu">source</span> /opt/openfoam13/etc/bashrc ParaView_TYPE=none        <span class="co"># Foundation 版 OpenFOAM 13</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> 02_laserAssistGas</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="ex">python3</span> tools/make_laser_cht_foundation.py run010_N2cut_t2mm_CHT_steady_OF13 <span class="st">&#39;{&quot;YO2_in&quot;: 0.0}&#39;</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> run010_N2cut_t2mm_CHT_steady_OF13 <span class="kw">&amp;&amp;</span> <span class="ex">./Allrun</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="ex">reconstructPar</span> <span class="at">-allRegions</span> <span class="at">-latestTime</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> ..</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a><span class="ex">python3</span> tools/compare_cht_vs_reacting.py docs/img/run010_cht_vs_run008 run008_N2cut_t2mm_reactingFoam run010_N2cut_t2mm_CHT_steady_OF13</span></code></pre></div>
+<ul>
+<li><code>YO2_in</code> で吹くガスを変えられる：0 は窒素切断、1
+は酸素切断、0.233 は空気切断。</li>
+</ul>
+<hr />
+<h2 id="6-再現手順run002run003">6. 再現手順（run002・run003）</h2>
+<div class="sourceCode" id="cb7"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> /mnt/d/work/002_CAE/openfoam/20261103_laserAssistGas</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="ex">python3</span> tools/make_laser_case.py run002_O2cut_mildSteel6mm <span class="st">&#39;{&quot;RK&quot;:0.25,&quot;RN&quot;:0.75,&quot;RIN&quot;:1.5,&quot;H&quot;:1.0,&quot;T&quot;:6.0,&quot;p0_gauge&quot;:0.1e6,&quot;YO2_in&quot;:1.0}&#39;</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="ex">openfoam2512</span> <span class="at">-c</span> <span class="st">&#39;./run002_O2cut_mildSteel6mm/Allrun&#39;</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="ex">python3</span> tools/plot_axisym.py run002_O2cut_mildSteel6mm      <span class="co"># images/axisym_Mach_&lt;反復&gt;.png</span></span></code></pre></div>
 <p>ParaView で見るときは各ケースの <code>post.foam</code>（wedge
 なので、<code>Reflect</code> で折り返すか
 <code>Rotational Extrusion</code> で回転体にすると見やすい）。</p>
