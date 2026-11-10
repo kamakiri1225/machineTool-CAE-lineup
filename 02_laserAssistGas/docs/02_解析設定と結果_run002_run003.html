@@ -459,8 +459,10 @@ bar）、<strong>板の上面に沿ってマッハ 2
 <td>○（<code>rhoReactionThermo</code>）</td>
 <td><strong>×</strong>（圧縮性の項はある）</td>
 <td>○</td>
-<td>本当の時間で進めると、空気の 1 回目は 0.18 ms
-で停止（<code>_failed_run007</code>）。安定化して窒素で計算中（<code>run009</code>）</td>
+<td>本当の時間で進めると、ノズルがチョークし始めるところで時間刻みが
+10⁻¹² s 以下に縮んで止まる。空気は 0.18
+ms（<code>_failed_run007</code>）、窒素は安定化しても 0.24
+ms（<code>run009</code>）</td>
 </tr>
 <tr class="even">
 <td><code>chtMultiRegionSimpleFoam</code>（Foundation）</td>
@@ -717,7 +719,16 @@ W。
 次元の溝（run004）で同じことをするには、OpenFOAM 13
 用にメッシュを作り直す必要がある。</li>
 <li>ESI 版の <code>chtMultiRegionFoam</code>
-で時間を進める方法（<code>run009</code>）も並行して計算中。終わったら同じ表に加える。</li>
+で時間を進める方法（<code>run009</code>）は、時間刻みを小さくし（Courant
+数 0.3）、圧力をゆっくり上げ（0.5 ms）、1 ステップに 2
+回解き直しても、ノズルの圧力が約 0.4 MPa（ゲージ）になった 0.24 ms
+で時間刻みが 10⁻¹² s 以下に縮んで進まなくなった。
+<ul>
+<li><code>transonic</code>
+の形がない圧力の式では、チョークと超音速の膨張を安定して解けないことが確かめられた。</li>
+<li>混合ガス・超音速の固体連成には、OpenFOAM 13 の
+<code>foamMultiRun</code>（<code>multicomponentFluid</code>＋<code>solid</code>）を使う。</li>
+</ul></li>
 </ul>
 <h3 id="57-再現手順">5.7 再現手順</h3>
 <div class="sourceCode" id="cb6"><pre

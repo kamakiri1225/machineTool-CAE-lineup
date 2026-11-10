@@ -1,0 +1,32 @@
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       volScalarField;
+    location    "0.orig/outside";
+    object      T;
+}
+
+dimensions      [0 0 0 1 0 0 0];
+
+internalField   uniform 293.15;
+
+boundaryField
+{
+    farField
+    {
+        type            fixedValue;
+        value           uniform 293.15;
+    }
+    outside_to_wall
+    {
+        type            compressible::turbulentTemperatureCoupledBaffleMixed;
+        Tnbr            T;
+        kappaMethod     fluidThermo;
+        value           uniform 293.15;
+    }
+    "(front|back)"
+    {
+        type            wedge;
+    }
+}

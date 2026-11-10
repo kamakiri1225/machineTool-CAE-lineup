@@ -1,0 +1,1031 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>ana003 CalculiX・FrontISTRで部品をばね接続する：設定ファイルと周波数応答・GIF</title>
+  <style>
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      html {
+        background-color: white;
+      }
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+      font-size: 85%;
+      margin: 0;
+      hyphens: manual;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      background-color: #1a1a1a;
+      border: none;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    /* CSS for syntax highlighting */
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      {   }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+    code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+    code span.at { color: #7d9029; } /* Attribute */
+    code span.bn { color: #40a070; } /* BaseN */
+    code span.bu { color: #008000; } /* BuiltIn */
+    code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #4070a0; } /* Char */
+    code span.cn { color: #880000; } /* Constant */
+    code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+    code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+    code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+    code span.dt { color: #902000; } /* DataType */
+    code span.dv { color: #40a070; } /* DecVal */
+    code span.er { color: #ff0000; font-weight: bold; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #40a070; } /* Float */
+    code span.fu { color: #06287e; } /* Function */
+    code span.im { color: #008000; font-weight: bold; } /* Import */
+    code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+    code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+    code span.op { color: #666666; } /* Operator */
+    code span.ot { color: #007020; } /* Other */
+    code span.pp { color: #bc7a00; } /* Preprocessor */
+    code span.sc { color: #4070a0; } /* SpecialChar */
+    code span.ss { color: #bb6688; } /* SpecialString */
+    code span.st { color: #4070a0; } /* String */
+    code span.va { color: #19177c; } /* Variable */
+    code span.vs { color: #4070a0; } /* VerbatimString */
+    code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+  <style>
+  body{font-family:'Noto Sans JP','Hiragino Sans','Meiryo',sans-serif;max-width:1100px;margin:2em auto;padding:0 1.2em;line-height:1.75;color:#222}
+  h1{border-bottom:3px solid #1F3A5F;padding-bottom:.3em;color:#1F3A5F} h2{border-left:6px solid #2F6FB0;padding-left:.5em;margin-top:2em;color:#1F3A5F}
+  h3{color:#2F6FB0} img{max-width:100%;height:auto;border:1px solid #ddd;margin:.5em 0}
+  table{border-collapse:collapse;margin:1em 0;font-size:.95em} th,td{border:1px solid #bbb;padding:.35em .7em} th{background:#E3ECF7}
+  code{background:#f4f4f4;padding:.1em .3em;border-radius:3px} pre{background:#f4f4f4;padding:1em;overflow-x:auto}
+  nav.top{font-size:.9em;margin-bottom:1em} nav.top a{color:#2F6FB0}
+  </style>
+  <nav class="top"><a href="../../index.html">← 一覧に戻る</a></nav>
+  <script
+  src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-chtml-full.js"
+  type="text/javascript"></script>
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">ana003
+CalculiX・FrontISTRで部品をばね接続する：設定ファイルと周波数応答・GIF</h1>
+</header>
+<p><a href="README.html">← docs 目次</a> ｜ <a href="../README.html">⌂
+トップ</a> ｜ <a
+href="ana002_CalculiX-FrontISTR_簡易工作機械の周波数応答解析.html">← 前:
+ana002 簡易工作機械の周波数応答解析</a> ｜ <a
+href="ana003_ばね接続モデルを自分で作る手順.html">次:
+ana003_ばね接続モデルを自分で作る手順 →</a></p>
+<h1
+id="ana003-calculixfrontistrで部品をばね接続する設定ファイルと周波数応答gif">ana003
+CalculiX・FrontISTRで部品をばね接続する：設定ファイルと周波数応答・GIF</h1>
+<p>更新: 2026-11-07</p>
+<p>自分で作る場合は、まず<a
+href="ana003_ばね接続モデルを自分で作る手順.html">FrontISTR・CalculiX別の作成手順（完成入力・実行確認付き）</a>から進める。面の節点集合→代表点とのMPC→代表点間ばねの順に解説する。</p>
+<p><strong>MONとは</strong>：こちらで「観測点（monitor）」に付けた節点集合名。ソルバ固有の特別な点ではない。このモデルではテーブル上面中央の節点20428、座標(500,300,350)
+mmが1点だけ入る。「MONをY加振→MONのZ変位」は、この点をY方向に押したときの、同じ点のZ方向の揺れを意味する。</p>
+<h2 id="1-ばね接続モデルの概要">1. ばね接続モデルの概要</h2>
+<p><strong>CalculiXでもFrontISTRでも作れる。</strong>
+ソリッドで作ったベッドとテーブルの間に、ガイドやボールねじの弾性を表す「2節点ばね」を入れる。ソルバの改造は不要。</p>
+<table>
+<thead>
+<tr class="header">
+<th>やりたいこと</th>
+<th>CalculiX</th>
+<th>FrontISTR</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>2節点間をX・Y・Zの指定方向にばね接続</td>
+<td><code>SPRING2</code>＋<code>*SPRING</code></td>
+<td>要素<code>511</code>＋<code>!SPRING_D</code></td>
+</tr>
+<tr class="even">
+<td>面の複数節点を代表点に結ぶ</td>
+<td><code>*EQUATION</code>で線形拘束式を記述</td>
+<td><code>!EQUATION</code>で線形拘束式を記述</td>
+</tr>
+<tr class="odd">
+<td>接続後の固有振動数を求める</td>
+<td><code>*FREQUENCY</code></td>
+<td><code>!SOLUTION, TYPE=EIGEN</code></td>
+</tr>
+<tr class="even">
+<td>接続後の調和加振の周波数応答を求める</td>
+<td><code>*STEADY STATE DYNAMICS</code></td>
+<td>この環境のFrontISTR
+5.9で<code>!DYNAMIC</code>の周波数応答経路を実行</td>
+</tr>
+</tbody>
+</table>
+<p><strong>実行ログで確認した版はCalculiX 2.21、FrontISTR
+5.9／6.0。</strong>
+RBE2の初回固有値解析は5.9、RBE3は6.0。実行中に既定の<code>~/opt/frontistr/bin/fistr1</code>が6.0へ切り替わっていたため、追加の9成分掃引では<code>~/opt/frontistr59/bin/fistr1</code>を明示して5.9に固定した。版は各ケースの実行ログで確認できる。
+FrontISTRの公開マニュアルには周波数応答について「未実装」の記載が残る版もあるが、この環境では実装ソースと実行出力の両方を確認した。すべての配布バイナリでの動作を保証する意味ではない。</p>
+<p>ここで扱うのは、2部品間のばね。FrontISTRの<code>!SPRING</code>は地面に対する弾性支持であり、今回の<code>!SPRING_D</code>とは別。基本3種類の静解析による確認は<a
+href="ana004_CalculiX-FrontISTR_ばねの種類の確認.html">ana004</a>を参照。</p>
+<h2 id="2-接続部品と節点の構成">2. 接続部品と節点の構成</h2>
+<p><img
+src="../analysis/ana003_ccx_fistr_mpc_spring/results/pv_rbe2_links.png"
+alt="代表点とばねの位置" /></p>
+<p><strong>灰色＝ベッドとコラム、青＝テーブル、黄色＝面を代表する節点、赤＝ばね、紫＝面と代表点を結ぶ拘束。</strong>
+見えるようにテーブルを持ち上げた分解表示で、実際の接続面は同じ高さにある。</p>
+<p>接続は次の順序になっている。</p>
+<pre class="text"><code>ベッドの取付面 ─ 拘束式 ─ 代表点B ─ ばね ─ 代表点T ─ 拘束式 ─ テーブルの取付面</code></pre>
+<p>ばねは両端の相対変位に応じた力を出す。例えばY方向なら、ばね力の大きさは<code>k × (テーブル側Y変位 − ベッド側Y変位)</code>。部品を一体化する拘束とは違い、両端に変位差が残る。</p>
+<table>
+<thead>
+<tr class="header">
+<th>接続箇所</th>
+<th>このモデルでの剛性</th>
+<th>意味</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>ガイドのキャリッジ4個</td>
+<td>1個につきY: 560,000 N/mm、Z: 800,000 N/mm</td>
+<td>横と上下の弾性支持。X方向の移動はこのガイドばねでは拘束しない</td>
+</tr>
+<tr class="even">
+<td>ナット部1個</td>
+<td>X: 200,000 N/mm</td>
+<td>ボールねじ系の送り方向の弾性を簡略化</td>
+</tr>
+<tr class="odd">
+<td>各接続の回転成分</td>
+<td>分布ばねの剛性と中心からの距離から計算</td>
+<td>有限の取付面が傾くときの抵抗を表現</td>
+</tr>
+</tbody>
+</table>
+<p>単位系はmm・N・t・s。例えば560,000 N/mmは560
+N/µm。材料は鋳鉄相当、ヤング率120,000
+N/mm²、ポアソン比0.27、密度7.3×10⁻⁹ t/mm³。ベッド底面をXYZ固定する。</p>
+<p>面のつなぎ方は2種類を実行した。</p>
+<ul>
+<li><strong>RBE2相当</strong>：面の形を保って代表点と一緒に動かす。取付面を剛体とする近似。</li>
+<li><strong>RBE3相当</strong>：面の節点の動きから代表点の平均運動を決める。面全体を剛体にはしない。</li>
+</ul>
+<p>どちらも本検証の自作拘束式であり、商用ソフトの同名要素の全機能を再現するという意味ではない。また、RBE3相当と分布ばねは局部変形に対する抵抗まで同一ではない。今回の低次モードが近いという結果を一般的な完全等価性とは扱わない。</p>
+<h2 id="3-calculixのばねmpc解析設定">3.
+CalculiXのばね・MPC・解析設定</h2>
+<p>実行した入力: <a
+href="../analysis/ana003_ccx_fistr_mpc_spring/frf/rbe2/ccx/response.inp">RBE2のresponse.inp</a>／<a
+href="../analysis/ana003_ccx_fistr_mpc_spring/frf/rbe3/ccx/response.inp">RBE3のresponse.inp</a>。節点・ソリッド要素の大量の行の後に、次の記述がある。</p>
+<h3 id="31-2節点とばね定数を指定する">3.1 2節点とばね定数を指定する</h3>
+<p>RBE2入力のCAR1のYばねを抜粋する。</p>
+<pre class="text"><code>*ELEMENT, TYPE=SPRING2, ELSET=SP_CAR1_2_0
+4289, 22259, 22261
+*SPRING, ELSET=SP_CAR1_2_0
+2, 2
+5.600000e+05</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th>行</th>
+<th>読み方</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>*ELEMENT, TYPE=SPRING2, ELSET=SP_CAR1_2_0</code></td>
+<td>方向指定の2節点ばねを作り、要素グループに名前を付ける</td>
+</tr>
+<tr class="even">
+<td><code>4289, 22259, 22261</code></td>
+<td>要素4289の両端は、ベッド側代表点22259とテーブル側代表点22261</td>
+</tr>
+<tr class="odd">
+<td><code>*SPRING, ELSET=SP_CAR1_2_0</code></td>
+<td>このグループのばね特性を指定する</td>
+</tr>
+<tr class="even">
+<td><code>2, 2</code></td>
+<td>第1節点の自由度2と第2節点の自由度2を結ぶ。2はY方向</td>
+</tr>
+<tr class="odd">
+<td><code>5.600000e+05</code></td>
+<td>剛性560,000 N/mm</td>
+</tr>
+</tbody>
+</table>
+<p>自由度1=X、2=Y、3=Z。<strong>方向は節点間の線の向きではなく自由度番号で指定する</strong>ので、同じ座標の別節点間にも置ける。これだけでは面には力が伝わらないため、次の拘束式も必要。</p>
+<h3 id="32-代表点を取付面に結ぶ">3.2 代表点を取付面に結ぶ</h3>
+<p>実際のRBE2相当の拘束式の一例。</p>
+<pre class="text"><code>*EQUATION
+3
+2912, 1, 1, 22259, 1, -1, 22260, 3, -20</code></pre>
+<p>これは<code>uX(2912) − uX(22259) − 20 θZ = 0</code>という意味。面の節点2912は、代表点の並進に加えて、中心からの距離に応じた回転分だけ動く。先頭の自由度が従属となる。</p>
+<p>22260は回転用の補助節点。その自由度1〜3を回転角の未知数として使う<strong>今回のモデル化上の工夫</strong>であり、ソリッド節点に通常の回転自由度を追加したわけではない。補助節点間のばねには、回転剛性N·mm/radを入れる。補助節点の値を物理的なmm変位として表示・集計しない。</p>
+<p>RBE3相当では式の向きを変え、代表点の並進を面の重み付き平均で決める。係数の作成処理は<a
+href="../analysis/tools/mpc_springs.py">mpc_springs.py</a>。</p>
+<h3 id="33-固有値周波数応答を設定する">3.3
+固有値→周波数応答を設定する</h3>
+<pre class="text"><code>*BOUNDARY
+FIX, 1, 3
+*STEP
+*FREQUENCY, STORAGE=YES
+30
+*NODE FILE
+U
+*END STEP
+*STEP
+*STEADY STATE DYNAMICS
+50.0, 750.0, 12, 1.0
+*MODAL DAMPING, RAYLEIGH
+,,30.1592894745,8.4882636316e-6
+*CLOAD, OP=NEW
+MON, 1, 1.0
+*NODE PRINT, NSET=MON
+U
+*NODE FILE
+U
+*END STEP</code></pre>
+<ul>
+<li><code>FIX, 1, 3</code>：FIXに含まれる底面節点のXYZを固定。</li>
+<li><code>*FREQUENCY, STORAGE=YES</code>と<code>30</code>：30モードを求め、後の応答計算用に保存する。</li>
+<li><code>50.0, 750.0, 12, 1.0</code>：50〜750
+Hzを計算する。12は<strong>全帯域を12点にする意味ではなく</strong>、固有振動数で分割される区間の計算点数指定。実際の周波数列は出力CSVで確認する。</li>
+<li><code>*MODAL DAMPING, RAYLEIGH</code>：<span
+class="math inline">\(C=\alpha M+\beta K\)</span>の減衰。150 Hzと600
+Hzで減衰比2%となる係数を仮定した。実測値ではない。</li>
+<li><code>MON, 1, 1.0</code>：テーブル上面中央のMON節点にX方向の振幅1
+Nの調和力。方向を2・3に変えたステップも実行する。</li>
+<li><code>OP=NEW</code>：前の方向の荷重を持ち越さず、今回の方向だけを加振。</li>
+<li><code>*NODE PRINT</code>：MONの複素変位を<code>.dat</code>へ出力。<code>*NODE FILE</code>：全体の複素変位を<code>.frd</code>へ出力。後者をGIFに使う。</li>
+</ul>
+<h2 id="4-frontistrのばねmpc解析設定">4.
+FrontISTRのばね・MPC・解析設定</h2>
+<p>RBE2の実ファイル: <a
+href="../analysis/ana003_ccx_fistr_mpc_spring/frf/rbe2/fistr/machine.msh">machine.msh</a>、<a
+href="../analysis/ana003_ccx_fistr_mpc_spring/frf/rbe2/fistr/eigen.cnt">eigen.cnt</a>、<a
+href="../analysis/ana003_ccx_fistr_mpc_spring/frf/rbe2/fistr/sweep_1.cnt">sweep_1.cnt</a>、<a
+href="../analysis/ana003_ccx_fistr_mpc_spring/frf/rbe2/fistr/shape_1.cnt">shape_1.cnt</a>。</p>
+<table>
+<thead>
+<tr class="header">
+<th>ファイル</th>
+<th>中身</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>.msh</code></td>
+<td>節点、ソリッド要素、ばね要素、材料・セクションの対応、拘束式、節点グループ</td>
+</tr>
+<tr class="even">
+<td><code>.cnt</code></td>
+<td>固有値／周波数応答の選択、ばね定数、固定、加振、減衰、出力指定</td>
+</tr>
+<tr class="odd">
+<td><code>hecmw_ctrl.dat</code></td>
+<td>使用するメッシュ・制御ファイルと、固有モードの読込先・結果の出力先の対応</td>
+</tr>
+</tbody>
+</table>
+<h3 id="41-mshに2節点ばねを作る">4.1
+<code>.msh</code>に2節点ばねを作る</h3>
+<p>CAR1のYばねは、**節点22259（ベッド側の面の代表点）と節点22261（テーブル側の面の代表点）**を結ぶ。</p>
+<p><img
+src="../analysis/ana003_ccx_fistr_mpc_spring/results/frf/car1_nodes.png"
+alt="要素4289がつなぐ2節点の位置と拡大分解図" /></p>
+<table>
+<thead>
+<tr class="header">
+<th>番号</th>
+<th>何か</th>
+<th>実際の座標 mm</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>22259</td>
+<td>レール上面・ベッド側の代表点</td>
+<td>(310, 150, 230)</td>
+</tr>
+<tr class="even">
+<td>22261</td>
+<td>キャリッジ下面・テーブル側の代表点</td>
+<td>(310, 150, 230)</td>
+</tr>
+<tr class="odd">
+<td>4289</td>
+<td>上の2節点をつなぐばね要素。節点番号ではない</td>
+<td>SP0に所属</td>
+</tr>
+</tbody>
+</table>
+<p>2点間の<strong>初期の実距離は0
+mm</strong>（座標差ΔX=ΔY=ΔZ=0）。座標が同じでも、別の節点なので変位は別々。右図の赤線は表示上90
+mmで、実長ではない。テーブル側の表示移動150
+mmから、上下代表点を面から離した30 mmずつを引いた表示距離（150−30−30=90
+mm）である。右図は見えるようにテーブル側をZ方向へ150
+mm持ち上げ、代表点もそれぞれの面から30
+mm離して表示した。赤線は接続関係を示し、その線の方向がばねの作用方向ではない。Y方向の指定は<code>.cnt</code>の<code>2, 2, 560000</code>で行う。</p>
+<p>ParaViewで開くデータ：実位置のcar1_actual.vtm（未収録：スクリプトで再生成）／分解表示のcar1_exploded.vtm（未収録：スクリプトで再生成）。VTMと同名フォルダ内の付属データを一緒に保持する。<code>node_id</code>に節点番号、<code>element_id</code>に要素番号を保存した。</p>
+<p><strong>多点拘束は紫の点・線の部分</strong>。この実行モデルでは、CAR1のベッド側37節点と代表点22259を111本の拘束式（37節点×XYZ）で結び、テーブル側37節点と代表点22261も同様に結ぶ。回転は補助節点22260・22262を使う。赤のばね要素4289自体は2節点要素であり、多点拘束は別の<code>!EQUATION</code>で定義する。</p>
+<pre class="text"><code>面の37節点 ── MPC（111式）── 22259 ── ばね4289 ── 22261 ── MPC（111式）── 面の37節点</code></pre>
+<p>紫の拘束線も含めてParaViewで確認できるcar1_mpc_network.vtm（未収録：スクリプトで再生成）を追加した。このファイルの線は拘束関係を可視化した表示用形状であり、ばね・MPCの解析設定は<code>.msh</code>／<code>.cnt</code>側にある。</p>
+<p>以下がこの2点を結ぶ入力。</p>
+<pre class="text"><code>!ELEMENT, TYPE=511, EGRP=SP0
+4289, 22259, 22261
+!MATERIAL, NAME=SPMAT0, ITEM=1
+!ITEM=1, SUBITEM=2
+1.0, 0.3
+!SECTION, TYPE=INTERFACE, EGRP=SP0, MATERIAL=SPMAT0
+1.0</code></pre>
+<p><code>511</code>が2節点コネクタ。<code>4289, 22259, 22261</code>の意味はCalculiXと同じ。<code>!SECTION</code>で要素グループSP0を材料名SPMAT0に対応させる。ここでの<code>TYPE=INTERFACE</code>はコネクタ用セクションの指定であり、面同士を自動接触させる設定ではない。</p>
+<p>この入力生成器では材料名登録のため<code>.msh</code>にもダミーの材料欄を置く。<strong><code>1.0, 0.3</code>やセクション行の<code>1.0</code>が、求めるばね定数ではない。</strong>
+ばね定数は次の<code>.cnt</code>側で与える。</p>
+<p><strong>初期距離0 mmでも方向指定ばねは使える。</strong>
+<code>SPRING2</code>／<code>511＋!SPRING_D</code>は、節点間の線から方向を計算せず、指定された自由度の相対変位から力を計算する。例えばY方向は
+<span
+class="math inline">\(F_y=k_y(u_{22261,y}-u_{22259,y})\)</span>。同じ座標の別節点なら変位差を持てるが、節点をマージするとこの接続は作れない。初期節点間方向を必要とする軸方向ばねと区別する。</p>
+<h3 id="42-cntにばね定数を書く">4.2
+<code>.cnt</code>にばね定数を書く</h3>
+<pre class="text"><code>!MATERIAL, NAME=SPMAT0
+!SPRING_D
+2, 2, 5.600000e+05</code></pre>
+<p>SPMAT0の2節点コネクタに、第1節点Yと第2節点Yを結ぶ560,000
+N/mmのばねを定義する。Xなら<code>1, 1, k</code>、Zなら<code>3, 3, k</code>。定義しなかった方向に、このばねからの剛性は加わらない。</p>
+<p>この材料定義は、固有値解析の<code>eigen.cnt</code>にも周波数応答の<code>sweep_*.cnt</code>／<code>shape_*.cnt</code>にも含める。</p>
+<h3 id="43-mshに面代表点の拘束を書く">4.3
+<code>.msh</code>に面―代表点の拘束を書く</h3>
+<pre class="text"><code>!EQUATION
+3, 0.0
+2912, 1, 1, 22259, 1, -1, 22260, 3, -20</code></pre>
+<p>3項の線形拘束、右辺0。最後の行はCalculiXと同じ「節点番号・自由度・係数」の組。同じ剛体運動式を両ソルバの入力書式で表している。</p>
+<h3 id="44-固有値解析を実行し応答計算で読み込む">4.4
+固有値解析を実行し、応答計算で読み込む</h3>
+<pre class="text"><code>!SOLUTION, TYPE=EIGEN
+!EIGEN
+30, 1.0E-8, 300
+!BOUNDARY
+FIX, 1, 3, 0.0</code></pre>
+<p>30モード、固有値計算の収束条件と反復上限を指定。固有値解析で出力した<code>0.log</code>を<code>eigen_0.log</code>へ保存し、モード結果<code>eigen.res.0.*</code>とともに応答計算へ渡す。</p>
+<p>X方向の周波数応答制御は次の通り。実ファイルには、これに前述の各ばね材料定義とソルバ設定が続く。</p>
+<pre class="text"><code>!SOLUTION, TYPE=DYNAMIC
+!DYNAMIC
+11, 2
+50.0, 750.0, 350, 183.0
+0.0, 0.00546448087431694
+1, 1, 3.015929e+01, 8.488264e-06
+1, 2, 20428
+1, 0, 0, 0, 0, 0
+!EIGENREAD
+eigen_0.log
+1, 30
+!BOUNDARY
+FIX, 1, 3, 0.0
+!FLOAD, LOAD CASE=1
+MON, 1, 1.0</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th>行</th>
+<th>この周波数応答経路での意味</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>11, 2</code></td>
+<td>第2値2で周波数応答を選ぶ。この場合、第1値11を時刻歴の陽解法で加振するという解釈はしない</td>
+</tr>
+<tr class="even">
+<td><code>50, 750, 350, 183</code></td>
+<td>帯域の開始・終了、分割数、時間位相出力用の加振周波数</td>
+</tr>
+<tr class="odd">
+<td><code>0, 1/183</code></td>
+<td>位相出力の時間範囲。立上がり過渡の計算時間ではない</td>
+</tr>
+<tr class="even">
+<td><code>1, 1, alpha, beta</code></td>
+<td>動解析用のパラメータ欄。周波数応答では後ろ2値のRayleigh係数を使う</td>
+</tr>
+<tr class="odd">
+<td><code>1, 2, 20428</code></td>
+<td>位相出力数1、可視化種別2、監視節点20428</td>
+</tr>
+<tr class="even">
+<td><code>1, 0, 0, 0, 0, 0</code></td>
+<td>変位を出力対象にし、速度・加速度等を省略</td>
+</tr>
+<tr class="odd">
+<td><code>!EIGENREAD</code>以下</td>
+<td>固有値ログと使用モード1〜30を指定。固有ベクトル本体は別の結果ファイルから読む</td>
+</tr>
+<tr class="even">
+<td><code>!FLOAD</code>以下</td>
+<td>MON節点にX方向1 Nの実部荷重。Y/Zでは方向番号を変える</td>
+</tr>
+</tbody>
+</table>
+<p>FrontISTRの掃引点はこの実装では52、54、…、750 Hzであり、開始値50
+Hzそのものは含まない。CalculiXとは周波数点が異なるため、ピーク位置の数字が完全に一致することは要求しない。</p>
+<p>GIF用の<code>shape_*.cnt</code>では帯域を選択周波数の直前〜その周波数、分割数1とし、<code>!WRITE,RESULT</code>で全節点の位相0の実部・虚部を出力する。周波数応答の振幅だけを変形ベクトルにして動かすことはしない。</p>
+<p><code>hecmw_ctrl.dat</code>の重要部分は次の対応。固有モードを読むための<code>result-in</code>を忘れない。</p>
+<pre class="text"><code>!MESH, NAME=fstrMSH, TYPE=HECMW-ENTIRE
+machine.msh
+!CONTROL, NAME=fstrCNT
+shape_1.cnt
+!RESULT, NAME=fstrRES, IO=OUT
+shape_1.res
+!RESULT, NAME=result-in, IO=IN
+eigen.res
+!RESULT, NAME=fstrDYNA, IO=OUT
+shape_1_dyna.res</code></pre>
+<h2 id="5-実際に計算した周波数応答">5. 実際に計算した周波数応答</h2>
+<p>テーブル上面中央をX・Y・Z方向に別々に1
+Nで加振し、<strong>同じ点の複素変位3成分の振幅ノルム</strong>を両ソルバで比較する。FrontISTRの標準監視ログがこのノルムなので、CalculiXも同じ量に合わせた。方向成分単独のFRFとは区別する。</p>
+<ul>
+<li>30モードを使用したモード重ね合わせによる線形定常応答。</li>
+<li>50〜750 Hz、Rayleigh減衰を共通に設定。</li>
+<li>熱・切削・サーボ制御は入れない。ばね接続した構造の動作確認。</li>
+<li>高次モード数の収束確認・実機検証は今回の対象外。</li>
+</ul>
+<h3
+id="rbe2相当取付面を剛体とする接続">RBE2相当：取付面を剛体とする接続</h3>
+<p><img
+src="../analysis/ana003_ccx_fistr_mpc_spring/results/frf/rbe2_frf.png"
+alt="RBE2の周波数応答" /></p>
+<h3
+id="rbe3相当面の平均運動から代表点を決める接続">RBE3相当：面の平均運動から代表点を決める接続</h3>
+<p><img
+src="../analysis/ana003_ccx_fistr_mpc_spring/results/frf/rbe3_frf.png"
+alt="RBE3の周波数応答" /></p>
+<table>
+<thead>
+<tr class="header">
+<th>接続</th>
+<th>方向</th>
+<th style="text-align: right;">CalculiXピーク Hz</th>
+<th style="text-align: right;">振幅 µm/N</th>
+<th style="text-align: right;">FrontISTRピーク Hz</th>
+<th style="text-align: right;">振幅 µm/N</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>RBE2</td>
+<td>X</td>
+<td style="text-align: right;">183.120</td>
+<td style="text-align: right;">0.17695</td>
+<td style="text-align: right;">184.000</td>
+<td style="text-align: right;">0.17021</td>
+</tr>
+<tr class="even">
+<td>RBE2</td>
+<td>Y</td>
+<td style="text-align: right;">453.790</td>
+<td style="text-align: right;">0.03359</td>
+<td style="text-align: right;">454.000</td>
+<td style="text-align: right;">0.03352</td>
+</tr>
+<tr class="odd">
+<td>RBE2</td>
+<td>Z</td>
+<td style="text-align: right;">625.062</td>
+<td style="text-align: right;">0.02171</td>
+<td style="text-align: right;">624.000</td>
+<td style="text-align: right;">0.02167</td>
+</tr>
+<tr class="even">
+<td>RBE3</td>
+<td>X</td>
+<td style="text-align: right;">181.162</td>
+<td style="text-align: right;">0.18000</td>
+<td style="text-align: right;">182.000</td>
+<td style="text-align: right;">0.17366</td>
+</tr>
+<tr class="odd">
+<td>RBE3</td>
+<td>Y</td>
+<td style="text-align: right;">441.684</td>
+<td style="text-align: right;">0.03578</td>
+<td style="text-align: right;">442.000</td>
+<td style="text-align: right;">0.03568</td>
+</tr>
+<tr class="even">
+<td>RBE3</td>
+<td>Z</td>
+<td style="text-align: right;">610.432</td>
+<td style="text-align: right;">0.02264</td>
+<td style="text-align: right;">610.000</td>
+<td style="text-align: right;">0.02265</td>
+</tr>
+</tbody>
+</table>
+<p>X方向のピーク振幅は離散掃引点の違いにより約4%の差がある。Y・Z方向のピークと全体の曲線も含めて比較する。GIFのFrontISTR側は別途、選択周波数で計算している。</p>
+<p>数値の表と各点のCSVは<a
+href="../analysis/ana003_ccx_fistr_mpc_spring/results/frf/">結果フォルダ</a>に保存する。ピークは各ソルバの離散掃引点の最大値であり、連続周波数で探索した厳密な最大値ではない。</p>
+<h2 id="6-周波数応答の揺れ方gif">6. 周波数応答の揺れ方GIF</h2>
+<h3
+id="コンプライアンスのピークと全体振動の対応">コンプライアンスのピークと全体振動の対応</h3>
+<p><strong>加振点も観測点も、テーブル上面中央MON（節点20428、座標(500,300,350)
+mm）。</strong> 入力はX・Y・Zの各方向に別々に与える振幅1
+Nの調和力。下段には同じMON点のX・Y・Zの変位振幅をそれぞれ別の曲線として表示する。</p>
+<p><span
+class="math display">\[H_{ij}(f)=U_i(\mathrm{MON},f)/F_j(\mathrm{MON},f)\]</span></p>
+<p><strong>添字は先が観測変位方向i、後が加振方向j。図はその絶対値（振幅）で、単位µm/N。</strong>
+位相・実部・虚部は振幅と別の量。対角3成分は同方向、非対角6成分がクロス方向となる。</p>
+<table>
+<thead>
+<tr class="header">
+<th>加振位置</th>
+<th>加振方向</th>
+<th>観測位置</th>
+<th>GIF下段の3曲線</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>テーブル上面中央MON</td>
+<td>+X方向1 N</td>
+<td>同じMON</td>
+<td>Hxx：X変位、Hyx：Y変位、Hzx：Z変位</td>
+</tr>
+<tr class="even">
+<td>同上</td>
+<td>+Y方向1 N</td>
+<td>同じMON</td>
+<td>Hxy：X変位、Hyy：Y変位、Hzy：Z変位</td>
+</tr>
+<tr class="odd">
+<td>同上</td>
+<td>+Z方向1 N</td>
+<td>同じMON</td>
+<td>Hxz：X変位、Hyz：Y変位、Hzz：Z変位</td>
+</tr>
+</tbody>
+</table>
+<p><strong>上段は組立状態の全体振動、下段はクロス方向を含む3成分コンプライアンス。</strong>
+FrontISTRのRBE2相当モデルの結果。上段の赤点が加振・観測点、赤矢印が正の加振方向。下段の縦線が上段の応答周波数、丸印が各方向の変位振幅に対応する。上段は全XYZ変位を同時に用いて部品を動かしており、1方向だけの変形図ではない。形状の切り出し・分解はせず、見えるよう変位だけを誇張してスロー再生する。</p>
+<h4 id="x方向183-hz付近の山と送り方向の動き">X方向：183
+Hz付近の山と送り方向の動き</h4>
+<p><img
+src="../analysis/ana003_ccx_fistr_mpc_spring/results/frf/whole_peak_response_1.gif"
+alt="X方向のコンプライアンスの山と揺れ方" /></p>
+<h4 id="y方向454-hz付近の山と横方向の動き">Y方向：454
+Hz付近の山と横方向の動き</h4>
+<p><img
+src="../analysis/ana003_ccx_fistr_mpc_spring/results/frf/whole_peak_response_2.gif"
+alt="Y方向のコンプライアンスの山と揺れ方" /></p>
+<h4 id="z方向625-hz付近の山と上下方向の動き">Z方向：625
+Hz付近の山と上下方向の動き</h4>
+<p><img
+src="../analysis/ana003_ccx_fistr_mpc_spring/results/frf/whole_peak_response_3.gif"
+alt="Z方向のコンプライアンスの山と揺れ方" /></p>
+<p>下段の曲線はテーブル上面中央MONの方向別変位振幅、上段は同じ加振周波数での全節点の応答。山に対応してどの部品が動くかを見るための表示である。Y方向ばねの要素4289だけが3方向すべてに抵抗するという意味ではなく、モデル内の他の方向のばねも働く。</p>
+<p>GIFが再生されない画面では、<a
+href="../analysis/ana003_ccx_fistr_mpc_spring/results/frf/whole_peak_response_1_phases.png">X方向の4位相静止図</a>、<a
+href="../analysis/ana003_ccx_fistr_mpc_spring/results/frf/whole_peak_response_2_phases.png">Y方向</a>、<a
+href="../analysis/ana003_ccx_fistr_mpc_spring/results/frf/whole_peak_response_3_phases.png">Z方向</a>で動きを確認できる。</p>
+<p>生成スクリプト：<a
+href="../analysis/ana003_ccx_fistr_mpc_spring/render_whole_peak.py">render_whole_peak.py</a>。ParaView用に全体形状と複素変位を保存した<code>results/frf/whole_response_1.vtu</code>〜<code>whole_response_3.vtu</code>も参照できる。</p>
+<h3
+id="同方向クロス方向の9成分を両ソルバで比較する">同方向・クロス方向の9成分を両ソルバで比較する</h3>
+<p><img
+src="../analysis/ana003_ccx_fistr_mpc_spring/results/frf/component_frf_3x3.png"
+alt="9成分コンプライアンス：行は観測方向、列は加振方向" /></p>
+<p>各図の加振点と観測点は同じMON。対角がHxx・Hyy・Hzz、非対角がクロス方向。CalculiXは<code>.dat</code>の複素変位成分から絶対値を計算し、FrontISTRは周波数ごとの結果ファイルの変位3成分を抽出している。<strong>監視ログの合成ノルムからクロス成分を推測したものではない。</strong></p>
+<p>非常に小さいクロス成分は対称性や数値誤差の影響も受けるため、ピークの見た目だけを物理的な連成の強さと解釈しない。全て縦軸は0始まりの線形目盛り。3×3図は微小なクロス成分も確認できるよう各図で縦軸上限を設定するため、図ごとの数値・単位を見て比較する。GIF下段は3成分を同じ線形軸に描くため、非常に小さいクロス成分は0付近に重なる。<a
+href="../analysis/ana003_ccx_fistr_mpc_spring/results/frf/component_summary.html">9成分の集計表</a>も参照。</p>
+<p>再生成は<code>compute_component_frf.py</code>→<code>plot_component_frf.py</code>→<code>render_whole_peak.py</code>の順。FrontISTRの全節点掃引出力は監視点の方向別CSVへ抽出・照合後、作成した一時結果のみ削除する。実行入力とログは<code>frf/rbe2/component_sweep59/</code>に残す。追加掃引はFrontISTR
+5.9、上段の選択周波数の場は既存の結果を利用しており、方向別振幅の合成を元の監視ログと照合する。</p>
+<h3 id="全体形状を両ソルバで比較する">全体形状を両ソルバで比較する</h3>
+<p><strong>左がCalculiX、右がFrontISTRの計算結果。</strong>
+それぞれの複素変位を使い、<span
+class="math inline">\(u(\varphi)=\mathrm{Re}[Ue^{i\varphi}]\)</span>で一周期を描いた。固有モードのアニメーションではなく、1
+Nの調和力が加わったときの定常応答。</p>
+<p>色は各点の複素変位の振幅ノルム（µm）、変形は大きく拡大している。左右は同じ変形倍率・色範囲で描く。各GIF同士の拡大率は異なるので、揺れの見た目だけで振幅を比較しない。再生はスロー表示で、実時間の183回/秒等ではない。</p>
+<p>CalculiXのGIFは掃引点のうち指定周波数に最も近い点、FrontISTRは指定周波数そのものを使う。<strong>左右の正確な周波数と拡大率は各GIF上部に表示</strong>する。完全な同一周波数での場の誤差比較ではない。</p>
+<h3
+id="rbe2x加振送り方向のばねでテーブルが揺れる">RBE2：X加振、送り方向のばねでテーブルが揺れる</h3>
+<p><img
+src="../analysis/ana003_ccx_fistr_mpc_spring/results/frf/rbe2_1.gif"
+alt="RBE2 X加振の定常応答" /></p>
+<h3
+id="rbe2y加振ガイド横方向の変形を伴う">RBE2：Y加振、ガイド横方向の変形を伴う</h3>
+<p><img
+src="../analysis/ana003_ccx_fistr_mpc_spring/results/frf/rbe2_2.gif"
+alt="RBE2 Y加振の定常応答" /></p>
+<h3
+id="rbe2z加振ガイド上下方向とテーブル変形を伴う">RBE2：Z加振、ガイド上下方向とテーブル変形を伴う</h3>
+<p><img
+src="../analysis/ana003_ccx_fistr_mpc_spring/results/frf/rbe2_3.gif"
+alt="RBE2 Z加振の定常応答" /></p>
+<h3 id="rbe3同じxyz加振での揺れ方">RBE3：同じX・Y・Z加振での揺れ方</h3>
+<p><img
+src="../analysis/ana003_ccx_fistr_mpc_spring/results/frf/rbe3_1.gif"
+alt="RBE3 X加振の定常応答" /></p>
+<p><img
+src="../analysis/ana003_ccx_fistr_mpc_spring/results/frf/rbe3_2.gif"
+alt="RBE3 Y加振の定常応答" /></p>
+<p><img
+src="../analysis/ana003_ccx_fistr_mpc_spring/results/frf/rbe3_3.gif"
+alt="RBE3 Z加振の定常応答" /></p>
+<h2 id="7-再現手順">7. 再現手順</h2>
+<div class="sourceCode" id="cb12"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> analysis/ana003_ccx_fistr_mpc_spring</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="ex">~/opt/venv/bin/python</span> frequency_response.py</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="ex">~/opt/venv/bin/python</span> post_frequency.py</span></code></pre></div>
+<p>再現スクリプトは<code>~/opt/ccx.sh</code>と<code>~/opt/frontistr59/bin/fistr1</code>（5.9を明示）を使う。パス・ライブラリの設定は<a
+href="../analysis/ana003_ccx_fistr_mpc_spring/frequency_response.py">実行スクリプト</a>にある。入力は<code>frf/rbe2/</code>と<code>frf/rbe3/</code>に生成し、従来の固有値比較用の入力・結果とは別の場所で実行する。</p>
+<p><a
+href="../analysis/ana003_ccx_fistr_mpc_spring/post_frequency.py">描画スクリプト</a>では、CalculiXのGIF元変位と<code>.dat</code>のMON変位、FrontISTRのGIF元変位と監視ログを照合する。確認数値は<a
+href="../analysis/ana003_ccx_fistr_mpc_spring/results/frf/checks.json">checks.json</a>へ保存する。</p>
+<p>拘束係数の詳しい説明は<a
+href="../analysis/ana003_ccx_fistr_mpc_spring/notes/previous_explanation.html">旧説明の保存版</a>にも残した。</p>
+<p>参考: <a
+href="https://www.dhondt.de/ccx_2.22.pdf">CalculiX公式マニュアル</a>、<a
+href="https://source-docs.frontistr.com/keyword_reference/cnt/spring_d.html">FrontISTRのSPRING_D</a>、<a
+href="https://source-docs.frontistr.com/en/keyword_reference/cnt/dynamic.html">FrontISTRのDYNAMIC</a>。周波数応答の出力処理はローカルのFrontISTR
+5.9ソース<code>fistr1/src/analysis/dynamic/freq/fstr_frequency_analysis.f90</code>でも確認した。</p>
+<hr />
+<p><a href="README.html">← docs 目次</a> ｜ <a href="../README.html">⌂
+トップ</a> ｜ <a
+href="ana002_CalculiX-FrontISTR_簡易工作機械の周波数応答解析.html">← 前:
+ana002 簡易工作機械の周波数応答解析</a> ｜ <a
+href="ana003_ばね接続モデルを自分で作る手順.html">次:
+ana003_ばね接続モデルを自分で作る手順 →</a></p>
+<h2 id="8-追加基礎部もmpcばねで支持するモデル">8.
+追加：基礎部もMPC＋ばねで支持するモデル</h2>
+<h3 id="81-ベッド底面の支持条件">8.1 ベッド底面の支持条件</h3>
+<p>前半のモデルはベッド底面全体を直接固定した。ここでは、その固定を解除し、<strong>底面の4か所の取付面をMPCでそれぞれ代表点に結び、固定地面側の代表点とばね接続する</strong>。</p>
+<pre class="text"><code>テーブル・ガイド・ナット（前半と同じ）
+                   │
+              ベッド・コラム
+                   │
+   底面の4取付面 → 各面のMPC → ベッド側代表点B
+                                    │ XYZばね＋回転ばね
+                              固定地面側代表点G</code></pre>
+<p>地盤そのもののソリッドモデルは作らず、設置部・基礎の弾性を等価ばねとして表す。線形ばねなので引張・圧縮の両方に抵抗する。浮上り、接触の開閉、摩擦すべりは扱わない。</p>
+<p><img
+src="../analysis/ana003_ccx_fistr_mpc_spring/foundation/results/foundation_mpc.png"
+alt="基礎4面とMPC・ばね・固定地面側代表点" /></p>
+<p>紫が面節点とMPC、黄がベッド側代表点、赤がばね、緑が固定地面側代表点。図は接続を見せるため代表点を上下に離した表示。<strong>各組の代表点の実距離は0
+mm</strong>。全体振動GIFでは機械を分解しない。</p>
+<h3 id="82-4か所の位置と仮定した剛性">8.2
+4か所の位置と、仮定した剛性</h3>
+<p>各取付面は100×100 mm。中心は次の4点で、いずれもベッド底面z=0
+mmにある。</p>
+<table>
+<thead>
+<tr class="header">
+<th>支持</th>
+<th>取付面中心 mm</th>
+<th>面の範囲 mm</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>FOOT1</td>
+<td>(100,100,0)</td>
+<td>x=50〜150、y=50〜150</td>
+</tr>
+<tr class="even">
+<td>FOOT2</td>
+<td>(900,100,0)</td>
+<td>x=850〜950、y=50〜150</td>
+</tr>
+<tr class="odd">
+<td>FOOT3</td>
+<td>(100,800,0)</td>
+<td>x=50〜150、y=750〜850</td>
+</tr>
+<tr class="even">
+<td>FOOT4</td>
+<td>(900,800,0)</td>
+<td>x=850〜950、y=750〜850</td>
+</tr>
+</tbody>
+</table>
+<p>1か所当たりの並進剛性は<strong>kx=ky=10,000 N/mm、kz=100,000
+N/mm</strong>。説明用の仮定値であり、実機・地盤の同定値ではない。</p>
+<p>各面に均等な分布ばねがある場合の剛体運動に対するモーメント抵抗を参考に、100
+mm角の面積二次モーメントから、回転剛性をkθx=kθy=8.3333×10⁷
+N·mm/rad、kθz=1.6667×10⁷
+N·mm/radとした。面中心の並進ばねだけと、有限面の回転抵抗を含むモデルは別なので、ここでは後者で統一する。</p>
+<p>実際の節点番号、面節点リスト、並進・回転剛性は<a
+href="../analysis/ana003_ccx_fistr_mpc_spring/foundation/results/supports.json">supports.json</a>に保存する。</p>
+<h3 id="83-frontistrでの変更手順">8.3 FrontISTRでの変更手順</h3>
+<p>実入力：<a
+href="../analysis/ana003_ccx_fistr_mpc_spring/foundation/fistr/machine.msh">machine.msh</a>、<a
+href="../analysis/ana003_ccx_fistr_mpc_spring/foundation/fistr/eigen.cnt">eigen.cnt</a>、<a
+href="../analysis/ana003_ccx_fistr_mpc_spring/foundation/fistr/shape_1.cnt">shape_1.cnt</a>。</p>
+<ol type="1">
+<li><code>!NGROUP</code>で底面の4取付面を<code>FOOT1_FACE</code>〜<code>FOOT4_FACE</code>として抽出する。角節点だけでなく中間節点も含める。</li>
+<li>各面にベッド側代表点Bと回転用補助点、地面側代表点Gと回転用補助点を追加する。BとGの座標は同じでも節点番号は別にする。</li>
+<li>面の各節点をBの並進・回転に結ぶ<code>!EQUATION</code>をXYZについて作る。式は前半の取付面と同じ剛体運動式で、今度はz=0の底面を対象にする。</li>
+<li><code>TYPE=511</code>と<code>TYPE=INTERFACE</code>でB―G間のXYZばねを作り、<code>.cnt</code>の<code>!SPRING_D</code>で方向と定数を書く。回転用補助点間にも3本のばねを作る。</li>
+<li><code>FIX</code>グループを<strong>地面側代表点と地面側回転用補助点だけ</strong>に変更する。ベッド底面全体を固定する古い節点リストを残さない。</li>
+<li>静解析・固有値・周波数応答の順に確認する。面節点・補助節点が無視されたという警告がないことも確認する。</li>
+</ol>
+<p>FOOT1のXばねは次の形になる。節点番号は実モデルの番号。</p>
+<pre class="text"><code># machine.msh
+!ELEMENT, TYPE=511, EGRP=SP22
+4311, 22279, 22281
+!SECTION, TYPE=INTERFACE, EGRP=SP22, MATERIAL=SPMAT22
+1.0
+
+# eigen.cnt / 周波数応答のcnt
+!MATERIAL, NAME=SPMAT22
+!SPRING_D
+1, 1, 1.000000e+04</code></pre>
+<p>22279はFOOT1のベッド側、22281は固定地面側。<code>.msh</code>の同名材料欄も前半と同様に登録する。各<code>.cnt</code>で基礎の並進・回転ばねの材料定義を省略しない。</p>
+<p><strong>補助節点の保持にも注意する。</strong>
+このモデルは回転用補助節点を回転ばね要素にも接続している。今回のFrontISTR
+5.9では、要素に接続していない補助節点が読込時に除外される場合があり、その節点を使うMPCが無視される。解析が終了したことだけでは正しい接続の証明にならない。警告・固有値・拘束式残差まで確認する。</p>
+<h3 id="84-calculixでの変更手順">8.4 CalculiXでの変更手順</h3>
+<p>実入力：<a
+href="../analysis/ana003_ccx_fistr_mpc_spring/foundation/ccx/response.inp">response.inp</a>。</p>
+<ol type="1">
+<li>底面の4取付面を選ぶ。各面の節点番号を確認する。</li>
+<li>B・Gと各回転用補助点を<code>*NODE</code>に追加する。</li>
+<li>各面の節点をBと回転用補助点に結ぶ<code>*EQUATION</code>を作る。面の節点の自由度を従属側として先頭に置く。</li>
+<li>B―G間に<code>SPRING2</code>と<code>*SPRING</code>でXYZばねを定義し、補助点間に回転ばねを定義する。</li>
+<li><code>FIX</code>の節点リストを地面側代表点・地面側回転用補助点だけにする。<code>*BOUNDARY</code>の書式は同じでも、固定対象の節点集合が変わる。</li>
+<li>30モードの固有値解析後、同じMONを各方向に1 Nで加振する。</li>
+</ol>
+<p>FOOT1のXばねの実際の記述。</p>
+<pre class="text"><code>*ELEMENT, TYPE=SPRING2, ELSET=SP_FOOT1_1_22
+4311, 22279, 22281
+*SPRING, ELSET=SP_FOOT1_1_22
+1, 1
+1.000000e+04</code></pre>
+<h3 id="85-支持条件による周波数応答の比較">8.5
+支持条件による周波数応答の比較</h3>
+<p>加振点・観測点は前半と同じMON (500,300,350) mm。振幅1
+NのX・Y・Z加振を別々に行い、同じ点のX・Y・Z変位から全9成分を求める。<strong>縦軸は全て線形</strong>。</p>
+<p>基礎支持による低い周波数のモードも見るため、追加モデルは5〜750
+Hzを対象とし、FrontISTRの掃引点は6〜750 Hzの1
+Hz刻み。使用する30モードとRayleigh係数は前半と同じ。低い周波数での減衰比は2%一定ではなく、同じRayleigh係数では低周波側ほど大きくなる。この減衰設定も説明用の仮定として扱う。</p>
+<p><img
+src="../analysis/ana003_ccx_fistr_mpc_spring/foundation/results/fixed_vs_foundation.png"
+alt="底面固定と基礎ばね支持の比較" /></p>
+<p>上の比較は各加振方向と同方向の変位。底面固定の既存結果は50
+Hz以上なので、50
+Hz未満に固定モデルの線を補間・外挿していない。両ソルバの追加モデルを同じ図に重ねる。</p>
+<p><img
+src="../analysis/ana003_ccx_fistr_mpc_spring/foundation/results/component_frf_3x3.png"
+alt="基礎ばね支持の9成分コンプライアンス" /></p>
+<p>行が観測方向、列が加振方向。例えばHzyは「MONをY加振したときの、同じMONのZ変位」。各図は0始まりの線形軸で、上限は成分ごとに異なる。</p>
+<p>底面固定では最初の弾性モードが約172
+Hzだったが、この仮定の基礎ばね支持では約23
+Hzからモードが現れる。両ソルバの低次6モードは次の通り。</p>
+<table>
+<thead>
+<tr class="header">
+<th>モード</th>
+<th style="text-align: right;">CalculiX Hz</th>
+<th style="text-align: right;">FrontISTR Hz</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>1</td>
+<td style="text-align: right;">23.127</td>
+<td style="text-align: right;">23.129</td>
+</tr>
+<tr class="even">
+<td>2</td>
+<td style="text-align: right;">23.165</td>
+<td style="text-align: right;">23.166</td>
+</tr>
+<tr class="odd">
+<td>3</td>
+<td style="text-align: right;">34.877</td>
+<td style="text-align: right;">34.828</td>
+</tr>
+<tr class="even">
+<td>4</td>
+<td style="text-align: right;">69.405</td>
+<td style="text-align: right;">69.204</td>
+</tr>
+<tr class="odd">
+<td>5</td>
+<td style="text-align: right;">78.043</td>
+<td style="text-align: right;">77.992</td>
+</tr>
+<tr class="even">
+<td>6</td>
+<td style="text-align: right;">87.679</td>
+<td style="text-align: right;">87.602</td>
+</tr>
+</tbody>
+</table>
+<h3 id="86-基礎支持による低周波応答の全体振動gif">8.6
+基礎支持による低周波応答の全体振動GIF</h3>
+<p>FrontISTRの6〜100
+Hzの掃引範囲から、同方向変位が最大となる点を各加振方向について選び、全節点の複素変位を改めて出力した。<strong>全帯域の最大ピークを必ず選んでいるわけではない。</strong>
+上段は組立状態の機械全体の揺れ方、下段は同じ点のX・Y・Z変位のコンプライアンス。赤点が加振・観測位置、赤矢印が加振方向。</p>
+<p><img
+src="../analysis/ana003_ccx_fistr_mpc_spring/foundation/results/whole_peak_response_1.gif"
+alt="基礎ばね支持：X加振の全体振動と3成分" /></p>
+<p><img
+src="../analysis/ana003_ccx_fistr_mpc_spring/foundation/results/whole_peak_response_2.gif"
+alt="基礎ばね支持：Y加振の全体振動と3成分" /></p>
+<p><img
+src="../analysis/ana003_ccx_fistr_mpc_spring/foundation/results/whole_peak_response_3.gif"
+alt="基礎ばね支持：Z加振の全体振動と3成分" /></p>
+<p>薄緑の地面表示は固定の参照表示。地盤の変形を計算したものではない。機械の変位だけを誇張し、同じ倍率でベッド・コラム・テーブルを動かす。</p>
+<h3 id="87-再現と確認">8.7 再現と確認</h3>
+<div class="sourceCode" id="cb16"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> analysis/ana003_ccx_fistr_mpc_spring</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="ex">~/opt/venv/bin/python</span> run_foundation.py</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="ex">~/opt/venv/bin/python</span> post_foundation.py</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a><span class="ex">~/opt/venv/bin/python</span> render_foundation_model.py</span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a><span class="ex">~/opt/venv/bin/python</span> plot_component_frf.py <span class="at">--foundation</span></span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a><span class="ex">~/opt/venv/bin/python</span> render_whole_peak.py <span class="at">--foundation</span></span></code></pre></div>
+<p>モデル作成：<a
+href="../analysis/ana003_ccx_fistr_mpc_spring/foundation_model.py">foundation_model.py</a>。元の底面固定モデルは残し、追加モデルの入力・ログ・結果は<a
+href="../analysis/ana003_ccx_fistr_mpc_spring/foundation/">foundation/</a>に分ける。使用ソルバはCalculiX
+2.21とFrontISTR 5.9（実行パスを明示）。</p>
+<p>選択周波数の変位成分と掃引結果の一致、MPC式の残差を<a
+href="../analysis/ana003_ccx_fistr_mpc_spring/foundation/results/checks.json">checks.json</a>へ記録する。基礎剛性・減衰は未同定なので、結果を実機の予測値とは扱わない。</p>
+<hr />
+<p><a href="README.html">← docs 目次</a> ｜ <a href="../README.html">⌂
+トップ</a> ｜ <a
+href="ana002_CalculiX-FrontISTR_簡易工作機械の周波数応答解析.html">← 前:
+ana002 簡易工作機械の周波数応答解析</a> ｜ <a
+href="ana003_ばね接続モデルを自分で作る手順.html">次:
+ana003_ばね接続モデルを自分で作る手順 →</a></p>
+</body>
+</html>

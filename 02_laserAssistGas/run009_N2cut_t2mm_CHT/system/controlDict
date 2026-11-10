@@ -1,0 +1,72 @@
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      controlDict;
+}
+
+application     chtMultiRegionFoam;
+startFrom       latestTime;
+startTime       0;
+stopAt          endTime;
+endTime         0.0018;
+deltaT          1e-10;
+writeControl    adjustable;
+writeInterval   1e-4;
+purgeWrite      0;
+writeFormat     binary;
+writePrecision  8;
+timeFormat      general;
+timePrecision   8;
+runTimeModifiable true;
+adjustTimeStep  yes;
+maxCo           0.3;
+maxDi           1000;
+maxDeltaT       1e-6;
+
+functions
+{
+    massFlow
+    {
+        type            surfaceFieldValue;
+        libs            (fieldFunctionObjects);
+        region          air;
+        regionType      patch;
+        name            inlet;
+        operation       sum;
+        fields          (phi);
+        writeFields     false;
+        writeControl    timeStep;
+        writeInterval   20;
+    }
+    heatToGas
+    {
+        type            wallHeatFlux;
+        libs            (fieldFunctionObjects);
+        region          air;
+        patches         (air_to_plate);
+        writeControl    writeTime;
+    }
+    plateT
+    {
+        type            volFieldValue;
+        libs            (fieldFunctionObjects);
+        region          plate;
+        regionType      all;
+        operation       volAverage;
+        fields          (T);
+        writeFields     false;
+        writeControl    timeStep;
+        writeInterval   50;
+    }
+    MachNo
+    {
+        type            MachNo;
+        libs            (fieldFunctionObjects);
+        region          air;
+        executeControl  writeTime;
+        writeControl    writeTime;
+    }
+}

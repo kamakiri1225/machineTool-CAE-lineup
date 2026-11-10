@@ -1,0 +1,837 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>ref000 オープンソース マルチフィジックス総覧（工作機械向け）</title>
+  <style>
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      html {
+        background-color: white;
+      }
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+      font-size: 85%;
+      margin: 0;
+      hyphens: manual;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      background-color: #1a1a1a;
+      border: none;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+  </style>
+  <style>
+  body{font-family:'Noto Sans JP','Hiragino Sans','Meiryo',sans-serif;max-width:1100px;margin:2em auto;padding:0 1.2em;line-height:1.75;color:#222}
+  h1{border-bottom:3px solid #1F3A5F;padding-bottom:.3em;color:#1F3A5F} h2{border-left:6px solid #2F6FB0;padding-left:.5em;margin-top:2em;color:#1F3A5F}
+  h3{color:#2F6FB0} img{max-width:100%;height:auto;border:1px solid #ddd;margin:.5em 0}
+  table{border-collapse:collapse;margin:1em 0;font-size:.95em} th,td{border:1px solid #bbb;padding:.35em .7em} th{background:#E3ECF7}
+  code{background:#f4f4f4;padding:.1em .3em;border-radius:3px} pre{background:#f4f4f4;padding:1em;overflow-x:auto}
+  nav.top{font-size:.9em;margin-bottom:1em} nav.top a{color:#2F6FB0}
+  </style>
+  <nav class="top"><a href="../../index.html">← 一覧に戻る</a></nav>
+  <script
+  src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-chtml-full.js"
+  type="text/javascript"></script>
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">ref000 オープンソース
+マルチフィジックス総覧（工作機械向け）</h1>
+</header>
+<p><a href="README.html">← docs 目次</a> ｜ <a href="../README.html">⌂
+トップ</a> ｜ <a
+href="ref005_CalculiX-FrontISTR_ばね・固有値・周波数応答の設定比較.html">次:
+ref005 ばね・固有値・周波数応答の設定比較 →</a></p>
+<h1 id="ref000-オープンソース-マルチフィジックス総覧工作機械向け">ref000
+オープンソース マルチフィジックス総覧（工作機械向け）</h1>
+<p>作成: 2026-11-07 目的:
+工作機械の主要テーマ（振動・機構・サーボモータ・ボールねじ・リニアガイド・熱変位）を
+オープンソースだけで解析・学習するために、使えるツールを整理する。</p>
+<blockquote>
+<p>バージョンや開発状況は変わるので、実際に試す時は各公式サイトで確認すること。</p>
+</blockquote>
+<hr />
+<h2 id="1-そもそもマルチフィジックスとは">1.
+そもそもマルチフィジックスとは</h2>
+<p>複数の物理現象を<strong>連成</strong>させて解くこと。工作機械で典型的なのは次の組み合わせ。</p>
+<table>
+<thead>
+<tr class="header">
+<th>連成</th>
+<th>工作機械での例</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>構造 ⇔ 熱</td>
+<td>主軸・モータ発熱 → 熱膨張 →
+加工精度の低下（<strong>熱変位</strong>）</td>
+</tr>
+<tr class="even">
+<td>電磁場 ⇔ 構造 ⇔ 熱</td>
+<td>サーボモータ／ビルトインモータの銅損・鉄損 → 発熱、電磁力 →
+振動</td>
+</tr>
+<tr class="odd">
+<td>機構 ⇔ 制御 ⇔ 構造</td>
+<td>サーボ制御ループ ＋ ボールねじ ＋ 弾性テーブル →
+位置決め誤差・共振</td>
+</tr>
+<tr class="even">
+<td>構造 ⇔ 切削力</td>
+<td><strong>びびり振動（チャタ）</strong>：工具・ワークの振動が切削厚みを変え、それが力を変える</td>
+</tr>
+<tr class="odd">
+<td>流体 ⇔ 熱</td>
+<td>クーラント・主軸冷却油・空気による冷却</td>
+</tr>
+<tr class="even">
+<td>接触 ⇔ 構造</td>
+<td>リニアガイドの転動体、軸受、ボルト結合部の剛性・減衰</td>
+</tr>
+</tbody>
+</table>
+<p>「何でも一つのソフトで連成」より、<strong>1D（制御・機構）と
+3D（FEM）を使い分けて、必要な所だけ繋ぐ</strong>のが現実的。</p>
+<hr />
+<h2 id="2-分野別ツール一覧">2. 分野別ツール一覧</h2>
+<p>★＝このプロジェクトで最初に触る候補</p>
+<h3 id="21-構造振動-fem3d">2.1 構造・振動 FEM（3D）</h3>
+<table>
+<thead>
+<tr class="header">
+<th>ツール</th>
+<th>特徴</th>
+<th>工作機械での使い道</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>★<strong>CalculiX</strong></td>
+<td>Abaqus類似の入力形式。軽量、Windows/Linux両対応。静解析・モーダル・周波数応答・熱・接触</td>
+<td>フレーム（ベッド・コラム）の固有振動数、静剛性</td>
+</tr>
+<tr class="even">
+<td>★<strong>code_aster</strong>（Salome-Meca同梱）</td>
+<td>EDF（仏電力）製。構造動力学が非常に強い。ローターダイナミクス、非線形接触、減衰、ハーモニック、過渡</td>
+<td>本格的な振動・接触・熱応力。習得コストは高い</td>
+</tr>
+<tr class="odd">
+<td>★<strong>FrontISTR</strong></td>
+<td>日本発（東京大学 奥田研究室が中心、FrontISTR Commons
+が開発、MITライセンス）。<strong>日本語マニュアルあり</strong>。静解析・非線形・接触・固有値・周波数応答・動解析（陰解法・陽解法）・熱伝導。並列計算に強い</td>
+<td>日本語で学べる構造FEMの本命。ばね・ダッシュポット要素（511）でガイド・ボールねじの剛性を入れられる</td>
+</tr>
+<tr class="even">
+<td>Elmer FEM</td>
+<td>下記マルチフィジックスの方で詳述</td>
+<td>構造＋熱＋電磁の連成</td>
+</tr>
+<tr class="odd">
+<td>FEniCSx / deal.II / MFEM</td>
+<td>方程式を自分でコードで書くライブラリ型</td>
+<td>研究的な独自モデル（切削力モデル連成など）</td>
+</tr>
+<tr class="even">
+<td>Kratos Multiphysics</td>
+<td>構造・流体・DEM・連成をPythonから組める</td>
+<td>連成解析の発展編</td>
+</tr>
+</tbody>
+</table>
+<h3 id="22-マルチフィジックス統合型">2.2 マルチフィジックス統合型</h3>
+<table>
+<thead>
+<tr class="header">
+<th>ツール</th>
+<th>特徴</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>★<strong>Elmer FEM</strong></td>
+<td>フィンランドCSC製。構造・熱・電磁場・流体・音響を1ソルバで連成。GUI（ElmerGUI）あり。<strong>モータの電磁場→発熱→熱変位</strong>の流れを1つで追える</td>
+</tr>
+<tr class="even">
+<td>Kratos Multiphysics</td>
+<td>アプリケーション（モジュール）の組合せで連成</td>
+</tr>
+<tr class="odd">
+<td>MOOSE</td>
+<td>米INL製。大規模連成、C++。原子力系が主だが汎用</td>
+</tr>
+<tr class="even">
+<td>preCICE</td>
+<td><strong>連成ライブラリ</strong>。OpenFOAM＋CalculiX
+など別ソフト同士を結合（FSI、共役熱伝達）</td>
+</tr>
+</tbody>
+</table>
+<h3 id="23-流体熱cfd">2.3 流体・熱（CFD）</h3>
+<table>
+<thead>
+<tr class="header">
+<th>ツール</th>
+<th>特徴</th>
+<th>使い道</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>★OpenFOAM</td>
+<td>定番CFD。共役熱伝達（chtMultiRegionFoam）</td>
+<td>主軸冷却ジャケット、クーラント、機内の空気の流れ</td>
+</tr>
+<tr class="even">
+<td>SU2</td>
+<td>圧縮性・随伴最適化に強い</td>
+<td>工作機械ではあまり使わない</td>
+</tr>
+</tbody>
+</table>
+<h3 id="24-電磁場サーボモータリニアモータビルトインモータ">2.4
+電磁場（サーボモータ・リニアモータ・ビルトインモータ）</h3>
+<table>
+<thead>
+<tr class="header">
+<th>ツール</th>
+<th>特徴</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>★<strong>FEMM</strong></td>
+<td>2D磁場の定番（Windows、無償）。トルク・コギング・インダクタンス計算。Pythonから操作可（pyfemm）</td>
+</tr>
+<tr class="even">
+<td><strong>pyleecan</strong></td>
+<td>電動機設計用のPythonフレームワーク。FEMMやGMSHと連携。PMSM（サーボモータ）の解析フローが揃う</td>
+</tr>
+<tr class="odd">
+<td>SyR-e</td>
+<td>同期リラクタンス／PMモータ設計（MATLAB/Octave＋FEMM）</td>
+</tr>
+<tr class="even">
+<td>GetDP + Gmsh（ONELAB）</td>
+<td>2D/3D電磁場。回転機の例題あり</td>
+</tr>
+<tr class="odd">
+<td>Elmer FEM</td>
+<td>3D電磁場＋熱連成</td>
+</tr>
+</tbody>
+</table>
+<h3 id="25-1d-システム制御サーボループ駆動系">2.5 1D
+システム・制御（サーボループ、駆動系）</h3>
+<p>ここが<strong>サーボモータ・ボールねじ・テーブル送り系</strong>の主戦場。</p>
+<table>
+<thead>
+<tr class="header">
+<th>ツール</th>
+<th>特徴</th>
+<th>使い道</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>★<strong>OpenModelica</strong></td>
+<td>Modelica言語のOSS環境。標準ライブラリ（MSL）に
+Electrical.Machines（モータ）, Mechanics.Rotational /
+Translational（慣性・ばね・摩擦・ギア）, Blocks（PID）が揃う</td>
+<td><strong>モータ→カップリング→ボールねじ→テーブル</strong>の送り系モデル、位置／速度／電流の3重ループ、摩擦・バックラッシ</td>
+</tr>
+<tr class="even">
+<td>★<strong>Python（python-control, SciPy）</strong></td>
+<td>伝達関数・状態方程式・ボード線図・根軌跡</td>
+<td>制御ゲイン設計、周波数応答、安定判別</td>
+</tr>
+<tr class="odd">
+<td>Scilab / Xcos</td>
+<td>Simulink的なブロック線図</td>
+<td>同上（GUIで組みたい場合）</td>
+</tr>
+<tr class="even">
+<td>GNU Octave</td>
+<td>MATLAB互換</td>
+<td>既存MATLABコードの流用</td>
+</tr>
+<tr class="odd">
+<td>FMPy / OMSimulator</td>
+<td>FMI（モデル交換規格）で別ツールのモデルを連成</td>
+<td>Modelicaモデルを Python から回す</td>
+</tr>
+</tbody>
+</table>
+<h3 id="26-機構マルチボディ動力学">2.6 機構・マルチボディ動力学</h3>
+<table>
+<thead>
+<tr class="header">
+<th>ツール</th>
+<th>特徴</th>
+<th>使い道</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>★<strong>Project Chrono</strong></td>
+<td>剛体・弾性体マルチボディ、接触、FEA、Python（PyChrono）</td>
+<td>機構全体の動き、リニアガイド・転動体の接触</td>
+</tr>
+<tr class="even">
+<td>MBDyn</td>
+<td>ミラノ工科大。弾性マルチボディ、制御連成</td>
+<td>弾性体を含む機構</td>
+</tr>
+<tr class="odd">
+<td>MuJoCo</td>
+<td>高速なマルチボディ＋接触（ロボット向け）</td>
+<td>5軸機構の運動学・動力学の学習</td>
+</tr>
+<tr class="even">
+<td>Drake</td>
+<td>制御・最適化と一体のマルチボディ</td>
+<td>軌道生成・制御</td>
+</tr>
+<tr class="odd">
+<td>FreeCAD Assembly</td>
+<td>CADの拘束による機構確認</td>
+<td>干渉チェック、ストローク確認</td>
+</tr>
+</tbody>
+</table>
+<h3 id="27-回転体主軸ローターダイナミクス">2.7
+回転体・主軸（ローターダイナミクス）</h3>
+<table>
+<thead>
+<tr class="header">
+<th>ツール</th>
+<th>特徴</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>★<strong>ROSS</strong></td>
+<td>Python製ローターダイナミクス。軸・円板・軸受要素で主軸モデルを組み、危険速度・キャンベル線図・不釣合い応答</td>
+</tr>
+<tr class="even">
+<td>OpenTorsion</td>
+<td>ねじり振動（駆動系）専用のPythonライブラリ</td>
+</tr>
+<tr class="odd">
+<td>code_aster</td>
+<td>3Dローターダイナミクス（ジャイロ効果込み）</td>
+</tr>
+</tbody>
+</table>
+<h3 id="28-びびり振動切削の安定性">2.8 びびり振動（切削の安定性）</h3>
+<p>専用OSSは少ない。<strong>理論（Altintas / Tlusty
+の安定限界線図＝SLD）を Python
+で自作する</strong>のが一番学びになる。</p>
+<ul>
+<li>入力：工具先端の周波数応答関数（FRF）→
+FEM（CalculiX）やROSSで計算、または打撃試験</li>
+<li>計算：ゼロ次近似（ZOA）法、半離散化法（Semi-Discretization）</li>
+<li>出力：安定限界線図（主軸回転数 vs 限界切込み）</li>
+</ul>
+<h3 id="29-実験モーダル解析信号処理実機と比較するため">2.9
+実験モーダル解析・信号処理（実機と比較するため）</h3>
+<table>
+<thead>
+<tr class="header">
+<th>ツール</th>
+<th>特徴</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>sdypy（旧 pyEMA ほか）</td>
+<td>Python。実験モーダル解析（FRFからの固有値同定）</td>
+</tr>
+<tr class="even">
+<td>pyFBS</td>
+<td>周波数応答ベースのサブストラクチャリング（工具＋ホルダ＋主軸の結合
+＝ RCSA的な使い方）</td>
+</tr>
+<tr class="odd">
+<td>SciPy.signal</td>
+<td>FFT・フィルタ・FRF推定</td>
+</tr>
+</tbody>
+</table>
+<h3 id="210-プリポストcad形状">2.10 プリ・ポスト・CAD・形状</h3>
+<table>
+<thead>
+<tr class="header">
+<th>ツール</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>★<strong>FreeCAD</strong></td>
+<td>CAD。FEMワークベンチで CalculiX / Elmer を GUI から実行できる →
+<strong>入門に最適</strong></td>
+</tr>
+<tr class="even">
+<td>★<strong>Gmsh</strong></td>
+<td>メッシュ生成（Pythonで自動化可）</td>
+</tr>
+<tr class="odd">
+<td>Salome</td>
+<td>CAD＋メッシュ＋code_aster連携（Salome-Meca）</td>
+</tr>
+<tr class="even">
+<td>Netgen</td>
+<td>メッシュ（FreeCAD内蔵）</td>
+</tr>
+<tr class="odd">
+<td>★<strong>ParaView</strong></td>
+<td>結果の可視化</td>
+</tr>
+</tbody>
+</table>
+<h3 id="211-工作機械そのものnccam">2.11 工作機械そのもの（NC・CAM）</h3>
+<table>
+<thead>
+<tr class="header">
+<th>ツール</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>LinuxCNC</td>
+<td>実際に機械を動かせるOSSのCNC。補間・加減速・サーボループ・運動学（5軸）の実装が読める</td>
+</tr>
+<tr class="even">
+<td>FreeCAD CAM（旧Path）</td>
+<td>工具経路生成</td>
+</tr>
+<tr class="odd">
+<td>grbl</td>
+<td>小型マシン用ファームウェア。加減速計画が読みやすい</td>
+</tr>
+</tbody>
+</table>
+<h3 id="212-最適化パラメトリック">2.12 最適化・パラメトリック</h3>
+<table>
+<thead>
+<tr class="header">
+<th>ツール</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>OpenMDAO</td>
+<td>多分野設計最適化（NASA製）</td>
+</tr>
+<tr class="even">
+<td>Dakota</td>
+<td>パラメータスタディ・不確かさ評価</td>
+</tr>
+<tr class="odd">
+<td>Optuna</td>
+<td>Python製。ソルバを外から回して最適化</td>
+</tr>
+</tbody>
+</table>
+<h3 id="213-ばね要素ボールねじリニアガイドの剛性の入れ方">2.13
+ばね要素（ボールねじ・リニアガイドの剛性）の入れ方</h3>
+<p>工作機械の構造解析では、ボールねじやリニアガイドを<strong>ばね剛性</strong>に置き換えるのが定番。各ソフトの対応は次のとおり。</p>
+<table>
+<thead>
+<tr class="header">
+<th>ソフト</th>
+<th>地面と結ぶばね</th>
+<th>2点間のばね</th>
+<th><span class="math inline">\(6\times6\)</span> 剛性行列</th>
+<th>備考</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>CalculiX</td>
+<td><code>SPRING1</code></td>
+<td><code>SPRINGA</code>（軸方向）, <code>SPRING2</code>（自由度指定）,
+<code>DASHPOTA</code></td>
+<td>×（ばねを組み合わせて表す）</td>
+<td>FreeCAD の GUI からも「Spring」拘束で面に剛性を与えられる</td>
+</tr>
+<tr class="even">
+<td>FrontISTR</td>
+<td><code>!SPRING</code>（静解析・陰解法動解析で使える）</td>
+<td>要素タイプ
+<strong>511</strong>（2節点のばね・ダッシュポットのコネクタ要素、<code>!SPRING_A</code>
+/ <code>!SPRING_D</code>）</td>
+<td>×</td>
+<td><code>!SPRING</code>
+は固有値解析の制御データには載っていない。固有値解析では511要素を使う想定だが、<strong>実際に試して確認する</strong></td>
+</tr>
+<tr class="odd">
+<td>code_aster</td>
+<td><code>DISCRET</code>（1節点）</td>
+<td><code>DISCRET</code>（2節点）: <code>K_T_D_L</code>,
+<code>K_TR_D_L</code></td>
+<td>○
+<code>K_TR_L</code>（方向同士が影響し合う剛性も可）。質量・減衰行列、すき間付き非線形（<code>DIS_CHOC</code>）も</td>
+<td>最も表現力が高い</td>
+</tr>
+<tr class="even">
+<td>Elmer</td>
+<td>境界のばね係数（弾性床）</td>
+<td>△</td>
+<td>×</td>
+<td>離散的なばねは不得意</td>
+</tr>
+<tr class="odd">
+<td>OpenModelica</td>
+<td><code>Fixed</code>＋<code>Spring</code></td>
+<td><code>SpringDamper</code>（並進・回転）</td>
+<td>×</td>
+<td>1Dの送り系モデル向け</td>
+</tr>
+<tr class="even">
+<td>Project Chrono</td>
+<td>—</td>
+<td><code>ChLinkTSDA</code> / <code>ChLinkRSDA</code></td>
+<td>○ ブッシュ要素</td>
+<td>マルチボディ向け</td>
+</tr>
+</tbody>
+</table>
+<p>剛性の値の作り方:</p>
+<ul>
+<li><strong>ボールねじの軸方向</strong>: 直列ばねとして合成する</li>
+</ul>
+<p><span class="math display">\[\frac{1}{K} =
+\frac{1}{K_{\mathrm{shaft}}} + \frac{1}{K_{\mathrm{nut}}} +
+\frac{1}{K_{\mathrm{bearing}}}, \qquad K_{\mathrm{shaft}} =
+\frac{AE}{L}\]</span></p>
+<p><span
+class="math inline">\(K_{\mathrm{shaft}}\)</span>：ねじ軸、<span
+class="math inline">\(K_{\mathrm{nut}}\)</span>：ナット、<span
+class="math inline">\(K_{\mathrm{bearing}}\)</span>：サポート軸受。<span
+class="math inline">\(A\)</span> はねじ軸の断面積、<span
+class="math inline">\(E\)</span> はヤング率、<span
+class="math inline">\(L\)</span>
+は固定側軸受からナットまでの距離（ナットの位置で変わる）</p>
+<ul>
+<li><strong>リニアガイド</strong>:
+カタログのラジアル・逆ラジアル・横方向の剛性（予圧の等級で変わる）。モーメント剛性は、キャリッジを複数のばねで支えて表す</li>
+<li>キャリッジやナットの取付面は、1つの節点に剛につなぎ（CalculiX
+<code>*RIGID BODY</code>、FrontISTR <code>!EQUATION</code> /
+<code>!MPC</code>、code_aster
+<code>LIAISON_SOLIDE</code>）、その節点とレール側の間にばねを入れる</li>
+</ul>
+<hr />
+<h2 id="3-学習テーマ--ツール対応表">3. 学習テーマ × ツール対応表</h2>
+<table>
+<thead>
+<tr class="header">
+<th>学習テーマ</th>
+<th>まず試す</th>
+<th>次に試す</th>
+<th>理論で押さえること</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>フレームの振動（ベッド・コラム）</td>
+<td>FreeCAD＋CalculiX</td>
+<td>FrontISTR / code_aster</td>
+<td>固有値解析、モード形状、質量・剛性行列</td>
+</tr>
+<tr class="even">
+<td>主軸の振動・危険速度</td>
+<td>ROSS</td>
+<td>code_aster</td>
+<td>はり要素、軸受剛性、ジャイロ効果、キャンベル線図</td>
+</tr>
+<tr class="odd">
+<td>びびり振動</td>
+<td>Python自作SLD</td>
+<td>CalculiXのFRFと連携</td>
+<td>再生びびり、安定限界線図</td>
+</tr>
+<tr class="even">
+<td>サーボモータ（電磁）</td>
+<td>FEMM / pyleecan</td>
+<td>Elmer（3D・熱連成）</td>
+<td>dq変換、トルク定数、コギング</td>
+</tr>
+<tr class="odd">
+<td>サーボ制御</td>
+<td>python-control</td>
+<td>OpenModelica</td>
+<td>電流・速度・位置ループ、帯域、ゲイン余裕</td>
+</tr>
+<tr class="even">
+<td>ボールねじ送り系</td>
+<td>OpenModelica</td>
+<td>Chrono＋FEM</td>
+<td>リード、慣性換算、軸方向剛性、ねじり剛性、危険速度</td>
+</tr>
+<tr class="odd">
+<td>リニアガイド</td>
+<td>手計算（Hertz接触）＋CalculiX / FrontISTR（ばね要素）</td>
+<td>code_aster（6×6）、Chrono（転動体接触）</td>
+<td>予圧、剛性、寿命計算</td>
+</tr>
+<tr class="even">
+<td>熱変位</td>
+<td>Elmer / CalculiX（熱→構造）</td>
+<td>OpenFOAM（冷却）</td>
+<td>熱伝導、熱伝達率、熱膨張</td>
+</tr>
+<tr class="odd">
+<td>機構・5軸運動学</td>
+<td>Python（同次変換行列）</td>
+<td>MuJoCo / LinuxCNC</td>
+<td>順・逆運動学、幾何誤差</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="4-学習ロードマップ案">4. 学習ロードマップ（案）</h2>
+<p>段階的に「手計算 → 1D → 3D →
+連成」の順で、<strong>毎回理論値と照合</strong>する。</p>
+<ol type="1">
+<li><strong>ana001</strong>
+FreeCAD＋CalculiX：片持ちはりのモーダル解析（理論解と一致確認＝ツールの使い方を覚える）</li>
+<li><strong>ana002</strong>
+CalculiX：簡易コラム形状の固有振動数・静剛性</li>
+<li><strong>ana003</strong>
+Python：ボールねじ送り系の慣性換算・軸方向剛性・危険速度の手計算ツール</li>
+<li><strong>ana004</strong>
+python-control：位置・速度ループのボード線図、2慣性系の共振</li>
+<li><strong>ana005</strong>
+OpenModelica：モータ＋ボールねじ＋テーブルの送り系シミュレーション（摩擦込み）</li>
+<li><strong>ana006</strong>
+ROSS：主軸（軸受2点支持）の危険速度・キャンベル線図</li>
+<li><strong>ana007</strong> Python：1自由度びびり振動の安定限界線図</li>
+<li><strong>ana008</strong> FEMM /
+pyleecan：小型PMSMのトルク・コギング</li>
+<li><strong>ana009</strong> Elmer：モータ発熱 →
+主軸の熱変位（熱-構造連成）</li>
+<li><strong>ana010</strong> 連成：送り系（1D）＋フレームFEMの縮約モデル
+→ 加減速時の振動</li>
+</ol>
+<hr />
+<h2 id="5-環境メモwsl2--linux-前提">5. 環境メモ（WSL2 / Linux
+前提）</h2>
+<table>
+<thead>
+<tr class="header">
+<th>ツール</th>
+<th>入手方法の目安</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>CalculiX</td>
+<td><code>apt install calculix-ccx</code></td>
+</tr>
+<tr class="even">
+<td>FrontISTR</td>
+<td>公式サイトのバイナリ、公式Dockerイメージ、またはソースビルド（<a
+href="https://www.frontistr.com/">frontistr.com</a>）</td>
+</tr>
+<tr class="odd">
+<td>FreeCAD</td>
+<td>公式AppImage または Windows版（GUIはWindows側が楽）</td>
+</tr>
+<tr class="even">
+<td>Elmer</td>
+<td>PPA（<code>ppa:elmer-csc-ubuntu/elmer-csc-ppa</code>）またはソースビルド</td>
+</tr>
+<tr class="odd">
+<td>code_aster</td>
+<td>Salome-Meca のコンテナ版（Singularity/Apptainer）</td>
+</tr>
+<tr class="even">
+<td>OpenFOAM</td>
+<td>openfoam.com または openfoam.org の apt リポジトリ</td>
+</tr>
+<tr class="odd">
+<td>OpenModelica</td>
+<td>公式aptリポジトリ（Windows版インストーラも可）</td>
+</tr>
+<tr class="even">
+<td>Gmsh / ParaView</td>
+<td>apt または公式バイナリ</td>
+</tr>
+<tr class="odd">
+<td>Python系（ROSS, python-control, pyleecan, pychrono, sdypy,
+scipy）</td>
+<td><code>pip</code> / <code>conda</code>（pychrono は
+conda-forge）</td>
+</tr>
+<tr class="even">
+<td>FEMM</td>
+<td>Windows専用（WSLからは Windows 側で実行）</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="6-参考になる理論書キーワード">6.
+参考になる理論書・キーワード</h2>
+<ul>
+<li>Y. Altintas『Manufacturing Automation』—
+切削力・びびり・送り駆動系制御の定番</li>
+<li>工作機械の熱変位、送り駆動系の剛性 —
+日本機械学会・精密工学会の論文</li>
+<li>ボールねじ・リニアガイドの選定 — 各メーカー技術資料（THK、NSK、HIWIN
+等の総合カタログに剛性・寿命・危険速度の計算式が載っている）</li>
+<li>主軸テーパ規格 → <a
+href="../study/ref001_工作機械_主軸テーパ30-40-50番.html">study/ref001</a></li>
+</ul>
+<hr />
+<p><a href="README.html">← docs 目次</a> ｜ <a href="../README.html">⌂
+トップ</a> ｜ <a
+href="ref005_CalculiX-FrontISTR_ばね・固有値・周波数応答の設定比較.html">次:
+ref005 ばね・固有値・周波数応答の設定比較 →</a></p>
+</body>
+</html>

@@ -1,0 +1,40 @@
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "system/gas";
+    object      topoSetDict;
+}
+
+actions
+(
+    {
+        name    chamberSet;
+        type    cellSet;
+        action  new;
+        source  boxToCell;
+        box     (-1 -1 -1) (1 -0.0049 1);      // y < -4.9 mm: the combustion chamber
+    }
+    {
+        name    chamber;
+        type    cellZoneSet;
+        action  new;
+        source  setToCellZone;
+        set     chamberSet;
+    }
+    {
+        name    tankSet;
+        type    cellSet;
+        action  new;
+        source  boxToCell;
+        box     (-1 0 -1) (1 1 1);              // y > 0: the tank
+    }
+    {
+        name    tank;
+        type    cellZoneSet;
+        action  new;
+        source  setToCellZone;
+        set     tankSet;
+    }
+);

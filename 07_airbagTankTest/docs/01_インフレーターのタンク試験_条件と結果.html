@@ -451,5 +451,130 @@ mm）は、超音速で膨張して温度が下がる領域（不足膨張噴流
 </tr>
 </tbody>
 </table>
+<hr />
+<h2 id="8-タンクの壁と外の空気も同時に解く固体連成途中経過2026-11-10">8.
+タンクの壁と外の空気も同時に解く（固体連成、途中経過：2026-11-10）</h2>
+<h3 id="81-ねらい">8.1 ねらい</h3>
+<p>ここまでの計算（run001）は、タンクの壁を断熱にしていた。
+実際のタンク試験では、高温の燃焼ガスが壁に熱を奪われ、圧力が最高点のあと下がっていく。
+壁への熱の逃げ方は熱伝達率で決まるが、その値を仮定せずに求めたい。
+そこで、<strong>燃焼ガス（混合ガス）・タンクの鋼の壁・外の空気の 3
+つを同時に解く</strong>（固体連成、CHT）。</p>
+<h3 id="82-モデルrun002_cht_wall_outsideair">8.2
+モデル（<code>run002_CHT_wall_outsideAir</code>）</h3>
+<table>
+<thead>
+<tr class="header">
+<th>領域</th>
+<th>中身</th>
+<th>範囲</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>gas</code>（流体）</td>
+<td>燃焼ガス N₂/CO₂/H₂O と空気 N₂/O₂ の混合ガス、k-ω SST</td>
+<td>燃焼室・オリフィス・タンク（run001 と同じ）</td>
+</tr>
+<tr class="even">
+<td><code>wall</code>（固体）</td>
+<td>鋼（密度 7,850、比熱 460、熱伝導率 45）、厚さ 5 mm</td>
+<td>タンクの底板・側面・ふた</td>
+</tr>
+<tr class="odd">
+<td><code>outside</code>（流体）</td>
+<td>空気（層流、重力あり）。外周は 293 K</td>
+<td>側面の外 60 mm、ふたの上 60 mm</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>境目（<code>gas_to_wall</code>・<code>wall_to_outside</code>）は、温度と熱流束がつり合う条件で、熱伝達率は計算から決まる。</li>
+<li>メッシュ：17,006 セル（ガス 10,700 セル）。ケースを作るスクリプトは
+<code>tools/make_tank_cht_case.py</code>。</li>
+</ul>
+<h3 id="83-やったことと結果">8.3 やったことと結果</h3>
+<table>
+<thead>
+<tr class="header">
+<th>回</th>
+<th>ソルバ</th>
+<th>内容</th>
+<th>結果</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>1</td>
+<td><code>chtMultiRegionFoam</code>（ESI v2512）</td>
+<td>run001
+と同じく、燃焼室の体積から質量・エネルギーを湧き出させた（<code>fvOptions</code>）</td>
+<td><strong>失敗</strong>。燃焼室の圧力が run001 の約 1/4
+しか上がらず、温度が上限の 3,000 K
+に張り付いた（<code>_failed_run002_CHT_volumeSource</code>）</td>
+</tr>
+<tr class="even">
+<td>2</td>
+<td>同上</td>
+<td>燃焼ガスを、燃焼室の底の境界から流量で入れる形に変えた（入る質量とエネルギーは同じ）</td>
+<td>0.3 ms までは run001 とほぼ同じ圧力（3.24 対 3.13
+bar）。<strong>0.62 ms で時間刻みが 10⁻¹¹ s
+以下に縮んで、進まなくなった</strong></td>
+</tr>
+</tbody>
+</table>
+<p><strong>1 回目の原因</strong>：<code>chtMultiRegionFoam</code>
+の圧力の式に、体積から質量が湧き出す項（<code>fvOptions(psi, p, rho)</code>）が入っていない（ソースで確認）。
+<code>reactingFoam</code>
+には入っている。質量は密度の式には足されるが、圧力が合わないため、エネルギーだけが溜まった。</p>
+<p><strong>2 回目の原因</strong>：止まった 0.62 ms は、燃焼室の圧力が約
+0.96 MPa
+になり、オリフィスが強くチョーク（音速で流量が頭打ち）し始めたところ。
+<code>chtMultiRegionFoam</code>
+の圧力の式には、超音速を安定して解く形（<code>transonic</code>）がない。
+レーザー切断のアシストガスでも、同じソルバがノズルのチョークのところで同じように止まった（<code>02_laserAssistGas</code>
+の解説 5 章）。</p>
+<h3 id="84-次の一手">8.4 次の一手</h3>
+<p>レーザー切断では、Foundation 版の <strong>OpenFOAM 13 の
+<code>foamMultiRun</code></strong>
+で、混合ガス・超音速・固体連成を解けた。 流体の部品
+<code>multicomponentFluid</code> は <code>transonic</code>
+に対応している。そこで、エアバッグも OpenFOAM 13 で計算し直す。</p>
+<table>
+<thead>
+<tr class="header">
+<th>領域</th>
+<th>OpenFOAM 13 の部品</th>
+<th>時間の進め方</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>gas</code></td>
+<td><code>multicomponentFluid</code>（<code>transonic yes</code>）</td>
+<td>非定常（圧力の時刻歴を見たいので LTS は使わない）</td>
+</tr>
+<tr class="even">
+<td><code>wall</code></td>
+<td><code>solid</code></td>
+<td>非定常</td>
+</tr>
+<tr class="odd">
+<td><code>outside</code></td>
+<td><code>fluid</code> または <code>multicomponentFluid</code></td>
+<td>非定常</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>50 ms の間に鋼の壁へ熱がしみ込む深さは √(αt) ≈ 0.8 mm（α = 1.25×10⁻⁵
+m²/s）。
+<ul>
+<li>なので、外の空気は 50 ms
+の圧力にはほとんど効かない。外の空気が効いてくるのは、秒単位の冷え方を見るとき。</li>
+</ul></li>
+<li>熱の逃げは 50 ms でガスの持つエネルギーの数 %
+と見積もられ、タンクの最高圧力が数 % 下がる見込み。</li>
+</ul>
 </body>
 </html>

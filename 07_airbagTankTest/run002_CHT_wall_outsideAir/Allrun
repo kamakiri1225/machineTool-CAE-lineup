@@ -1,0 +1,13 @@
+#!/bin/sh
+cd "${0%/*}" || exit
+. ${WM_PROJECT_DIR:?}/bin/tools/RunFunctions
+export HWLOC_COMPONENTS=-gl        # WSL2: keeps mpirun from hanging
+rm -rf 0 constant/polyMesh constant/*/polyMesh
+runApplication blockMesh
+runApplication splitMeshRegions -cellZones -overwrite
+runApplication topoSet -region gas
+rm -rf 0 && cp -r 0.orig 0
+runApplication checkMesh -region gas
+runApplication decomposePar -allRegions -force
+runParallel $(getApplication)
+touch post.foam

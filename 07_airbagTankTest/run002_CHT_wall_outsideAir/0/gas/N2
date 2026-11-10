@@ -1,0 +1,29 @@
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       volScalarField;
+    location    "0.orig/gas";
+    object      N2;
+}
+
+dimensions      [0 0 0 0 0 0 0];
+
+internalField   uniform 0.767;
+
+boundaryField
+{
+    gasInlet
+    {
+        type            fixedValue;
+        value           uniform 0.7000000000000001;
+    }
+    ".*"
+    {
+        type            zeroGradient;
+    }
+    "(front|back)"
+    {
+        type            wedge;
+    }
+}

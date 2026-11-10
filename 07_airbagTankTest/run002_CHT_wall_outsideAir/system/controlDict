@@ -1,0 +1,126 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  2512                                  |
+|   \\  /    A nd           | Website:  www.openfoam.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+FoamFile
+{
+    version         2;
+    format          ascii;
+    class           dictionary;
+    location        "system";
+    object          controlDict;
+}
+
+application     chtMultiRegionFoam;
+
+startFrom       latestTime;
+
+startTime       0;
+
+stopAt          endTime;
+
+endTime         0.05;
+
+deltaT          1e-08;
+
+writeControl    adjustable;
+
+writeInterval   0.0005;
+
+purgeWrite      0;
+
+writeFormat     binary;
+
+writePrecision  8;
+
+timeFormat      general;
+
+timePrecision   6;
+
+runTimeModifiable true;
+
+adjustTimeStep  yes;
+
+maxCo           0.5;
+
+maxDi           10;
+
+maxDeltaT       1e-05;
+
+functions
+{
+    tankAvg
+    {
+        type            volFieldValue;
+        libs            ( fieldFunctionObjects );
+        region          gas;
+        regionType      cellZone;
+        name            tank;
+        operation       volAverage;
+        fields          ( p T CO2 );
+        writeFields     false;
+        writeControl    timeStep;
+        writeInterval   20;
+    }
+    chamberAvg
+    {
+        type            volFieldValue;
+        libs            ( fieldFunctionObjects );
+        region          gas;
+        regionType      cellZone;
+        name            chamber;
+        operation       volAverage;
+        fields          ( p T );
+        writeFields     false;
+        writeControl    timeStep;
+        writeInterval   20;
+    }
+    wallAvg
+    {
+        type            volFieldValue;
+        libs            ( fieldFunctionObjects );
+        region          wall;
+        regionType      all;
+        operation       volAverage;
+        fields          ( T );
+        writeFields     false;
+        writeControl    timeStep;
+        writeInterval   20;
+    }
+    heatToWall
+    {
+        type            wallHeatFlux;
+        libs            ( fieldFunctionObjects );
+        region          gas;
+        patches         ( gas_to_wall );
+        writeControl    writeTime;
+    }
+    innerWallT
+    {
+        type            surfaceFieldValue;
+        libs            ( fieldFunctionObjects );
+        region          gas;
+        regionType      patch;
+        name            gas_to_wall;
+        operation       areaAverage;
+        fields          ( T );
+        writeFields     false;
+        writeControl    timeStep;
+        writeInterval   20;
+    }
+    MachNo
+    {
+        type            MachNo;
+        libs            ( fieldFunctionObjects );
+        region          gas;
+        executeControl  writeTime;
+        writeControl    writeTime;
+    }
+}
+
+
+// ************************************************************************* //

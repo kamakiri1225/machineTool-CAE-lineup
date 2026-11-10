@@ -33,3 +33,5 @@ __pycache__/
 **/docs/img_local/
 **/_failed_*/
 **/_stopped_*/
+07_airbagTankTest/run002_CHT_wall_outsideAir/postProcessing/gas/heatToWall/
+02_laserAssistGas/run009_N2cut_t2mm_CHT/postProcessing/air/heatToGas/

@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>ref006 FrontISTR 6.0 の変更点と 5.9 との比較</title>
+  <style>
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      html {
+        background-color: white;
+      }
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+      font-size: 85%;
+      margin: 0;
+      hyphens: manual;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      background-color: #1a1a1a;
+      border: none;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+  </style>
+  <style>
+  body{font-family:'Noto Sans JP','Hiragino Sans','Meiryo',sans-serif;max-width:1100px;margin:2em auto;padding:0 1.2em;line-height:1.75;color:#222}
+  h1{border-bottom:3px solid #1F3A5F;padding-bottom:.3em;color:#1F3A5F} h2{border-left:6px solid #2F6FB0;padding-left:.5em;margin-top:2em;color:#1F3A5F}
+  h3{color:#2F6FB0} img{max-width:100%;height:auto;border:1px solid #ddd;margin:.5em 0}
+  table{border-collapse:collapse;margin:1em 0;font-size:.95em} th,td{border:1px solid #bbb;padding:.35em .7em} th{background:#E3ECF7}
+  code{background:#f4f4f4;padding:.1em .3em;border-radius:3px} pre{background:#f4f4f4;padding:1em;overflow-x:auto}
+  nav.top{font-size:.9em;margin-bottom:1em} nav.top a{color:#2F6FB0}
+  </style>
+  <nav class="top"><a href="../../index.html">← 一覧に戻る</a></nav>
+  <script
+  src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-chtml-full.js"
+  type="text/javascript"></script>
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">ref006 FrontISTR 6.0 の変更点と 5.9 との比較</h1>
+</header>
+<p><a href="README.html">← docs 目次</a> ｜ <a href="../README.html">⌂
+トップ</a> ｜ <a
+href="ref005_CalculiX-FrontISTR_ばね・固有値・周波数応答の設定比較.html">←
+前: ref005 ばね・固有値・周波数応答の設定比較</a> ｜ <a
+href="ana001_CalculiX-FrontISTR_簡易工作機械の固有値解析.html">次:
+ana001 簡易工作機械の固有値解析 →</a></p>
+<h1 id="ref006-frontistr-60-の変更点と-59-との比較">ref006 FrontISTR 6.0
+の変更点と 5.9 との比較</h1>
+<p>作成: 2026-11-07</p>
+<p>このプロジェクトの FrontISTR を <strong>5.9 → 6.0</strong>
+に上げた。何が変わったかを調べ、ana001〜004
+と同じ入力で両方を動かして比べた。</p>
+<h2 id="1-結論">1. 結論</h2>
+<ul>
+<li><strong>6.0 は 2026-10-05 に公開</strong>（GitLab のタグ
+<code>v6.0</code>、VERSION ファイル「Version 6.0
+(2026/10/5)」）。5.9（2026-03-26）からの変更は 659 コミット、マージ 約
+150 件</li>
+<li><strong>このプロジェクトの解析（ばね・MPC・固有値・周波数応答）では、結果は
+5.9 と完全に同じ</strong>（固有振動数・周波数応答・変位とも差 0）</li>
+<li><strong>計算時間は 6〜16 % 短くなった</strong></li>
+<li>入力ファイルの書き方は<strong>そのまま使える</strong>（書き換え不要）。新しく使える指定が増えた（3
+章）</li>
+<li>今後は 6.0 を標準にする。5.9 も比較用に残した</li>
+</ul>
+<table>
+<thead>
+<tr class="header">
+<th>場所</th>
+<th>版</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>~/opt/frontistr/bin/fistr1</code></td>
+<td><strong>6.0</strong>（<code>~/opt/frontistr6</code> へのリンク）。各
+ana の <code>run.sh</code> はこれを使う</td>
+</tr>
+<tr class="even">
+<td><code>~/opt/frontistr59/bin/fistr1</code></td>
+<td>5.9（比較用）</td>
+</tr>
+</tbody>
+</table>
+<p>ビルド方法は 5.9 と同じ（ソースを GitLab
+から取得、CMake、MPI・METIS・MUMPS なし、OpenMP あり、BLAS/LAPACK は
+CalculiX の deb から展開したもの）。 <code>fistr1 -v</code> で
+<code>version: 5.9</code> → <code>6.0</code>
+になったことを確認した。</p>
+<h2 id="2-同じ入力で比べた結果">2. 同じ入力で比べた結果</h2>
+<p><img src="../analysis/fistr_v59_v60_check/v59_v60_compare.png"
+alt="5.9 と 6.0 の比較" /></p>
+<table>
+<thead>
+<tr class="header">
+<th>ケース</th>
+<th>5.9 時間 [s]</th>
+<th>6.0 時間 [s]</th>
+<th>結果</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>ana001 固有値</td>
+<td>24.5</td>
+<td>22.2</td>
+<td>1〜6次 172.2, 181.2, 243.2, 441.8, 474.4, 610.9
+Hz：<strong>同じ</strong>（10次まで差 0.000 %）</td>
+</tr>
+<tr class="even">
+<td>ana002 周波数応答（X 加振）</td>
+<td>39.8</td>
+<td>33.6</td>
+<td>ピーク 180.6 Hz・0.1780 µm/N：<strong>同じ</strong>（全周波数で差
+<span class="math inline">\(3\times10^{-13}\)</span> % 以下）</td>
+</tr>
+<tr class="odd">
+<td>ana003 RBE2（MPC）</td>
+<td>21.1</td>
+<td>19.5</td>
+<td>1〜6次 172.2, 183.1, 243.2, 453.5, 486.8, 625.3
+Hz：<strong>同じ</strong></td>
+</tr>
+<tr class="even">
+<td>ana003 RBE3（MPC）</td>
+<td>24.8</td>
+<td>23.4</td>
+<td><strong>同じ</strong></td>
+</tr>
+<tr class="odd">
+<td>ana004 ばね 3 種類</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>−0.25005 / 0.25000 / −0.25000 mm：<strong>同じ</strong>（手計算 0.25
+mm）</td>
+</tr>
+</tbody>
+</table>
+<p><em>スクリプト: <a
+href="../analysis/fistr_v59_v60_check/compare.py">compare.py</a>（元の
+ana フォルダから入力をコピーして両方の版で実行）、<a
+href="../analysis/fistr_v59_v60_check/plot.py">plot.py</a>。全結果: <a
+href="../analysis/fistr_v59_v60_check/compare.html">compare.md</a></em></p>
+<p>6.0 では「周波数応答の結果値の修正」「MPC
+を消去したときの固有値解析の質量・正規化の修正」が入っているが、
+このプロジェクトのモデル（モード重ね合わせの周波数応答、<code>!EQUATION</code>
+の MPC、Lanczos 法）では結果に影響しなかった。</p>
+<h2 id="3-60-で変わったことこのプロジェクトに関係が深い順">3. 6.0
+で変わったこと（このプロジェクトに関係が深い順）</h2>
+<p>変更の一覧はソースの履歴（<code>git log v5.9..v6.0</code>）のマージ件名から整理した。</p>
+<h3 id="31-固有値解析周波数応答ana001003-に関係">3.1
+固有値解析・周波数応答（ana001〜003 に関係）</h3>
+<table>
+<thead>
+<tr class="header">
+<th>変更</th>
+<th>内容</th>
+<th>このプロジェクトへの影響</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Lanczos 法のシフト量 <span class="math inline">\(\sigma\)</span>
+を入力できる</td>
+<td><code>!EIGEN</code> の 4 つ目の値（「モード数, 収束判定, 最大反復,
+<strong>シフト量</strong>」）。従来はプログラム内で固定</td>
+<td>指定しなければ従来どおり。0 Hz
+付近の剛体モードがあるモデルで便利</td>
+</tr>
+<tr class="even">
+<td>収束判定が「要求した低次モード」を見るように</td>
+<td>5.9 までは反復回数が 3〜12
+倍に増えたり、上限に達すると見かけのゼロ固有値が出ることがあった</td>
+<td>今回のモデルでは同じ結果。時間短縮の一因と考えられる</td>
+</tr>
+<tr class="odd">
+<td>MPC 消去時の固有値解析の修正</td>
+<td>質量行列の大きさ、固有ベクトルの正規化、残差の計算を修正</td>
+<td>ana003（<code>!EQUATION</code>）で差なし</td>
+</tr>
+<tr class="even">
+<td>消去法で集中質量を剛性と整合させて縮約</td>
+<td>MPC・接触の自由度消去と質量の扱いを揃えた</td>
+<td>差なし</td>
+</tr>
+<tr class="odd">
+<td>周波数応答の結果値の修正と応力・ひずみの出力</td>
+<td>周波数応答で応力・ひずみも出せるようになった</td>
+<td>今後、取付部の応力振幅を見るときに使える</td>
+</tr>
+<tr class="even">
+<td>周波数応答の面荷重
+<code>!FLOAD</code>（面グループ）に面積の重みを適用</td>
+<td>面に分布する加振力が正しくなった</td>
+<td>今回は節点への集中加振なので影響なし</td>
+</tr>
+<tr class="odd">
+<td>周波数応答の領域分割（MPI 並列）対応</td>
+<td></td>
+<td>今回は逐次版</td>
+</tr>
+<tr class="even">
+<td>整合質量・集中質量の制御を整理</td>
+<td>整合質量は陰解法の時刻歴応答のみ対応、と明記</td>
+<td>固有値・周波数応答は従来どおり</td>
+</tr>
+</tbody>
+</table>
+<h3 id="32-接触動解析今後のガイドの接触モデルなどに関係">3.2
+接触・動解析（今後のガイドの接触モデルなどに関係）</h3>
+<table>
+<thead>
+<tr class="header">
+<th>変更</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>面-面（mortar）接触</strong>の追加</td>
+<td><code>!CONTACT, MORTAR=YES</code>。従来の点-面接触より、面どうしの圧力が滑らかに伝わる。ボルト締結面・ガイド取付面の接触剛性を調べるときに使える</td>
+</tr>
+<tr class="even">
+<td>接触面の平滑化（Nagata パッチ）・接触反力のダンピング</td>
+<td><code>SMOOTHING=NAGATA</code>、<code>DAMP_ALPHA</code>
+など。粗いメッシュでの接触の収束を良くする</td>
+</tr>
+<tr class="odd">
+<td>接触と判定する貫入深さを <code>!CONTACT_PARAM</code> で指定</td>
+<td>既定値も広げた</td>
+</tr>
+<tr class="even">
+<td>摩擦（拡張ラグランジュ法）の既定を変更</td>
+<td><code>FRICTION_CONE</code> の既定を FOLLOW に</td>
+</tr>
+<tr class="odd">
+<td>動解析の自動増分・カットバック</td>
+<td>時刻歴応答で、収束しないときに時間刻みを自動で小さくする</td>
+</tr>
+<tr class="even">
+<td>非線形の動解析で MPC を含むと収束しない問題を修正</td>
+<td>代表点＋MPC のモデルで時刻歴応答をするときに関係</td>
+</tr>
+<tr class="odd">
+<td>回転速度の境界条件 <code>ROT_CENTER</code></td>
+<td>動解析で回転体（主軸など）に回転を与える</td>
+</tr>
+</tbody>
+</table>
+<h3 id="33-その他">3.3 その他</h3>
+<table>
+<thead>
+<tr class="header">
+<th>変更</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>制御ファイルのキーワードを読み込み時に大文字化</td>
+<td>小文字で書いても読めるようになった</td>
+</tr>
+<tr class="even">
+<td><code>fistr1</code> の終了コードを失敗の種類で分ける</td>
+<td>スクリプトから失敗の原因を判別しやすい</td>
+</tr>
+<tr class="odd">
+<td>シェル要素の修正・拡張</td>
+<td>板厚を材料から断面へ移動、MITC4
+シェルの大変形、直交異方性シェルのせん断補正など</td>
+</tr>
+<tr class="even">
+<td>反復法ソルバの設定</td>
+<td>残差の再計算周期 <code>RECOMPUTE_RESIDUAL</code>、SSOR
+の緩和係数など</td>
+</tr>
+<tr class="odd">
+<td>GPU（OpenACC）・富岳（A64FX）向けの統合</td>
+<td>大規模並列向け</td>
+</tr>
+<tr class="even">
+<td>Ubuntu 26.04 対応、Abaqus 形式の名前を INP
+形式に（<code>TYPE=ABAQUS</code> → <code>TYPE=INP</code>）</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h2 id="4-使い方の変化このプロジェクトの入力で">4.
+使い方の変化（このプロジェクトの入力で）</h2>
+<p>書き換えは不要。新しい指定を使う場合の例:</p>
+<pre class="text"><code>!EIGEN
+ 20, 1.0E-8, 300, 0.0        ← モード数, 収束判定, 最大反復, シフト量 σ（6.0 で追加。省略可）</code></pre>
+<pre class="text"><code>!CONTACT, GRPID=1, INTERACTION=SSLID, MORTAR=YES    ← 面-面接触（6.0 で追加）</code></pre>
+<p>出典: <a
+href="https://gitlab.com/FrontISTR-Commons/FrontISTR/-/tags">FrontISTR
+GitLab（タグ一覧）</a>、ソースの `VERSION`
+とマージ履歴（<code>git log --merges v5.9..v6.0</code>）、<code>fistr1/src/common/fstr_ctrl_eigen.f90</code>（<code>!EIGEN</code>
+の読み込み）</p>
+<hr />
+<p><a href="README.html">← docs 目次</a> ｜ <a href="../README.html">⌂
+トップ</a> ｜ <a
+href="ref005_CalculiX-FrontISTR_ばね・固有値・周波数応答の設定比較.html">←
+前: ref005 ばね・固有値・周波数応答の設定比較</a> ｜ <a
+href="ana001_CalculiX-FrontISTR_簡易工作機械の固有値解析.html">次:
+ana001 簡易工作機械の固有値解析 →</a></p>
+</body>
+</html>

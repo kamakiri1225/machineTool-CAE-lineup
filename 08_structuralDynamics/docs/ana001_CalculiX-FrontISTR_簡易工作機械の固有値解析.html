@@ -1,0 +1,794 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>ana001 簡易工作機械モデルの固有値解析（CalculiX と FrontISTR）</title>
+  <style>
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      html {
+        background-color: white;
+      }
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+      font-size: 85%;
+      margin: 0;
+      hyphens: manual;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      background-color: #1a1a1a;
+      border: none;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    /* CSS for syntax highlighting */
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      {   }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+    code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+    code span.at { color: #7d9029; } /* Attribute */
+    code span.bn { color: #40a070; } /* BaseN */
+    code span.bu { color: #008000; } /* BuiltIn */
+    code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #4070a0; } /* Char */
+    code span.cn { color: #880000; } /* Constant */
+    code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+    code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+    code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+    code span.dt { color: #902000; } /* DataType */
+    code span.dv { color: #40a070; } /* DecVal */
+    code span.er { color: #ff0000; font-weight: bold; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #40a070; } /* Float */
+    code span.fu { color: #06287e; } /* Function */
+    code span.im { color: #008000; font-weight: bold; } /* Import */
+    code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+    code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+    code span.op { color: #666666; } /* Operator */
+    code span.ot { color: #007020; } /* Other */
+    code span.pp { color: #bc7a00; } /* Preprocessor */
+    code span.sc { color: #4070a0; } /* SpecialChar */
+    code span.ss { color: #bb6688; } /* SpecialString */
+    code span.st { color: #4070a0; } /* String */
+    code span.va { color: #19177c; } /* Variable */
+    code span.vs { color: #4070a0; } /* VerbatimString */
+    code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+  <style>
+  body{font-family:'Noto Sans JP','Hiragino Sans','Meiryo',sans-serif;max-width:1100px;margin:2em auto;padding:0 1.2em;line-height:1.75;color:#222}
+  h1{border-bottom:3px solid #1F3A5F;padding-bottom:.3em;color:#1F3A5F} h2{border-left:6px solid #2F6FB0;padding-left:.5em;margin-top:2em;color:#1F3A5F}
+  h3{color:#2F6FB0} img{max-width:100%;height:auto;border:1px solid #ddd;margin:.5em 0}
+  table{border-collapse:collapse;margin:1em 0;font-size:.95em} th,td{border:1px solid #bbb;padding:.35em .7em} th{background:#E3ECF7}
+  code{background:#f4f4f4;padding:.1em .3em;border-radius:3px} pre{background:#f4f4f4;padding:1em;overflow-x:auto}
+  nav.top{font-size:.9em;margin-bottom:1em} nav.top a{color:#2F6FB0}
+  </style>
+  <nav class="top"><a href="../../index.html">← 一覧に戻る</a></nav>
+  <script
+  src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-chtml-full.js"
+  type="text/javascript"></script>
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">ana001 簡易工作機械モデルの固有値解析（CalculiX と
+FrontISTR）</h1>
+</header>
+<p><a href="README.html">← docs 目次</a> ｜ <a href="../README.html">⌂
+トップ</a> ｜ <a href="ref006_FrontISTR_6.0の変更点と5.9との比較.html">←
+前: ref006 6.0の変更点と5.9との比較</a> ｜ <a
+href="ana002_CalculiX-FrontISTR_簡易工作機械の周波数応答解析.html">次:
+ana002 簡易工作機械の周波数応答解析 →</a></p>
+<h1
+id="ana001-簡易工作機械モデルの固有値解析calculix-と-frontistr">ana001
+簡易工作機械モデルの固有値解析（CalculiX と FrontISTR）</h1>
+<p>作成: 2026-11-07 解析フォルダ: <a
+href="../analysis/ana001_ccx_fistr_modal/">analysis/ana001_ccx_fistr_modal</a></p>
+<h2 id="1-目的">1. 目的</h2>
+<ul>
+<li>コラム・テーブルの
+<strong>1次固有振動数とモード形状</strong>を求める</li>
+<li>リニアガイドとボールねじを、<strong>面と面をつなぐばね</strong>でモデル化する方法を確立する</li>
+<li>同じモデルを <strong>CalculiX</strong> と <strong>FrontISTR</strong>
+で解き、結果が一致するか確かめる</li>
+</ul>
+<h2 id="2-環境">2. 環境</h2>
+<table>
+<thead>
+<tr class="header">
+<th>ソフト</th>
+<th>バージョン</th>
+<th>入れ方（管理者権限なし）</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>CalculiX</td>
+<td>2.21</td>
+<td>Ubuntu のパッケージ <code>calculix-ccx</code> と依存ライブラリを
+<code>apt-get download</code> → <code>dpkg -x</code> で
+<code>~/opt/ccxroot</code> に展開。実行は <code>~/opt/ccx.sh</code></td>
+</tr>
+<tr class="even">
+<td>FrontISTR</td>
+<td>6.0（当初 5.9 で実行。6.0 でも結果は同じ → <a
+href="ref006_FrontISTR_6.0の変更点と5.9との比較.html">ref006</a>）</td>
+<td>ソースを GitLab から取得して逐次版をビルド（MPI・METIS・MUMPS
+なし、OpenMP あり）→ <code>~/opt/frontistr/bin/fistr1</code></td>
+</tr>
+<tr class="odd">
+<td>Python</td>
+<td>3.12</td>
+<td><code>~/opt/venv</code>（numpy, matplotlib, pyvista, cmake）</td>
+</tr>
+</tbody>
+</table>
+<p>可視化は ParaView と同じ VTK を使う <strong>pyvista</strong>
+で行った。結果は ParaView でも開ける（8 章）。</p>
+<h2 id="3-モデル">3. モデル</h2>
+<p><img
+src="../analysis/ana001_ccx_fistr_modal/results/pv_spring_locations.png"
+alt="ばねの位置（分解図）" /></p>
+<p><em>テーブルを 180 mm 持ち上げて描いた分解図。線がばね（実際は長さ
+0）。赤 = X（ボールねじ）、緑 = Y（ガイド横）、青 =
+Z（ガイド上下）。</em></p>
+<table>
+<thead>
+<tr class="header">
+<th>部品</th>
+<th>寸法 [mm]</th>
+<th>メモ</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>ベッド</td>
+<td>1000 × 900 × 200</td>
+<td>底面を全拘束</td>
+</tr>
+<tr class="even">
+<td>レール（2本）</td>
+<td>幅 40、高さ 30、長さ 1000</td>
+<td>ベッドと一体（同じ節点を共有）</td>
+</tr>
+<tr class="odd">
+<td>コラム</td>
+<td>300 × 200 × 高さ 800</td>
+<td>ベッドと一体</td>
+</tr>
+<tr class="even">
+<td>ボールねじ支持台</td>
+<td>80 × 40 × 30</td>
+<td>ナットの真下。ベッドと一体。ボールねじの軸方向剛性をここで受ける（簡略化）</td>
+</tr>
+<tr class="odd">
+<td>テーブル</td>
+<td>500 × 400 × 80</td>
+<td></td>
+</tr>
+<tr class="even">
+<td>キャリッジ（4個）</td>
+<td>80 × 40 × 40</td>
+<td>テーブルと一体</td>
+</tr>
+<tr class="odd">
+<td>ナットブラケット</td>
+<td>80 × 40 × 40</td>
+<td>テーブルと一体</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>材料: 鋳鉄（FC300 相当）<span class="math inline">\(E\)</span> = 120
+GPa、<span class="math inline">\(\nu\)</span> = 0.27、<span
+class="math inline">\(\rho\)</span> = 7300 kg/m³</li>
+<li>要素: 20節点六面体（CalculiX <code>C3D20</code>、FrontISTR
+<code>362</code>）4,288 要素、22,258 節点</li>
+<li>単位系: mm, N, t（トン）, s → 応力 MPa、ばね N/mm</li>
+<li>メッシュは Python で自作（<a
+href="../analysis/tools/machine_model.py">analysis/tools/machine_model.py</a>）。同じ節点・要素を両ソルバに書き出す</li>
+</ul>
+<h2 id="4-ばねの設定いちばん大事な所">4.
+ばねの設定（いちばん大事な所）</h2>
+<h3 id="41-どこにどの方向のばねが入っているか">4.1
+どこに、どの方向のばねが入っているか</h3>
+<table>
+<thead>
+<tr class="header">
+<th>ばね</th>
+<th>つなぐ面</th>
+<th>方向</th>
+<th>1面あたりのばね定数</th>
+<th>実物</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>CAR1〜CAR4</td>
+<td>レール上面 ⇔ キャリッジ下面（z = 230 mm）</td>
+<td><strong>Y（横）</strong></td>
+<td>5.6 × 10⁵ N/mm（560 N/µm）</td>
+<td>リニアガイドの横剛性</td>
+</tr>
+<tr class="even">
+<td>〃</td>
+<td>〃</td>
+<td><strong>Z（上下）</strong></td>
+<td>8.0 × 10⁵ N/mm（800 N/µm）</td>
+<td>リニアガイドのラジアル剛性</td>
+</tr>
+<tr class="odd">
+<td>〃</td>
+<td>〃</td>
+<td>X（送り）</td>
+<td><strong>入れない（0）</strong></td>
+<td>ガイドは転がる方向には支えない</td>
+</tr>
+<tr class="even">
+<td>NUT</td>
+<td>支持台上面 ⇔ ナットブラケット下面</td>
+<td><strong>X（送り）だけ</strong></td>
+<td>2.0 × 10⁵ N/mm（200 N/µm）</td>
+<td>ボールねじ送り系の軸方向剛性</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li><strong>ボールねじのばねは入っている</strong>（上の図の赤い線）。送り方向（X）だけに効く</li>
+<li><strong>テーブルが送り方向（X）に動くとき、それを支えるのはボールねじのばねだけ</strong>。ガイドは
+X 方向に何も支えない。だから X
+方向は他の方向より柔らかく、2次モード（181 Hz）になっている</li>
+<li>値の根拠と、どういう値を入れるべきかは <a
+href="../study/ref004_工作機械_ばね剛性と減衰の決め方.html">study/ref004</a>
+にまとめた</li>
+</ul>
+<h3 id="42-面と面をつなぐ方法分布ばね">4.2
+面と面をつなぐ方法（分布ばね）</h3>
+<p><img
+src="../analysis/ana001_ccx_fistr_modal/results/spring_weights.png"
+alt="ばねの割り振り" /></p>
+<ol type="1">
+<li>レール上面（ベッド側）とキャリッジ下面（テーブル側）は<strong>同じ位置・同じ分割</strong>で、<strong>別々の節点</strong>を持たせる（向かい合う節点が同じ座標に
+2 つある）</li>
+<li>向かい合う節点の組を、<strong>方向を指定した線形ばね</strong>でつなぐ
+<ul>
+<li>CalculiX: <code>SPRING2</code> 要素（2節点、自由度指定）</li>
+<li>FrontISTR: <code>511</code> 要素（2節点コネクタ）＋
+<code>!SPRING_D</code>（自由度指定ばね）</li>
+</ul></li>
+<li>面全体のばね定数 <span class="math inline">\(K\)</span>
+を、各節点が受け持つ面積の割合 <span class="math inline">\(w_i\)</span>
+で割り振る：<span class="math inline">\(k_i = w_i K\)</span>、<span
+class="math inline">\(\sum_i w_i = 1\)</span>
+<ul>
+<li>1 つの四角形の面積の 1/4 ずつを 4 隅に配る → 隅 1/32、辺 2/32、内部
+4/32（キャリッジ 1 個を 4×2 に分割した場合）</li>
+<li>20節点要素の<strong>中間節点（辺の中点）にはばねを付けない</strong></li>
+</ul></li>
+<li>ばねの長さは 0（同じ座標の 2
+節点）。自由度指定ばねは長さに関係なく働くので問題ない</li>
+</ol>
+<p><strong>分布ばねにする理由</strong>:
+面全体に分散して付けると、キャリッジの<strong>傾き（モーメント）に対する剛性</strong>も自然に入る。
+1 点だけでつなぐと、キャリッジが首を振る方向に支えがなくなる。</p>
+<h3 id="43-mpc代表点方式もできる">4.3 MPC（代表点）方式もできる</h3>
+<p>面ごとに代表点を作り、面の節点を拘束式（MPC）で代表点に結び、代表点どうしをばねでつなぐ方法も、両ソルバで動くことを確認した。
+→ <a
+href="ana003_CalculiX-FrontISTR_代表点MPCばねの比較.html">ana003</a></p>
+<h2 id="5-入力ファイルの解説">5. 入力ファイルの解説</h2>
+<h3 id="51-calculixccxmachineinp約-31000-行">5.1 CalculiX（<a
+href="../analysis/ana001_ccx_fistr_modal/ccx/machine.inp">ccx/machine.inp</a>、約
+31,000 行）</h3>
+<pre class="text"><code>*NODE, NSET=NALL                         ← 節点（番号, x, y, z）
+1, 0, 0, 0
+...
+*ELEMENT, TYPE=C3D20, ELSET=EBED         ← ベッド＋レール＋コラムの20節点六面体
+1, 1, 2, ..., 15,                         （1行目に要素番号＋15節点、2行目に残り5節点）
+16, 17, 18, 19, 20
+*ELEMENT, TYPE=C3D20, ELSET=ETABLE       ← テーブル＋キャリッジ＋ナットブラケット
+...
+*ELEMENT, TYPE=SPRING2, ELSET=SP_CAR1_2_0  ← ばね要素（要素番号, ベッド側節点, テーブル側節点）
+4289, 2912, 18940
+*SPRING, ELSET=SP_CAR1_2_0               ← このグループのばね定数
+2, 2                                      ← ベッド側の自由度2(Y) と テーブル側の自由度2(Y) をつなぐ
+1.750000e+04                              ← ばね定数 [N/mm]（= 560,000 × 1/32）
+...                                      （面・方向・割合ごとにグループを分けて 27 組）
+*NSET, NSET=FIX                          ← ベッド底面の節点
+*NSET, NSET=MON                          ← テーブル上面中央（ana002 の加振点）
+*MATERIAL, NAME=CASTIRON
+*ELASTIC
+120000.0, 0.27                            ← ヤング率 [MPa], ポアソン比
+*DENSITY
+7.3e-09                                   ← 密度 [t/mm^3]
+*SOLID SECTION, ELSET=EBED, MATERIAL=CASTIRON
+*SOLID SECTION, ELSET=ETABLE, MATERIAL=CASTIRON
+*BOUNDARY
+FIX, 1, 3                                 ← 底面の x, y, z を固定
+*STEP
+*FREQUENCY, STORAGE=YES                   ← 固有値解析。STORAGE=YES で次の周波数応答に結果を渡せる
+15                                        ← 求めるモード数
+*NODE FILE                                ← .frd（結果ファイル）に変位を出力
+U
+*END STEP</code></pre>
+<p>ポイント:</p>
+<ul>
+<li><code>SPRING2</code>
+は<strong>自由度を指定するばね</strong>。<code>*SPRING</code> の 2
+行目「2, 2」は「1つ目の節点の Y と 2つ目の節点の Y」の意味</li>
+<li>方向がずれない（変形に追従しない）線形ばねなので、固有値解析・周波数応答でそのまま使える</li>
+<li>1 つの <code>*SPRING</code> には 1 つの値しか書けないので、値ごとに
+ELSET を分けている</li>
+<li>結果は <code>machine.dat</code>（固有振動数の表）と
+<code>machine.frd</code>（モード形状）</li>
+</ul>
+<h3
+id="52-frontistrメッシュ-machinemsh制御-machine_eigencnt全体制御-hecmw_ctrldat">5.2
+FrontISTR（メッシュ <a
+href="../analysis/ana001_ccx_fistr_modal/fistr/machine.msh">machine.msh</a>、制御
+<a
+href="../analysis/ana001_ccx_fistr_modal/fistr/machine_eigen.cnt">machine_eigen.cnt</a>、全体制御
+<a
+href="../analysis/ana001_ccx_fistr_modal/fistr/hecmw_ctrl.dat">hecmw_ctrl.dat</a>）</h3>
+<p>メッシュファイル（.msh）:</p>
+<pre class="text"><code>!NODE
+...
+!ELEMENT, TYPE=362, EGRP=EBED            ← 20節点六面体（節点の順番は CalculiX と同じ）
+!ELEMENT, TYPE=362, EGRP=ETABLE
+!ELEMENT, TYPE=511, EGRP=SP0             ← 2節点コネクタ要素（ばね用）
+4289, 2912, 18940
+!MATERIAL, NAME=CASTIRON, ITEM=2         ← 鋳鉄（ヤング率・ポアソン比、密度）
+!MATERIAL, NAME=SPMAT0, ITEM=1           ← ばね用の材料（中身はダミー。★下の注意）
+!ITEM=1, SUBITEM=2
+1.0, 0.3
+!SECTION, TYPE=INTERFACE, EGRP=SP0, MATERIAL=SPMAT0   ← ばね要素には TYPE=INTERFACE
+!NGROUP, NGRP=FIX
+!NGROUP, NGRP=MON</code></pre>
+<p>制御ファイル（.cnt）:</p>
+<pre class="text"><code>!SOLUTION, TYPE=EIGEN                    ← 固有値解析
+!EIGEN
+ 15, 1.0E-8, 300                         ← モード数, 収束判定, 最大反復回数（Lanczos 法）
+!BOUNDARY
+ FIX, 1, 3, 0.0                          ← 底面の 1〜3 方向を 0 に固定
+!MATERIAL, NAME=SPMAT0                   ← ばね定数はここ（制御ファイル側）で与える
+!SPRING_D
+2, 2, 1.750000e+04                       ← 節点1の自由度2 と 節点2の自由度2 を k=17500 N/mm でつなぐ
+...
+!SOLVER, METHOD=DIRECT                   ← 直接法ソルバ
+!WRITE,RESULT / !WRITE,VISUAL            ← 結果ファイルと VTK 出力</code></pre>
+<p>★ 詰まった点: 制御ファイルの <code>!MATERIAL, NAME=SPMAT0</code>
+は、<strong>メッシュ側に同じ名前の材料が無いと</strong>
+<code>### Error: Fail in read in material definition</code>
+で止まる。メッシュ側にダミーの材料（<code>!ITEM=1</code>
+に適当な値）を置いて解決した。</p>
+<h2 id="6-結果">6. 結果</h2>
+<h3 id="61-固有振動数calculix-と-frontistr-の比較">6.1
+固有振動数（CalculiX と FrontISTR の比較）</h3>
+<table>
+<thead>
+<tr class="header">
+<th>モード</th>
+<th>CalculiX [Hz]</th>
+<th>FrontISTR [Hz]</th>
+<th>差 [%]</th>
+<th>ゆれ方</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>1</td>
+<td>172.5</td>
+<td>172.2</td>
+<td>−0.16</td>
+<td>コラムが前後（Y）に曲がる</td>
+</tr>
+<tr class="even">
+<td>2</td>
+<td>181.2</td>
+<td>181.2</td>
+<td>0.00</td>
+<td>テーブルが送り方向（X）に動く（ボールねじのばね）</td>
+</tr>
+<tr class="odd">
+<td>3</td>
+<td>243.5</td>
+<td>243.2</td>
+<td>−0.11</td>
+<td>コラムが左右（X）に曲がる</td>
+</tr>
+<tr class="even">
+<td>4</td>
+<td>442.0</td>
+<td>441.8</td>
+<td>−0.05</td>
+<td>テーブルが横（Y）に動く（ガイドの横ばね）</td>
+</tr>
+<tr class="odd">
+<td>5</td>
+<td>475.7</td>
+<td>474.4</td>
+<td>−0.27</td>
+<td>テーブルが Z 軸まわりにねじれる</td>
+</tr>
+<tr class="even">
+<td>6</td>
+<td>610.6</td>
+<td>610.9</td>
+<td>+0.05</td>
+<td>テーブルが上下（Z）に動き、曲がる（ガイドの上下ばね）</td>
+</tr>
+</tbody>
+</table>
+<p>（7〜15次は <a
+href="../analysis/ana001_ccx_fistr_modal/results/frequencies.html">results/frequencies.md</a>。差は最大
+1.8 %）</p>
+<ul>
+<li>6次までは差 0.3 % 以内で一致。高次で FrontISTR
+がわずかに低いのは、質量行列の作り方（集中質量か整合質量か）の違いと考えられる</li>
+<li><strong>FrontISTR のばね要素（511 +
+<code>!SPRING_D</code>）は固有値解析でも効く</strong>ことを確認した（マニュアルには明記されていなかった）</li>
+<li>計算時間: CalculiX 14 秒、FrontISTR 24 秒（OpenMP 8 スレッド）</li>
+</ul>
+<p><img
+src="../analysis/ana001_ccx_fistr_modal/results/freq_compare.png"
+alt="固有振動数の比較" /></p>
+<h3 id="62-モード形状calculixpyvista-で描画">6.2
+モード形状（CalculiX、pyvista で描画）</h3>
+<p><img
+src="../analysis/ana001_ccx_fistr_modal/results/pv_mode_shapes.png"
+alt="モード形状" /></p>
+<p><em>色 = 変位の大きさ（最大を 1 に正規化）。灰色の線 =
+変形前の形。変形は誇張している。</em></p>
+<ul>
+<li><strong>1次（172 Hz）</strong>:
+コラムが前後にお辞儀する。コラムの断面は Y 方向に薄い（200
+mm）ので、こちらが先に来る</li>
+<li><strong>2次（181 Hz）</strong>:
+テーブル全体が送り方向にスライドする。ガイドは X
+を支えないので、ボールねじのばね 1 本で支えている</li>
+<li><strong>3次（243 Hz）</strong>: コラムが左右に曲がる（断面の幅 300
+mm 方向なので 1次より高い）</li>
+<li><strong>4次（442 Hz）</strong>: テーブルが横にずれる（ガイド 4
+個の横ばね）</li>
+<li><strong>5次（476 Hz）</strong>:
+テーブルが真上から見て回る（中心はほぼ動かず、四隅が動く）</li>
+<li><strong>6次（611 Hz）</strong>:
+テーブルが上下に動きながら弓なりに曲がる</li>
+</ul>
+<h3 id="62a-アニメーションgifで見る">6.2a
+アニメーション（GIF）で見る</h3>
+<p>静止画だと「並進（平行にずれる）」と「ねじれ（回る）」の区別がつきにくいので、各モードを動かして
+3 方向から見る。 **上から（XY
+面）**の図で、平行にずれれば並進、回っていればねじれ（Z
+軸まわり）と判断できる。</p>
+<p><img
+src="../analysis/ana001_ccx_fistr_modal/results/gif/modes_all.gif"
+alt="全モード" /></p>
+<table>
+<thead>
+<tr class="header">
+<th>モード</th>
+<th>種類</th>
+<th>見分け方</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>1次 173 Hz</td>
+<td>曲げ（コラム）</td>
+<td>正面図ではほぼ動かず、斜め図でコラム上端が前後に振れる</td>
+</tr>
+<tr class="even">
+<td>2次 181 Hz</td>
+<td><strong>並進</strong>（テーブル X）</td>
+<td>上から見て、テーブルが形を保ったまま左右（X）に平行移動</td>
+</tr>
+<tr class="odd">
+<td>3次 243 Hz</td>
+<td>曲げ（コラム）</td>
+<td>正面図でコラム上端が左右に振れる</td>
+</tr>
+<tr class="even">
+<td>4次 442 Hz</td>
+<td><strong>並進</strong>（テーブル Y）</td>
+<td>上から見て、テーブルが上下（Y）に平行移動</td>
+</tr>
+<tr class="odd">
+<td>5次 476 Hz</td>
+<td><strong>ねじれ</strong>（テーブル Z 軸まわり）</td>
+<td>上から見て、テーブルが中心のまわりに<strong>回る</strong>。中心は動かない（色が青）</td>
+</tr>
+<tr class="even">
+<td>6次 611 Hz</td>
+<td>上下＋曲げ</td>
+<td>正面図でテーブルが上下し、弓なりに曲がる</td>
+</tr>
+</tbody>
+</table>
+<p>各モードの 3 方向アニメーション（左: 斜め、中: 上から、右:
+正面から）:</p>
+<p><strong>1次 173 Hz：コラムの Y 曲げ</strong></p>
+<p><img src="../analysis/ana001_ccx_fistr_modal/results/gif/mode01.gif"
+alt="モード1" /></p>
+<p><strong>2次 181 Hz：テーブルの X 並進（ボールねじ）</strong></p>
+<p><img src="../analysis/ana001_ccx_fistr_modal/results/gif/mode02.gif"
+alt="モード2" /></p>
+<p><strong>3次 243 Hz：コラムの X 曲げ</strong></p>
+<p><img src="../analysis/ana001_ccx_fistr_modal/results/gif/mode03.gif"
+alt="モード3" /></p>
+<p><strong>4次 442 Hz：テーブルの Y 並進（ガイド横ばね）</strong></p>
+<p><img src="../analysis/ana001_ccx_fistr_modal/results/gif/mode04.gif"
+alt="モード4" /></p>
+<p><strong>5次 476 Hz：テーブルの Z
+軸まわりのねじれ（ヨーイング）</strong></p>
+<p><img src="../analysis/ana001_ccx_fistr_modal/results/gif/mode05.gif"
+alt="モード5" /></p>
+<p><strong>6次 611 Hz：テーブルの上下＋曲げ</strong></p>
+<p><img src="../analysis/ana001_ccx_fistr_modal/results/gif/mode06.gif"
+alt="モード6" /></p>
+<p><em>生成スクリプト: <a
+href="../analysis/ana001_ccx_fistr_modal/make_gifs.py">make_gifs.py</a>（pyvista
+で 20 コマ描画 → Pillow で GIF
+に。変形は誇張、灰色の線は元の形）</em></p>
+<p>これらのモードが周波数応答（コンプライアンス）のどのピークになるかは
+<a
+href="ana002_CalculiX-FrontISTR_簡易工作機械の周波数応答解析.html">ana002
+の 4.2 節</a> を参照。</p>
+<h3 id="63-calculix-と-frontistr-のモード形状の比較2次">6.3 CalculiX と
+FrontISTR のモード形状の比較（2次）</h3>
+<p><img
+src="../analysis/ana001_ccx_fistr_modal/results/pv_ccx_vs_fistr_mode2.png"
+alt="2次モードの比較" /></p>
+<h2 id="7-妥当性チェック手計算">7. 妥当性チェック（手計算）</h2>
+<table>
+<thead>
+<tr class="header">
+<th>モード</th>
+<th>手計算モデル</th>
+<th>手計算</th>
+<th>FEM</th>
+<th>差の理由</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>2次 テーブル X</td>
+<td>テーブル質量 <span class="math inline">\(m\)</span> = 0.1215 t
+をばね <span class="math inline">\(K\)</span> = 2.0 × 10⁵ N/mm 1
+本で支える：<span class="math inline">\(f =
+\frac{1}{2\pi}\sqrt{K/m}\)</span></td>
+<td>204 Hz</td>
+<td>181 Hz</td>
+<td>ベッド・支持台・テーブルの変形がばねと直列に入って柔らかくなる</td>
+</tr>
+<tr class="even">
+<td>1次 コラム Y</td>
+<td>片持ちはり <span class="math inline">\(f_1 =
+\frac{1.875^2}{2\pi}\sqrt{\frac{EI}{\rho A L^4}}\)</span>、<span
+class="math inline">\(L\)</span> = 800 mm、断面 300 × 200</td>
+<td>205 Hz</td>
+<td>172 Hz</td>
+<td>根元（ベッド）が変形する、せん断変形</td>
+</tr>
+<tr class="odd">
+<td>6次 テーブル Z</td>
+<td>4 キャリッジの上下ばね 3.2 × 10⁶ N/mm で <span
+class="math inline">\(m\)</span> を支える</td>
+<td>817 Hz</td>
+<td>611 Hz</td>
+<td>テーブル自体の曲げが加わる</td>
+</tr>
+</tbody>
+</table>
+<p>どれも FEM が手計算より低く、理由も説明できるので妥当と判断した。</p>
+<h2 id="8-paraview-で見る">8. ParaView で見る</h2>
+<ul>
+<li>results/ccx_modes.vtu（未収録：スクリプトで再生成） を ParaView
+で開く（File → Open）
+<ul>
+<li>点データ <code>mode01_172.5Hz</code> 〜
+<code>mode15_...</code>：各モードの変位</li>
+<li>セルデータ <code>part</code>：0 = ベッド・コラム、1 = テーブル、2 =
+ばね</li>
+</ul></li>
+<li>モード形状を見る: Filters → <strong>Warp By Vector</strong>（Vectors
+にモードを選び、Scale Factor を 50〜100 程度に）</li>
+<li>ばねだけ見る: Filters →
+<strong>Threshold</strong>（<code>part</code> を 2〜2）</li>
+<li>FrontISTR の結果:
+<code>fistr/machine_eigen_vis_psf.000N.pvtu</code>（N =
+モード番号）をそのまま開ける</li>
+</ul>
+<h2 id="9-再現手順">9. 再現手順</h2>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> analysis/ana001_ccx_fistr_modal</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="ex">~/opt/venv/bin/python</span> make_inputs.py            <span class="co"># 入力ファイルを作る</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="kw">(</span><span class="bu">cd</span> ccx <span class="kw">&amp;&amp;</span> <span class="ex">~/opt/ccx.sh</span> <span class="at">-i</span> machine<span class="kw">)</span>              <span class="co"># CalculiX</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="kw">(</span><span class="bu">cd</span> fistr <span class="kw">&amp;&amp;</span> <span class="va">LD_LIBRARY_PATH</span><span class="op">=</span>~/opt/ccxroot/usr/lib/x86_64-linux-gnu/blas:~/opt/ccxroot/usr/lib/x86_64-linux-gnu/lapack <span class="ex">~/opt/frontistr/bin/fistr1</span><span class="kw">)</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="ex">~/opt/venv/bin/python</span> post.py                    <span class="co"># 表とグラフ</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="ex">~/opt/venv/bin/python</span> post_vtk.py                <span class="co"># VTU 出力と 3D 図</span></span></code></pre></div>
+<h2 id="10-詰まった点次の課題">10. 詰まった点・次の課題</h2>
+<ul>
+<li>FrontISTR の材料名の問題（5.2 の★）</li>
+<li>ばねの値は仮の値。カタログ値と取付部の影響で決める方法は <a
+href="../study/ref004_工作機械_ばね剛性と減衰の決め方.html">study/ref004</a></li>
+<li><strong>テーブル位置によるボールねじ剛性の変化</strong>を入れて、位置ごとの固有振動数を調べる（次の課題）</li>
+<li>主軸頭・サドルを追加して、工具先端の剛性を見る</li>
+</ul>
+<hr />
+<p><a href="README.html">← docs 目次</a> ｜ <a href="../README.html">⌂
+トップ</a> ｜ <a href="ref006_FrontISTR_6.0の変更点と5.9との比較.html">←
+前: ref006 6.0の変更点と5.9との比較</a> ｜ <a
+href="ana002_CalculiX-FrontISTR_簡易工作機械の周波数応答解析.html">次:
+ana002 簡易工作機械の周波数応答解析 →</a></p>
+</body>
+</html>

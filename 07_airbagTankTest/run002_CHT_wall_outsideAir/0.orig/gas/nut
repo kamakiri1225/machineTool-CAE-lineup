@@ -1,0 +1,30 @@
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       volScalarField;
+    location    "0.orig/gas";
+    object      nut;
+}
+
+dimensions      [0 2 -1 0 0 0 0];
+
+internalField   uniform 0;
+
+boundaryField
+{
+    gasInlet
+    {
+        type            calculated;
+        value           uniform 0;
+    }
+    ".*"
+    {
+        type            nutkWallFunction;
+        value           uniform 0;
+    }
+    "(front|back)"
+    {
+        type            wedge;
+    }
+}

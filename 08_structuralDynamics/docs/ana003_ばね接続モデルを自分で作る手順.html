@@ -1,0 +1,1243 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>【図解】CalculiX・FrontISTR で「面と面をばねでつなぐ」モデルを自分で作る手順（代表点＋MPC）</title>
+  <style>
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      html {
+        background-color: white;
+      }
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+      font-size: 85%;
+      margin: 0;
+      hyphens: manual;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      background-color: #1a1a1a;
+      border: none;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    /* CSS for syntax highlighting */
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      {   }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+    code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+    code span.at { color: #7d9029; } /* Attribute */
+    code span.bn { color: #40a070; } /* BaseN */
+    code span.bu { color: #008000; } /* BuiltIn */
+    code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #4070a0; } /* Char */
+    code span.cn { color: #880000; } /* Constant */
+    code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+    code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+    code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+    code span.dt { color: #902000; } /* DataType */
+    code span.dv { color: #40a070; } /* DecVal */
+    code span.er { color: #ff0000; font-weight: bold; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #40a070; } /* Float */
+    code span.fu { color: #06287e; } /* Function */
+    code span.im { color: #008000; font-weight: bold; } /* Import */
+    code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+    code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+    code span.op { color: #666666; } /* Operator */
+    code span.ot { color: #007020; } /* Other */
+    code span.pp { color: #bc7a00; } /* Preprocessor */
+    code span.sc { color: #4070a0; } /* SpecialChar */
+    code span.ss { color: #bb6688; } /* SpecialString */
+    code span.st { color: #4070a0; } /* String */
+    code span.va { color: #19177c; } /* Variable */
+    code span.vs { color: #4070a0; } /* VerbatimString */
+    code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+  <style>
+  body{font-family:'Noto Sans JP','Hiragino Sans','Meiryo',sans-serif;max-width:1100px;margin:2em auto;padding:0 1.2em;line-height:1.75;color:#222}
+  h1{border-bottom:3px solid #1F3A5F;padding-bottom:.3em;color:#1F3A5F} h2{border-left:6px solid #2F6FB0;padding-left:.5em;margin-top:2em;color:#1F3A5F}
+  h3{color:#2F6FB0} img{max-width:100%;height:auto;border:1px solid #ddd;margin:.5em 0}
+  table{border-collapse:collapse;margin:1em 0;font-size:.95em} th,td{border:1px solid #bbb;padding:.35em .7em} th{background:#E3ECF7}
+  code{background:#f4f4f4;padding:.1em .3em;border-radius:3px} pre{background:#f4f4f4;padding:1em;overflow-x:auto}
+  nav.top{font-size:.9em;margin-bottom:1em} nav.top a{color:#2F6FB0}
+  </style>
+  <nav class="top"><a href="../../index.html">← 一覧に戻る</a></nav>
+  <script
+  src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-chtml-full.js"
+  type="text/javascript"></script>
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">【図解】CalculiX・FrontISTR
+で「面と面をばねでつなぐ」モデルを自分で作る手順（代表点＋MPC）</h1>
+</header>
+<p><a href="README.html">← docs 目次</a> ｜ <a href="../README.html">⌂
+トップ</a> ｜ <a
+href="ana003_CalculiX-FrontISTR_代表点MPCばねの比較.html">← 前: ana003
+代表点MPCばねの比較</a> ｜ <a
+href="ana004_CalculiX-FrontISTR_ばねの種類の確認.html">次: ana004
+ばねの種類の確認 →</a></p>
+<h1
+id="図解calculixfrontistr-で面と面をばねでつなぐモデルを自分で作る手順代表点mpc">【図解】CalculiX・FrontISTR
+で「面と面をばねでつなぐ」モデルを自分で作る手順（代表点＋MPC）</h1>
+<p>作成: 2026-11-07　／　使用ソフト: CalculiX 2.21、FrontISTR
+6.0、ParaView（または pyvista）</p>
+<p>工作機械の FEM
+では、リニアガイドやボールねじを「ばね」に置き換えます。
+ところが実際にやろうとすると、</p>
+<ul>
+<li>2
+つの部品の<strong>面と面</strong>を、どうやってばねでつなぐの？</li>
+<li>「代表点」「MPC」「RBE2」って、入力ファイルに何を書けばいいの？</li>
+<li>CalculiX と FrontISTR で書き方はどう違うの？</li>
+</ul>
+<p>と、手が止まってしまいます。 この記事では、<strong>100 mm の立方体 2
+個</strong>といういちばん小さいモデルを使って、面と面をばねでつなぐモデルを<strong>7
+つの手順で、図を見ながら</strong>一から作ります。
+最後に実際に解いて、手計算と一致することまで確かめます。</p>
+<p><strong>この記事でわかること</strong></p>
+<ul>
+<li>面の節点を集める（節点集合）→ 代表点を作る → 拘束式（MPC）で結ぶ →
+代表点どうしをばねでつなぐ、の流れ</li>
+<li>各手順で CalculiX（<code>.inp</code>）と
+FrontISTR（<code>.msh</code>・<code>.cnt</code>）に<strong>何を書くか</strong></li>
+<li>拘束式の係数の決め方（数式）</li>
+<li>結果を ParaView で確認する方法</li>
+<li>実際の工作機械モデルに広げるときのコツ</li>
+</ul>
+<p><strong>目次</strong></p>
+<ol type="1">
+<li>完成形と全体の流れ</li>
+<li>例題のモデル</li>
+<li>手順 1：部品を作る</li>
+<li>手順 2：つなぐ面の節点を集める</li>
+<li>手順 3：代表点を足す</li>
+<li>手順 4：面と代表点を拘束式（MPC）で結ぶ</li>
+<li>手順 5：代表点どうしをばねでつなぐ</li>
+<li>手順 6：固定と荷重</li>
+<li>手順 7：解いて確かめる</li>
+<li>ParaView で確認する</li>
+<li>工作機械のモデルに広げる</li>
+<li>よくある失敗</li>
+<li>まとめ</li>
+</ol>
+<hr />
+<h2 id="1-完成形と全体の流れ">1. 完成形と全体の流れ</h2>
+<p>まず、最後にできあがるモデルを見てください。</p>
+<p><img
+src="../analysis/ana003_ccx_fistr_mpc_spring/results/tutorial/step0_goal.png"
+alt="完成形" /></p>
+<p>↑完成したモデルです（上の立方体を持ち上げて描いた分解図。本当は z =
+100 mm で接しています）。</p>
+<p>つなぎ方は、次の 1 行にまとまります。</p>
+<blockquote>
+<p><strong>面の節点 →（拘束式 MPC）→ 代表点 ―（ばね）― 代表点 ←（拘束式
+MPC）← 面の節点</strong></p>
+</blockquote>
+<p>ポイントは、<strong>ばねは面と面を直接つなぐのではなく、それぞれの面の「代表点」どうしをつなぐ</strong>ことです。
+面の節点は、拘束式（MPC）で代表点にぶら下げます。</p>
+<p>作業の流れと、各手順で書くキーワードを 1 枚にまとめました。</p>
+<p><img
+src="../analysis/ana003_ccx_fistr_mpc_spring/results/tutorial/flow.png"
+alt="作業の流れ" /></p>
+<p>↑CalculiX は 1 つの <code>.inp</code> にすべて書きます。FrontISTR
+は「形（<code>.msh</code>）」と「解析条件・ばね定数（<code>.cnt</code>）」の
+2 つのファイルに分かれます。</p>
+<hr />
+<h2 id="2-例題のモデル">2. 例題のモデル</h2>
+<table>
+<thead>
+<tr class="header">
+<th>項目</th>
+<th>設定</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>下の部品（ベッドのつもり）</td>
+<td>立方体 x = 0〜100、y = 0〜100、z = 0〜100 mm。節点 1〜8</td>
+</tr>
+<tr class="even">
+<td>上の部品（キャリッジのつもり）</td>
+<td>立方体 x = 0〜100、y = 0〜100、z = 100〜200 mm。節点 9〜16</td>
+</tr>
+<tr class="odd">
+<td>要素</td>
+<td>8 節点六面体（CalculiX <code>C3D8</code>、FrontISTR
+<code>361</code>）各 1 個</td>
+</tr>
+<tr class="even">
+<td>材料</td>
+<td>鋼 <span class="math inline">\(E\)</span> = 200,000 N/mm²、<span
+class="math inline">\(\nu\)</span> = 0.3</td>
+</tr>
+<tr class="odd">
+<td>代表点</td>
+<td>101（下の面用）、201（上の面用）。どちらも (50, 50, 100)</td>
+</tr>
+<tr class="even">
+<td>回転用の補助点</td>
+<td>102（下）、202（上）。同じく (50, 50, 100)</td>
+</tr>
+<tr class="odd">
+<td>並進ばね</td>
+<td>X・Y・Z 各 1,000 N/mm（= 1 N/µm）</td>
+</tr>
+<tr class="even">
+<td>回転ばね</td>
+<td>θx・θy・θz 各 1,000,000 N·mm/rad</td>
+</tr>
+<tr class="odd">
+<td>固定</td>
+<td>下の部品の底面（節点 1〜4）</td>
+</tr>
+<tr class="even">
+<td>荷重</td>
+<td>上のブロックの節点 13（上面の角 (0, 0, 200)）に Y 方向 1
+N。ばね（代表点）に直接ではなく、部品の節点を押す</td>
+</tr>
+<tr class="odd">
+<td>単位系</td>
+<td>mm・N・s（質量は t）</td>
+</tr>
+</tbody>
+</table>
+<p>完成した入力ファイルはここにあります。横に開きながら読み進めてください。</p>
+<ul>
+<li>CalculiX：<a
+href="../analysis/ana003_ccx_fistr_mpc_spring/tutorial/ccx/model.inp">tutorial/ccx/model.inp</a></li>
+<li>FrontISTR：<a
+href="../analysis/ana003_ccx_fistr_mpc_spring/tutorial/fistr/model.msh">tutorial/fistr/model.msh</a>、<a
+href="../analysis/ana003_ccx_fistr_mpc_spring/tutorial/fistr/model.cnt">model.cnt</a>、<a
+href="../analysis/ana003_ccx_fistr_mpc_spring/tutorial/fistr/hecmw_ctrl.dat">hecmw_ctrl.dat</a></li>
+</ul>
+<p>※
+記事の中のコードは<strong>抜粋</strong>です。抜粋だけを保存しても解ける入力にはなりません。</p>
+<hr />
+<h2 id="3-手順-1部品を作る節点は共有しない">3. 手順
+1：部品を作る（節点は共有しない）</h2>
+<p><img
+src="../analysis/ana003_ccx_fistr_mpc_spring/results/tutorial/step1_parts.png"
+alt="手順1" /></p>
+<p>↑下の部品の上面（節点 5〜8、赤）と、上の部品の下面（節点
+9〜12、青）は<strong>同じ座標にある別の節点</strong>です。</p>
+<p><strong>CalculiX（model.inp）</strong></p>
+<pre class="text"><code>*NODE
+1, 0, 0, 0
+...
+5, 0, 0, 100        ← 下の部品の上面
+...
+9, 0, 0, 100        ← 上の部品の下面（5 と同じ座標だが別の番号）
+...
+*ELEMENT, TYPE=C3D8, ELSET=SOLIDS
+1, 1,2,3,4,5,6,7,8           ← 下の部品
+2, 9,10,11,12,13,14,15,16    ← 上の部品</code></pre>
+<p><strong>FrontISTR（model.msh）</strong></p>
+<pre class="text"><code>!NODE
+（CalculiX と同じ）
+!ELEMENT, TYPE=361, EGRP=SOLIDS
+1, 1,2,3,4,5,6,7,8
+2, 9,10,11,12,13,14,15,16</code></pre>
+<ul>
+<li><code>C3D8</code> / <code>361</code>：8
+節点の六面体要素。節点の並び順は両ソフトで同じ（下の面 4 つ → 上の面 4
+つ）</li>
+</ul>
+<p><strong>ポイントは、接する面の節点を共有（マージ）しないこと</strong>です。
+共有すると 2
+つの部品が直接くっつき、間にばねを入れる意味がなくなります。メッシュ作成ソフトでも「別パート」「節点をマージしない」にしておきます。</p>
+<hr />
+<h2 id="4-手順-2つなぐ面の節点を集める節点集合">4. 手順
+2：つなぐ面の節点を集める（節点集合）</h2>
+<p><img
+src="../analysis/ana003_ccx_fistr_mpc_spring/results/tutorial/step2_sets.png"
+alt="手順2" /></p>
+<p>↑赤 = FACE_B（下の部品の上面）、青 = FACE_T（上の部品の下面）、緑 =
+FIX（固定する底面）。</p>
+<p><strong>CalculiX（model.inp）</strong></p>
+<pre class="text"><code>*NSET, NSET=FACE_B
+5,6,7,8
+*NSET, NSET=FACE_T
+9,10,11,12
+*NSET, NSET=FIX
+1,2,3,4</code></pre>
+<p><strong>FrontISTR（model.msh）</strong></p>
+<pre class="text"><code>!NGROUP, NGRP=FACE_B
+5,6,7,8
+!NGROUP, NGRP=FACE_T
+9,10,11,12
+!NGROUP, NGRP=FIX
+1,2,3,4</code></pre>
+<ul>
+<li><code>*NSET</code> /
+<code>!NGROUP</code>：節点に名前を付けてまとめる</li>
+</ul>
+<p>面の節点は、次の 3 つの条件で選びます。</p>
+<ol type="1">
+<li><strong>その部品の節点であること</strong>（座標だけで選ぶと、同じ位置にある相手の部品の節点も混ざります）</li>
+<li><strong>面の高さ</strong>にあること（ここでは z = 100）</li>
+<li><strong>取付面の範囲内</strong>にあること（x, y が範囲内）</li>
+</ol>
+<p>※ 2 次要素（20 節点など）では、辺の中間の節点も含めます。</p>
+<p>※
+<strong>節点集合を作っただけでは、まだ何もつながっていません。</strong>
+集合は「選んだ節点の確認用」です。次の手順で、1
+節点ずつ式を書いてつなぎます。</p>
+<hr />
+<h2 id="5-手順-3代表点を足すref-と-rot">5. 手順 3：代表点を足す（REF と
+ROT）</h2>
+<p><img
+src="../analysis/ana003_ccx_fistr_mpc_spring/results/tutorial/step3_ref.png"
+alt="手順3" /></p>
+<p>↑黄 = 代表点 REF（101, 201）、緑 = 回転用の補助点 ROT（102,
+202）。図ではずらしていますが、<strong>4 点とも同じ座標 (50, 50,
+100)</strong> です。</p>
+<p><strong>CalculiX（<code>*NODE</code> に追加）／
+FrontISTR（<code>!NODE</code> に追加）</strong></p>
+<pre class="text"><code>101, 50, 50, 100     ← 下の面の代表点 REF
+102, 50, 50, 100     ← 下の面の回転用補助点 ROT
+201, 50, 50, 100     ← 上の面の代表点 REF
+202, 50, 50, 100     ← 上の面の回転用補助点 ROT</code></pre>
+<ul>
+<li><strong>代表点 REF</strong>：面全体の「平行移動」<span
+class="math inline">\(u_x, u_y, u_z\)</span> を受け持つ節点</li>
+<li><strong>回転用補助点 ROT</strong>：面全体の「回転」<span
+class="math inline">\(\theta_x, \theta_y, \theta_z\)</span>
+を受け持つ節点</li>
+</ul>
+<p>★ここがいちばんのミソです。ソリッド要素の節点には<strong>回転の自由度がありません</strong>。
+そこで、要素につながっていない節点 ROT を 1 つ用意し、その<strong>自由度
+1・2・3 を「回転角 θx・θy・θz」という意味で使います</strong>。
+ソルバから見ればただの節点の変位ですが、次の手順の式の中で「回転」として扱います。</p>
+<p>※
+要素は付けません。節点を足すだけです。番号は既存の節点と重ならないものにします。</p>
+<hr />
+<h2 id="6-手順-4面と代表点を拘束式mpcで結ぶ">6. 手順
+4：面と代表点を拘束式（MPC）で結ぶ</h2>
+<p><img
+src="../analysis/ana003_ccx_fistr_mpc_spring/results/tutorial/step4_mpc.png"
+alt="手順4" /></p>
+<p>↑紫の線が拘束式。1 本の線は、X・Y・Z の 3
+本の式を表します。橙の矢印は、代表点から節点 5 へのベクトル <span
+class="math inline">\(r\)</span> です。</p>
+<h3 id="61-式の考え方">6.1 式の考え方</h3>
+<p>「面の節点は、代表点と一緒に<strong>剛体として</strong>動く」（RBE2
+相当）とします。 剛体の小さな動きは「平行移動 ＋ 回転 ×
+位置」なので、</p>
+<p><span class="math display">\[\boldsymbol{u}_i =
+\boldsymbol{u}_{\mathrm{REF}} + \boldsymbol{\theta} \times
+\boldsymbol{r}_i\]</span></p>
+<p><span class="math inline">\(\boldsymbol{r}_i = (r_x, r_y,
+r_z)\)</span> は代表点から節点 <span class="math inline">\(i\)</span>
+へのベクトルです。成分に分けると、</p>
+<p><span class="math display">\[\begin{aligned} u_{ix} &amp;=
+u_{\mathrm{REF},x} + \theta_y r_z - \theta_z r_y \\ u_{iy} &amp;=
+u_{\mathrm{REF},y} + \theta_z r_x - \theta_x r_z \\ u_{iz} &amp;=
+u_{\mathrm{REF},z} + \theta_x r_y - \theta_y r_x
+\end{aligned}\]</span></p>
+<p>この例では面が水平（<span class="math inline">\(r_z =
+0\)</span>）なので、もう少し簡単になります。</p>
+<h3 id="61a-この式は標準の機能なの">6.1a
+この式は「標準の機能」なの？</h3>
+<p>**式そのものはソフトの機能ではなく、力学の基本式（剛体の小さな動き）**です。どのソフトでも同じです。
+ソフトによって違うのは、<strong>この式を自動で作ってくれるコマンドがあるかどうか</strong>です。</p>
+<table>
+<thead>
+<tr class="header">
+<th>ソフト</th>
+<th>この式を自動で作るコマンド（標準機能）</th>
+<th>自分で書く方法（この記事）</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>CalculiX</td>
+<td><strong>ある</strong>：<code>*RIGID BODY, NSET=FACE_B, REF NODE=101, ROT NODE=102</code>（<code>*COUPLING</code>
+＋ <code>*KINEMATIC</code> も同じ働き）</td>
+<td><code>*EQUATION</code> で 1 式ずつ書く</td>
+</tr>
+<tr class="even">
+<td>FrontISTR</td>
+<td><strong>ない</strong>（剛体結合の専用コマンドはない）</td>
+<td><code>!EQUATION</code> で 1 式ずつ書く（これしか方法がない）</td>
+</tr>
+<tr class="odd">
+<td>商用（Nastran など）</td>
+<td><code>RBE2</code>（Abaqus は
+<code>*COUPLING, KINEMATIC</code>）</td>
+<td>―</td>
+</tr>
+</tbody>
+</table>
+<p>実は CalculiX の <code>*RIGID BODY</code> も、<strong>「REF NODE ＝
+平行移動、ROT NODE の自由度 1〜3 ＝
+回転角」という、この記事と同じ仕組み</strong>で動いています。
+確かめるために、この例の 12 式 × 2 面を消して <code>*RIGID BODY</code>
+の 2 行に置き換えて解くと、<strong>結果は全桁一致</strong>しました。</p>
+<table>
+<thead>
+<tr class="header">
+<th>書き方</th>
+<th style="text-align: right;"><span
+class="math inline">\(u_Y(101)\)</span> [mm]</th>
+<th style="text-align: right;"><span
+class="math inline">\(u_Y(201)\)</span> [mm]</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>*EQUATION</code> を 24 式（この記事）</td>
+<td style="text-align: right;">3.900000E-07</td>
+<td style="text-align: right;">1.000390E-03</td>
+</tr>
+<tr class="even">
+<td><code>*RIGID BODY</code> を 2 行（CalculiX の標準機能）</td>
+<td style="text-align: right;">3.900000E-07</td>
+<td style="text-align: right;">1.000390E-03</td>
+</tr>
+</tbody>
+</table>
+<p><em>入力: <a
+href="../analysis/ana003_ccx_fistr_mpc_spring/tutorial/ccx_rigidbody/model.inp">tutorial/ccx_rigidbody/model.inp</a></em></p>
+<pre class="text"><code>*RIGID BODY, NSET=FACE_B, REF NODE=101, ROT NODE=102   ← FACE_B の節点を 101・102 に剛体で結ぶ
+*RIGID BODY, NSET=FACE_T, REF NODE=201, ROT NODE=202</code></pre>
+<p><strong>ではなぜ自分で書くのか？</strong></p>
+<ul>
+<li><strong>FrontISTR
+には専用コマンドがない</strong>ので、両方のソルバで同じモデルを作るには
+<code>!EQUATION</code> を書くしかない</li>
+<li>中身（何が何に結ばれているか）が<strong>目に見える</strong>ので、間違いに気づきやすい</li>
+<li>RBE3（平均で結ぶ）のような、専用コマンドがない結び方も同じ書き方で作れる</li>
+</ul>
+<p>※ CalculiX だけを使うなら、<code>*RIGID BODY</code>
+を使うのがいちばん簡単で確実です。</p>
+<h3 id="62-節点-5-の-x-の式を入力ファイルの-1-行にする">6.2 節点 5 の X
+の式を、入力ファイルの 1 行にする</h3>
+<p>節点 5 は (0, 0, 100)、代表点は (50, 50, 100) なので <span
+class="math inline">\(r = (-50, -50, 0)\)</span>。X
+の式に代入すると、</p>
+<p><span class="math display">\[u_x(5) = u_x(101) - \theta_z \times
+(-50) \quad\Longrightarrow\quad 1 \cdot u_x(5) - 1 \cdot u_x(101) -
+50\,\theta_z = 0\]</span></p>
+<p>あとは各項を「<strong>節点番号, 自由度番号, 係数</strong>」の 3
+つ組にして並べるだけです。<span class="math inline">\(\theta_z\)</span>
+は「ROT 節点 102 の自由度 3」です。</p>
+<table>
+<thead>
+<tr class="header">
+<th>項</th>
+<th>節点</th>
+<th>自由度</th>
+<th>係数</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><span class="math inline">\(1 \cdot u_x(5)\)</span></td>
+<td>5</td>
+<td>1</td>
+<td>1</td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(-1 \cdot u_x(101)\)</span></td>
+<td>101</td>
+<td>1</td>
+<td>−1</td>
+</tr>
+<tr class="odd">
+<td><span class="math inline">\(-50\,\theta_z\)</span></td>
+<td>102</td>
+<td>3</td>
+<td>−50</td>
+</tr>
+</tbody>
+</table>
+<p><strong>CalculiX（model.inp）</strong></p>
+<pre class="text"><code>*EQUATION
+3                                       ← 項の数
+5, 1, 1, 101, 1, -1, 102, 3, -50        ← 節点, 自由度, 係数 を 3 項ぶん
+*EQUATION
+3
+5, 2, 1, 101, 2, -1, 102, 3, 50         ← Y の式（r_x = −50）
+*EQUATION
+4
+5, 3, 1, 101, 3, -1, 102, 1, 50, 102, 2, -50   ← Z の式</code></pre>
+<p><strong>FrontISTR（model.msh）</strong></p>
+<pre class="text"><code>!EQUATION
+3, 0.0                                  ← 項の数, 右辺（= 0）
+5, 1, 1, 101, 1, -1, 102, 3, -50
+3, 0.0
+5, 2, 1, 101, 2, -1, 102, 3, 50
+4, 0.0
+5, 3, 1, 101, 3, -1, 102, 1, 50, 102, 2, -50</code></pre>
+<ul>
+<li><code>*EQUATION</code>（CalculiX）：1 式ごとに
+<code>*EQUATION</code> → 項の数 → 項の並び</li>
+<li><code>!EQUATION</code>（FrontISTR）：<code>!EQUATION</code>
+の後に「項の数, 右辺」→ 項の並び、を繰り返す</li>
+<li><strong>最初の項が「従属自由度」</strong>：計算の中で消去される側。面の節点を先頭に書きます</li>
+</ul>
+<p>これを面の節点 4 個 × X・Y・Z × 面 2 枚 = <strong>24
+式</strong>書きます（上の面は 101 → 201、102 → 202 に置き換え）。</p>
+<p>※ <span class="math inline">\(r_x, r_y\)</span>
+は節点ごとに<strong>符号も含めて</strong>計算し直します。手で書くと間違えやすいので、実際のモデルでは
+Python などで自動生成します（11 章）。</p>
+<p>※ 1 つの自由度を 2
+つの式の先頭（従属）にしない、固定した自由度を従属にしない、の 2
+つに注意します。</p>
+<hr />
+<h2 id="7-手順-5代表点どうしをばねでつなぐ">7. 手順
+5：代表点どうしをばねでつなぐ</h2>
+<p><img
+src="../analysis/ana003_ccx_fistr_mpc_spring/results/tutorial/step5_spring.png"
+alt="手順5" /></p>
+<p>↑赤 = 並進ばね（101 ― 201）、緑 = 回転ばね（102 ― 202）。</p>
+<p><strong>CalculiX（model.inp）</strong>：Y 方向の並進ばねの例</p>
+<pre class="text"><code>*ELEMENT, TYPE=SPRING2, ELSET=SP102
+102, 101, 201              ← 要素番号, 節点1, 節点2
+*SPRING, ELSET=SP102
+2, 2                       ← 節点1の自由度, 節点2の自由度（2 = Y）
+1000.0                     ← ばね定数 [N/mm]</code></pre>
+<p><strong>FrontISTR</strong>：要素は <code>.msh</code>、ばね定数は
+<code>.cnt</code> に書きます</p>
+<pre class="text"><code>（model.msh）
+!ELEMENT, TYPE=511, EGRP=SP102
+102, 101, 201
+!MATERIAL, NAME=SP102, ITEM=1        ← 名前の登録用（値はばね定数ではない）
+!ITEM=1, SUBITEM=2
+1.0, 0.3
+!SECTION, TYPE=INTERFACE, EGRP=SP102, MATERIAL=SP102
+
+（model.cnt）
+!MATERIAL, NAME=SP102
+!SPRING_D
+2, 2, 1000.0                         ← 自由度, 自由度, ばね定数</code></pre>
+<ul>
+<li><code>SPRING2</code> / <code>511</code>：2
+つの節点の間のばね要素</li>
+<li><code>*SPRING</code> /
+<code>!SPRING_D</code>：どの自由度どうしを、どの硬さでつなぐか</li>
+<li>※ FrontISTR は、<code>.cnt</code> の <code>!MATERIAL</code>
+と<strong>同じ名前の材料が <code>.msh</code>
+にもないとエラー</strong>になります（<code>Fail in read in material definition</code>）</li>
+</ul>
+<p>同じように、X（<code>1, 1</code>）・Z（<code>3, 3</code>）の並進ばねと、ROT
+どうし（102 ― 202）の回転ばね 3 本も書きます。合計 6 本です。</p>
+<table>
+<thead>
+<tr class="header">
+<th>ばね</th>
+<th>節点</th>
+<th>何を表すか（工作機械では）</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>並進 X・Y・Z</td>
+<td>101 ― 201</td>
+<td>ガイドの上下・横の剛性、ボールねじの軸方向剛性（<a
+href="../study/ref004_工作機械_ばね剛性と減衰の決め方.html">ばね剛性の決め方</a>）</td>
+</tr>
+<tr class="even">
+<td>回転 θx・θy・θz</td>
+<td>102 ― 202</td>
+<td>ガイドのモーメント剛性（ピッチング・ローリング・ヨーイング）。単位は
+N·mm/rad</td>
+</tr>
+</tbody>
+</table>
+<p>※ Y のばね 1
+本だけだと、ほかの方向に支えがなくなり、計算が解けません（特異行列）。</p>
+<h3 id="71-並進ばねと回転ばねを分ける理由">7.1
+並進ばねと回転ばねを分ける理由</h3>
+<p>理由は 3 つあります。</p>
+<p><strong>① 代表点 1
+点では、並進ばねだけだと回転を止められない</strong></p>
+<p>面と面を「たくさんの節点どうし」でつなぐ分布ばね（<a
+href="ana001_CalculiX-FrontISTR_簡易工作機械の固有値解析.html">ana001</a>）なら、面が傾くと端の節点のばねが伸び縮みするので、回転の硬さは自然に出てきます。</p>
+<p><span class="math display">\[k_\theta = \sum_i k_i\, r_i^2 \qquad
+(\text{分布ばね：中心から離れたばねほど回転を強く止める})\]</span></p>
+<p>ところが代表点方式では、ばねは<strong>中心の 1
+点だけ</strong>です。腕の長さ <span class="math inline">\(r = 0\)</span>
+なので、並進ばねは回転に対してまったく抵抗しません。
+だから回転の硬さは<strong>別に入れる必要があります</strong>。</p>
+<p><strong>② ばね 1 本は「1
+つの自由度どうし」しかつなげない</strong></p>
+<p><code>SPRING2</code>・<code>511</code>＋<code>!SPRING_D</code>
+は、「節点 1 の自由度 ○」と「節点 2 の自由度 ○」を 1
+つの値でつなぐ要素です。 代表点 REF の自由度 1〜3
+は<strong>平行移動</strong>、補助点 ROT の自由度 1〜3
+は<strong>回転角</strong>なので、</p>
+<ul>
+<li>平行移動の硬さ → REF ― REF のばね（単位 N/mm）</li>
+<li>回転の硬さ → ROT ― ROT のばね（単位 N·mm/rad）</li>
+</ul>
+<p>と、つなぐ節点も単位も違う別のばねになります。</p>
+<p><strong>③ カタログの値も別々に載っている</strong></p>
+<p>リニアガイドのカタログには、上下・横の**剛性（N/µm）<strong>と、ピッチング・ローリング・ヨーイングの</strong>モーメント剛性（N·m/rad
+など）**が別々に載っています。
+並進ばねと回転ばねを分けておくと、カタログ値をそれぞれそのまま入れられます。</p>
+<p><strong>計算で確かめる</strong>：この例では荷重を上のブロックの角（節点
+13）にかけているので、ばねのまわりにモーメントがかかり、上のブロックが傾きます。</p>
+<p><img
+src="../analysis/ana003_ccx_fistr_mpc_spring/results/tutorial/step5_why_rotspring.png"
+alt="並進ばねと回転ばね" /></p>
+<p>↑左：代表点から離れた節点を押すと傾く。右上：節点 13
+の動きの内訳。右下：回転ばねを外すと答えがでたらめになる。</p>
+<p>節点 13 は代表点から <span class="math inline">\(r = (-50, -50,
+100)\)</span> mm の位置なので、モーメントは</p>
+<p><span class="math display">\[\boldsymbol{M} = \boldsymbol{r} \times
+\boldsymbol{F} = (-50, -50, 100) \times (0, 1, 0) = (-100,\ 0,\ -50)\
+\mathrm{N \cdot mm}\]</span></p>
+<p>回転ばね <span class="math inline">\(k_\theta = 10^6\)</span>
+N·mm/rad で割ると、<span class="math inline">\(\theta_x =
+-1\times10^{-4}\)</span> rad、<span class="math inline">\(\theta_z =
+-5\times10^{-5}\)</span> rad。節点 13 の Y 変位は</p>
+<p><span class="math display">\[u_Y(13) =
+\underbrace{\frac{F}{k}}_{\text{並進ばね}} + \underbrace{\theta_z r_x -
+\theta_x r_z}_{\text{回転ばね}} = 0.001 + 0.0125 = 0.0135\
+\mathrm{mm}\]</span></p>
+<p>となり、CalculiX（0.01350 mm）・FrontISTR（0.01350
+mm）と一致しました。
+<strong>この例では、回転ばねによる傾きのほうが並進ばねの伸びより 12
+倍も大きい</strong>ことに注目してください。工具先端のように取付面から離れた点では、ガイドのモーメント剛性が効いてきます。</p>
+<table>
+<thead>
+<tr class="header">
+<th>回転ばね</th>
+<th>節点 13 の Y 変位</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>あり（1,000,000 N·mm/rad）</td>
+<td>0.0135 mm（手計算どおり）</td>
+</tr>
+<tr class="even">
+<td>なし</td>
+<td>3×10⁹ mm（回転を止めるものがなく、でたらめな値）</td>
+</tr>
+</tbody>
+</table>
+<p><em>入力: <a
+href="../analysis/ana003_ccx_fistr_mpc_spring/tutorial/ccx_no_rot/model.inp">tutorial/ccx_no_rot/model.inp</a>（回転ばね
+3 本を消したもの）</em></p>
+<p>※
+ソルバがエラーで止まらず、でたらめな数字を出すことがあります。<strong>結果は必ず手計算や絵で確かめます。</strong></p>
+<h3 id="71b-ばねに回転剛性を直接入れられないのか">7.1b
+ばねに回転剛性を直接入れられないのか</h3>
+<p>実は、回転ばね（102―202）がやっていることは「回転剛性を直接入れる」ことそのものです。ばね定数
+1,000,000 N·mm/rad
+は回転の硬さの値で、カタログのモーメント剛性をそのまま書けます。ただ、その回転ばねを<strong>どの節点につなぐか</strong>に制約があります。</p>
+<p>ソリッド要素（C3D8・361 など）の節点は、X・Y・Z の 3
+つの並進しか持っていません。回転の自由度（自由度
+4・5・6）がないので、面の節点に直接「回転ばね」をつけることはできません。そこで、面の動きから回転角を表す節点（ROT）を別に作り、そこに回転ばねをつないでいます。はりやシェルの要素なら節点に回転の自由度があるので、そういう部品どうしなら補助点なしで回転ばねを直接つけられます。</p>
+<p>もう一つの考え方として、代表点を使わずに、面と面の向かい合う節点どうしを並進ばねでたくさんつなぐ方法（分布ばね、<a
+href="ana001_CalculiX-FrontISTR_簡易工作機械の固有値解析.html">ana001</a>）もあります。この場合は回転ばねは不要で、面が傾くと端の方のばねが伸び縮みするので、回転の硬さ
+<span class="math inline">\(k_\theta = \sum_i k_i r_i^2\)</span>
+が自動的に生まれます。ただしその値は、ばねの並べ方で決まってしまい、カタログのモーメント剛性に合わせて自由に設定することはできません。代表点＋回転ばねの方式は、並進と回転の硬さを別々にカタログ値どおりに入れたいときに使います。</p>
+<h3 id="71c-代表点どうしを1-本の-6-成分ばねとしてつなぐ道具">7.1c
+代表点どうしを「1 本の 6 成分ばね」としてつなぐ道具</h3>
+<p>CalculiX の <code>SPRING2</code> も FrontISTR の
+<code>511</code>＋<code>!SPRING_D</code> も、ばねでつなげるのは自由度
+1〜3（並進）だけです。CalculiX で <code>*RIGID BODY</code> の代表点（REF
+NODE）どうしに自由度 4〜6
+のばねを入れて試したところ、回転ばねは効かず、答えが発散しました（<a
+href="../analysis/ana003_ccx_fistr_mpc_spring/tutorial/ref6dof/ccx/model.inp">ref6dof/ccx/model.inp</a>）。ソルバの入力だけで「代表点
+1 つに 6
+成分のばね」を直接書く方法は、どちらのソルバにもありません。</p>
+<p>そこで、使う側からは「面 A の節点、面 B の節点、代表点の位置、6
+つのばね定数」を渡すだけで済むように、補助点・拘束式・ばねをまとめて書き出す
+Python の道具を作りました（<a
+href="../analysis/tools/rep_spring.py">analysis/tools/rep_spring.py</a>）。中身はこの記事の手順
+3〜5 と同じで、補助点 ROT は道具の中で自動的に作られます。</p>
+<div class="sourceCode" id="cb11"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> rep_spring <span class="im">import</span> RepSpring</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>rs <span class="op">=</span> RepSpring(first_node<span class="op">=</span><span class="dv">101</span>, first_elem<span class="op">=</span><span class="dv">101</span>)          <span class="co"># 新しく使う節点・要素番号の始まり</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>rs.add(<span class="st">&quot;JOINT&quot;</span>, [<span class="dv">5</span>, <span class="dv">6</span>, <span class="dv">7</span>, <span class="dv">8</span>], [<span class="dv">9</span>, <span class="dv">10</span>, <span class="dv">11</span>, <span class="dv">12</span>],          <span class="co"># 面 A の節点、面 B の節点</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>       center<span class="op">=</span>(<span class="dv">50</span>, <span class="dv">50</span>, <span class="dv">100</span>),                            <span class="co"># 代表点の位置</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>       k<span class="op">=</span>(<span class="dv">1000</span>, <span class="dv">1000</span>, <span class="dv">1000</span>, <span class="fl">1e6</span>, <span class="fl">1e6</span>, <span class="fl">1e6</span>),             <span class="co"># kx, ky, kz [N/mm]、krx, kry, krz [N·mm/rad]</span></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>       coords<span class="op">=</span>P)                                        <span class="co"># 節点番号 → 座標</span></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>ccx_lines <span class="op">=</span> rs.ccx()                 <span class="co"># CalculiX：.inp に貼る行（節点・*EQUATION・SPRING2）</span></span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>msh_lines, cnt_lines <span class="op">=</span> rs.fistr()    <span class="co"># FrontISTR：.msh に貼る行と .cnt に貼る行</span></span></code></pre></div>
+<p>ガイドが 4 個あれば <code>add</code> を 4
+回呼ぶだけです。この記事の例題をこの道具で作り直すと、CalculiX・FrontISTR
+とも、手で書いた入力と同じ結果（ばねの伸び 0.001000 mm、節点 13 の Y
+変位 0.013502 mm）になりました（<a
+href="../analysis/ana003_ccx_fistr_mpc_spring/tutorial/rep_spring_demo/demo.py">rep_spring_demo/demo.py</a>）。</p>
+<h3 id="72-回転の硬さは-calculix-でも-frontistr-でも入れられる">7.2
+回転の硬さは CalculiX でも FrontISTR でも入れられる？</h3>
+<p><strong>どちらでも入れられます。</strong> この記事の方法（補助点 ROT
+＋ ばね）は、両方のソルバで同じように動きます。 上の 9
+章の表のとおり、回転ばねの両端の角度の差は CalculiX・FrontISTR
+とも手計算の <span class="math inline">\(-1\times10^{-4}\)</span> rad
+に一致しました。</p>
+<table>
+<thead>
+<tr class="header">
+<th></th>
+<th>CalculiX</th>
+<th>FrontISTR</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>ソリッドの節点に回転の自由度はあるか</td>
+<td>ない（X・Y・Z の 3 つだけ）</td>
+<td>ない（同じ）</td>
+</tr>
+<tr class="even">
+<td>回転の硬さの入れ方（この記事）</td>
+<td>補助点 ROT どうしを <code>SPRING2</code> ＋
+<code>*SPRING</code>（自由度 1〜3）でつなぐ</td>
+<td>補助点 ROT どうしを <code>511</code> ＋
+<code>!SPRING_D</code>（自由度 1〜3）でつなぐ</td>
+</tr>
+<tr class="odd">
+<td>ROT を面に結ぶ方法</td>
+<td><code>*EQUATION</code>、または標準機能の
+<code>*RIGID BODY</code>（ROT NODE を指定）</td>
+<td><code>!EQUATION</code>（専用コマンドはない）</td>
+</tr>
+<tr class="even">
+<td>結果（この例の <span class="math inline">\(\theta_x\)</span>）</td>
+<td>−1.0×10⁻⁴ rad</td>
+<td>−1.0×10⁻⁴ rad</td>
+</tr>
+</tbody>
+</table>
+<p>違いは「<strong>ROT
+を面に結ぶ専用コマンドがあるかどうか</strong>」だけで、回転ばねそのものはどちらも同じ書き方で入ります。
+※
+どちらのソルバにも「ソリッドの節点に直接つける回転ばね」はありません。ソリッドの節点には回転の自由度がないためで、だから補助点
+ROT を使います。</p>
+<hr />
+<h2 id="8-手順-6固定と荷重">8. 手順 6：固定と荷重</h2>
+<p><img
+src="../analysis/ana003_ccx_fistr_mpc_spring/results/tutorial/step6_bc.png"
+alt="手順6" /></p>
+<p>↑緑の三角 = 固定した底面、橙の矢印 = 上のブロックの節点
+13（上面の角）に Y 方向 1 N。</p>
+<p><strong>CalculiX（model.inp）</strong></p>
+<pre class="text"><code>*MATERIAL, NAME=STEEL
+*ELASTIC
+200000, 0.3
+*SOLID SECTION, ELSET=SOLIDS, MATERIAL=STEEL
+*BOUNDARY
+FIX, 1, 3                ← FIX の自由度 1〜3 を固定
+*STEP
+*STATIC
+*CLOAD
+13, 2, 1.0               ← 上のブロックの節点 13 の Y に 1 N
+*NODE PRINT, NSET=MON
+U
+*NODE FILE
+U
+*END STEP</code></pre>
+<p><strong>FrontISTR（model.cnt）</strong></p>
+<pre class="text"><code>!VERSION
+3
+!SOLUTION, TYPE=STATIC
+!BOUNDARY
+FIX, 1, 3, 0.0
+!CLOAD
+13, 2, 1.0
+（ここに手順 5 の !MATERIAL / !SPRING_D）
+!SOLVER, METHOD=DIRECT
+!WRITE,RESULT
+!END</code></pre>
+<ul>
+<li>荷重は<strong>ばね（代表点）ではなく、部品の節点</strong>にかけます。力は上のブロックの中を伝わり、面の
+4 節点 → 拘束式 → 代表点 201 → ばね、と流れます</li>
+<li>実際の機械でも、切削力は工具先端（部品の上）にかかります。代表点に直接かけると、モーメント（傾き）が出ず、回転ばねの確認ができません</li>
+<li><code>MON</code> は確認用に 101・102・201・202・13
+をまとめた節点集合です</li>
+</ul>
+<hr />
+<h2 id="9-手順-7解いて確かめる">9. 手順 7：解いて確かめる</h2>
+<div class="sourceCode" id="cb14"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># CalculiX（.inp は付けない）</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="ex">ccx</span> <span class="at">-i</span> model</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="co"># FrontISTR（hecmw_ctrl.dat がある場所で）</span></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a><span class="ex">fistr1</span></span></code></pre></div>
+<p><img
+src="../analysis/ana003_ccx_fistr_mpc_spring/results/tutorial/step7_result.png"
+alt="手順7" /></p>
+<p>↑CalculiX の結果（変形を 3,000 倍に拡大）。上のブロックは Y
+へずれながら傾きます（荷重が角にかかっているため）。下のブロックはほとんど動きません。</p>
+<p><strong>結果の読み方</strong>：上のブロックの節点を押しても、Y
+方向の力 1 N はすべて並進ばねを通るので、ばねの両端の変位の差は</p>
+<p><span class="math display">\[u_Y(201) - u_Y(101) = \frac{F}{k} =
+\frac{1\ \mathrm{N}}{1000\ \mathrm{N/mm}} = 0.001\
+\mathrm{mm}\]</span></p>
+<p>回転ばねの両端の角度の差は、7.1 節のモーメントから <span
+class="math inline">\(\theta_x = M_x / k_\theta =
+-1\times10^{-4}\)</span> rad、<span class="math inline">\(\theta_z = M_z
+/ k_\theta = -5\times10^{-5}\)</span> rad です。</p>
+<table>
+<thead>
+<tr class="header">
+<th>ソルバ</th>
+<th style="text-align: right;">下の代表点 101 の Y 変位 [mm]</th>
+<th style="text-align: right;">上の代表点 201 の Y 変位 [mm]</th>
+<th style="text-align: right;">ばねの伸び [mm]</th>
+<th style="text-align: right;">手計算 [mm]</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>CalculiX</td>
+<td style="text-align: right;">3.90e-07</td>
+<td style="text-align: right;">0.00100039</td>
+<td style="text-align: right;">0.00100000</td>
+<td style="text-align: right;">0.001</td>
+</tr>
+<tr class="even">
+<td>FrontISTR</td>
+<td style="text-align: right;">5.40e-07</td>
+<td style="text-align: right;">0.00100054</td>
+<td style="text-align: right;">0.00100000</td>
+<td style="text-align: right;">0.001</td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr class="header">
+<th>ソルバ</th>
+<th style="text-align: right;"><span class="math inline">\(\theta_x(202)
+- \theta_x(102)\)</span> [rad]</th>
+<th style="text-align: right;"><span class="math inline">\(\theta_z(202)
+- \theta_z(102)\)</span> [rad]</th>
+<th style="text-align: right;">節点 13 の Y 変位 [mm]</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>手計算</td>
+<td style="text-align: right;">−1.0e-4</td>
+<td style="text-align: right;">−5.0e-5</td>
+<td style="text-align: right;">0.0135</td>
+</tr>
+<tr class="even">
+<td>CalculiX</td>
+<td style="text-align: right;">−1.0e-4</td>
+<td style="text-align: right;">−5.0e-5</td>
+<td style="text-align: right;">0.013502</td>
+</tr>
+<tr class="odd">
+<td>FrontISTR</td>
+<td style="text-align: right;">−1.0e-4</td>
+<td style="text-align: right;">−5.0e-5</td>
+<td style="text-align: right;">0.013502</td>
+</tr>
+</tbody>
+</table>
+<p><strong>両ソルバとも手計算と一致しました。</strong>（照合は <a
+href="../analysis/ana003_ccx_fistr_mpc_spring/make_tutorial.py">make_tutorial.py</a>
+が自動で行い、結果を <a
+href="../analysis/ana003_ccx_fistr_mpc_spring/tutorial/check.html">tutorial/check.md</a>
+に書き出します）</p>
+<p>※ 201
+の値そのものではなく<strong>差</strong>で比べます。下のブロック自体もわずかに変形する（101
+が 4×10⁻⁷ mm 動く）ためです。 ※ 回転ばねの「両端の差」は、補助点 ROT
+の自由度 1・3 の値（ソルバの出力では変位として出る）の差です。</p>
+<hr />
+<h2 id="10-paraview-で確認する">10. ParaView で確認する</h2>
+<p>モデルが意図どおりにつながっているかは、<strong>絵で見るのがいちばん確実</strong>です。
+確認用のファイルを用意しました。</p>
+<table>
+<thead>
+<tr class="header">
+<th>ファイル</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>tutorial/vtu/tutorial_model_exploded.vtu（未収録：スクリプトで再生成）</td>
+<td>分解図（上の部品を持ち上げ、代表点をずらしたもの）。この記事の図と同じ配置</td>
+</tr>
+<tr class="even">
+<td>tutorial/vtu/tutorial_model.vtu（未収録：スクリプトで再生成）</td>
+<td>実際の座標のもの</td>
+</tr>
+</tbody>
+</table>
+<p>どちらにも、ソリッド・拘束式・ばねが入っています。</p>
+<ul>
+<li>セルデータ <code>kind</code>：0 = ソリッド、1 = 拘束式（面の節点 →
+代表点の線）、2 = 並進ばね、3 = 回転ばね</li>
+<li>点データ <code>set</code>：1 = FACE_B、2 = FACE_T、3 = FIX、4 =
+代表点 REF、5 = 補助点 ROT</li>
+<li>点データ
+<code>node_id</code>（節点番号）、<code>DISPLACEMENT</code>（CalculiX
+の結果）</li>
+</ul>
+<p><strong>ParaView での手順</strong></p>
+<ol type="1">
+<li>File → Open で <code>tutorial_model_exploded.vtu</code>
+を開き、Apply</li>
+<li>表示を <strong>Surface With Edges</strong>、Opacity を 0.3
+にする（中が透けて見える）</li>
+<li>Filters → <strong>Threshold</strong>（Scalars =
+<code>kind</code>、範囲 1〜1）→ 紫で表示 …
+<strong>拘束式の線</strong>が見える</li>
+<li>もう一度 <strong>Threshold</strong>（<code>kind</code> = 2〜3）→
+赤で表示 … <strong>ばね</strong>が見える</li>
+<li>元のデータを選び、Filters → <strong>Glyph</strong>（Glyph Type =
+Sphere）、色を <code>set</code> にする …
+<strong>面の節点・代表点</strong>が色分けされる</li>
+<li>番号を見たいとき：View → <strong>Find Data</strong>（または
+Spreadsheet View）で <code>node_id</code> を表示</li>
+<li>結果を見るとき：<code>tutorial_model.vtu</code> を開いて Filters →
+<strong>Warp By Vector</strong>（<code>DISPLACEMENT</code>、Scale Factor
+= 20000）</li>
+</ol>
+<p>チェックすること:</p>
+<ul class="task-list">
+<li><label><input
+type="checkbox" />紫の線が、<strong>つなぎたい面の節点だけ</strong>から出ているか（相手の部品の節点が混ざっていないか）</label></li>
+<li><label><input
+type="checkbox" />代表点が面の中心にあるか</label></li>
+<li><label><input
+type="checkbox" />ばねが、下の代表点と上の代表点の間にあるか</label></li>
+<li><label><input
+type="checkbox" />解いた後、上の部品が<strong>形を変えずに</strong>動いているか（RBE2
+なので面は剛体）</label></li>
+</ul>
+<p>この記事の図は、同じデータを ParaView と同じ VTK ライブラリ（Python
+の pyvista）で描いたものです。 生成スクリプト: <a
+href="../analysis/ana003_ccx_fistr_mpc_spring/make_tutorial_figs.py">make_tutorial_figs.py</a>、<a
+href="../analysis/ana003_ccx_fistr_mpc_spring/make_tutorial_flow.py">make_tutorial_flow.py</a></p>
+<hr />
+<h2 id="11-工作機械のモデルに広げる">11. 工作機械のモデルに広げる</h2>
+<p>立方体 2
+個でできたら、あとは<strong>同じことを面の数だけ繰り返す</strong>だけです。
+ただ、実際のモデルでは面の節点が数十〜数百個になるので、手で式を書くのは無理です。
+次のような短いスクリプトで、節点集合と拘束式を自動で作ります。</p>
+<div class="sourceCode" id="cb15"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> face_nodes(part_nodes, z0, x0, x1, y0, y1, tol<span class="op">=</span><span class="fl">1e-6</span>):</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>    <span class="co">&quot;&quot;&quot;部品の節点 {番号: (x, y, z)} から、高さ z0・範囲内の節点を選ぶ（手順 2）&quot;&quot;&quot;</span></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> [n <span class="cf">for</span> n, (x, y, z) <span class="kw">in</span> part_nodes.items()</span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span> <span class="bu">abs</span>(z <span class="op">-</span> z0) <span class="op">&lt;</span> tol <span class="kw">and</span> x0 <span class="op">-</span> tol <span class="op">&lt;=</span> x <span class="op">&lt;=</span> x1 <span class="op">+</span> tol <span class="kw">and</span> y0 <span class="op">-</span> tol <span class="op">&lt;=</span> y <span class="op">&lt;=</span> y1 <span class="op">+</span> tol]</span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> rbe2_equations(nodes, face, ref, rot, center):</span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>    <span class="co">&quot;&quot;&quot;面の各節点を代表点 ref・補助点 rot に剛体で結ぶ式（手順 4）。項は (節点, 自由度, 係数)&quot;&quot;&quot;</span></span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>    eqs <span class="op">=</span> []</span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> n <span class="kw">in</span> face:</span>
+<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a>        rx, ry, rz <span class="op">=</span> np.array(nodes[n]) <span class="op">-</span> np.array(center)</span>
+<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a>        eqs.append([(n, <span class="dv">1</span>, <span class="dv">1</span>), (ref, <span class="dv">1</span>, <span class="op">-</span><span class="dv">1</span>), (rot, <span class="dv">2</span>, <span class="op">-</span>rz), (rot, <span class="dv">3</span>, ry)])   <span class="co"># ux = uR,x + θy rz − θz ry</span></span>
+<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a>        eqs.append([(n, <span class="dv">2</span>, <span class="dv">1</span>), (ref, <span class="dv">2</span>, <span class="op">-</span><span class="dv">1</span>), (rot, <span class="dv">3</span>, <span class="op">-</span>rx), (rot, <span class="dv">1</span>, rz)])   <span class="co"># uy = uR,y + θz rx − θx rz</span></span>
+<span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a>        eqs.append([(n, <span class="dv">3</span>, <span class="dv">1</span>), (ref, <span class="dv">3</span>, <span class="op">-</span><span class="dv">1</span>), (rot, <span class="dv">1</span>, <span class="op">-</span>ry), (rot, <span class="dv">2</span>, rx)])   <span class="co"># uz = uR,z + θx ry − θy rx</span></span>
+<span id="cb15-16"><a href="#cb15-16" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> [[t <span class="cf">for</span> t <span class="kw">in</span> eq <span class="cf">if</span> t[<span class="dv">2</span>] <span class="op">!=</span> <span class="dv">0</span>] <span class="cf">for</span> eq <span class="kw">in</span> eqs]                      <span class="co"># 係数 0 の項は省く</span></span>
+<span id="cb15-17"><a href="#cb15-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-18"><a href="#cb15-18" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> write_ccx(eqs):</span>
+<span id="cb15-19"><a href="#cb15-19" aria-hidden="true" tabindex="-1"></a>    out <span class="op">=</span> []</span>
+<span id="cb15-20"><a href="#cb15-20" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> eq <span class="kw">in</span> eqs:</span>
+<span id="cb15-21"><a href="#cb15-21" aria-hidden="true" tabindex="-1"></a>        out <span class="op">+=</span> [<span class="st">&quot;*EQUATION&quot;</span>, <span class="bu">str</span>(<span class="bu">len</span>(eq)), <span class="st">&quot;, &quot;</span>.join(<span class="ss">f&quot;</span><span class="sc">{</span>n<span class="sc">}</span><span class="ss">, </span><span class="sc">{</span>d<span class="sc">}</span><span class="ss">, </span><span class="sc">{</span>c<span class="sc">:g}</span><span class="ss">&quot;</span> <span class="cf">for</span> n, d, c <span class="kw">in</span> eq)]</span>
+<span id="cb15-22"><a href="#cb15-22" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> out</span>
+<span id="cb15-23"><a href="#cb15-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-24"><a href="#cb15-24" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> write_fistr(eqs):</span>
+<span id="cb15-25"><a href="#cb15-25" aria-hidden="true" tabindex="-1"></a>    out <span class="op">=</span> [<span class="st">&quot;!EQUATION&quot;</span>]</span>
+<span id="cb15-26"><a href="#cb15-26" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> eq <span class="kw">in</span> eqs:</span>
+<span id="cb15-27"><a href="#cb15-27" aria-hidden="true" tabindex="-1"></a>        out <span class="op">+=</span> [<span class="ss">f&quot;</span><span class="sc">{</span><span class="bu">len</span>(eq)<span class="sc">}</span><span class="ss">, 0.0&quot;</span>, <span class="st">&quot;, &quot;</span>.join(<span class="ss">f&quot;</span><span class="sc">{</span>n<span class="sc">}</span><span class="ss">, </span><span class="sc">{</span>d<span class="sc">}</span><span class="ss">, </span><span class="sc">{</span>c<span class="sc">:g}</span><span class="ss">&quot;</span> <span class="cf">for</span> n, d, c <span class="kw">in</span> eq)]</span>
+<span id="cb15-28"><a href="#cb15-28" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> out</span></code></pre></div>
+<p>このスクリプトで立方体の例を作ると、手で書いた 24
+式と同じものができます（立方体の例の生成: <a
+href="../analysis/ana003_ccx_fistr_mpc_spring/make_tutorial.py">make_tutorial.py</a>）。
+工作機械モデル全体（キャリッジ 4 個＋ボールねじナット、面 10
+枚）を作ったコードは <a
+href="../analysis/tools/mpc_springs.py">analysis/tools/mpc_springs.py</a>
+です。</p>
+<p><strong>進め方のおすすめ</strong></p>
+<ol type="1">
+<li>この記事の立方体の例をそのまま解き、ばねの伸び 0.001 mm・節点 13
+の変位 0.0135 mm になることを確かめる</li>
+<li>ばね定数を 2 倍にして、差が半分になることを確かめる</li>
+<li>荷重を X・Z に変えて、それぞれのばねが効くことを確かめる</li>
+<li>自分のモデルで、部品ごとに面の節点集合を作り、<strong>ParaView
+で選んだ節点を確認</strong>する</li>
+<li>スクリプトで拘束式とばねを書き出し、静解析で意図した方向に動くか確かめる</li>
+<li>固有値解析で、余計な剛体モード（0 Hz
+付近）や局所モードがないか確かめる（<a
+href="ana001_CalculiX-FrontISTR_簡易工作機械の固有値解析.html">ana001</a>）</li>
+<li>周波数応答を解く（<a
+href="ana002_CalculiX-FrontISTR_簡易工作機械の周波数応答解析.html">ana002</a>、<a
+href="ana003_CalculiX-FrontISTR_代表点MPCばねの比較.html">ana003</a>）</li>
+</ol>
+<hr />
+<h2 id="12-よくある失敗">12. よくある失敗</h2>
+<table>
+<thead>
+<tr class="header">
+<th>症状</th>
+<th>原因</th>
+<th>対策</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>ばねを入れたのに結果が変わらない／2 部品がくっついている</td>
+<td>接する面の節点を共有（マージ）している</td>
+<td>部品ごとに別の節点にする（手順 1）</td>
+</tr>
+<tr class="even">
+<td>面の選択に相手の部品の節点が混ざる</td>
+<td>座標だけで選んでいる</td>
+<td>「部品」で絞ってから座標で選ぶ（手順 2）</td>
+</tr>
+<tr class="odd">
+<td>解けない（特異行列・ゼロピボット）</td>
+<td>ばねの方向が足りない、回転ばねがない</td>
+<td>並進 3 方向＋回転 3
+方向を入れる。または全体がほかで支えられているか確認</td>
+</tr>
+<tr class="even">
+<td>固有値解析で 0 Hz のモードが出る</td>
+<td>上と同じ。どこにもつながっていない自由度がある</td>
+<td>ParaView でばね・拘束線がすべての部品に届いているか確認</td>
+</tr>
+<tr class="odd">
+<td>FrontISTR が <code>Fail in read in material definition</code></td>
+<td><code>.cnt</code> の <code>!MATERIAL</code> と同じ名前の材料が
+<code>.msh</code> にない</td>
+<td><code>.msh</code> にダミーの材料と
+<code>!SECTION, TYPE=INTERFACE</code> を書く（手順 5）</td>
+</tr>
+<tr class="even">
+<td>CalculiX が拘束式でエラー</td>
+<td>同じ自由度が 2
+つの式の先頭（従属）になっている／固定と重なっている</td>
+<td>先頭には面の節点だけを書く。固定した節点を面に含めない</td>
+</tr>
+<tr class="odd">
+<td>結果が硬すぎる</td>
+<td>MPC は「無限に硬い」ので、面の中の柔らかさが消える</td>
+<td>RBE2 の代わりに RBE3（平均）を使う（<a
+href="ana003_CalculiX-FrontISTR_代表点MPCばねの比較.html">ana003</a>、<a
+href="ana004_CalculiX-FrontISTR_ばねの種類の確認.html">ana004 3
+章</a>）</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="13-まとめ">13. まとめ</h2>
+<ul>
+<li>面と面をばねでつなぐときは、<strong>面 →（MPC）→ 代表点 ―（ばね）―
+代表点 ←（MPC）← 面</strong> の形にする</li>
+<li>手順は 7 つ：①部品を作る（節点を共有しない）②面の節点集合 ③代表点
+REF と回転用補助点 ROT ④拘束式 ⑤並進ばねと回転ばね
+⑥固定・荷重（荷重は部品の節点に）⑦解いて <span
+class="math inline">\(F/k\)</span>・<span
+class="math inline">\(M/k_\theta\)</span> と比べる</li>
+<li>拘束式は「剛体の動き <span class="math inline">\(\boldsymbol{u}_i =
+\boldsymbol{u}_{\mathrm{REF}} + \boldsymbol{\theta} \times
+\boldsymbol{r}_i\)</span>」を「節点, 自由度,
+係数」の並びに書き直したもの。<strong>ソルバの標準機能（<code>*EQUATION</code>
+/ <code>!EQUATION</code>）だけで作れる</strong></li>
+<li>回転は、要素のない補助点 ROT の自由度 1〜3 を回転角として使う</li>
+<li>CalculiX は 1 ファイル、FrontISTR は
+<code>.msh</code>（形・拘束式・ばね要素）と
+<code>.cnt</code>（ばね定数・条件）に分けて書く</li>
+<li>作ったら必ず <strong>ParaView
+で絵にして</strong>、つなぎ方を目で確認する</li>
+</ul>
+<p>次は、このつなぎ方を工作機械モデル全体に使った結果（RBE2 と RBE3
+の違い、周波数応答）を <a
+href="ana003_CalculiX-FrontISTR_代表点MPCばねの比較.html">ana003</a>
+で見てください。</p>
+<hr />
+<p><a href="README.html">← docs 目次</a> ｜ <a href="../README.html">⌂
+トップ</a> ｜ <a
+href="ana003_CalculiX-FrontISTR_代表点MPCばねの比較.html">← 前: ana003
+代表点MPCばねの比較</a> ｜ <a
+href="ana004_CalculiX-FrontISTR_ばねの種類の確認.html">次: ana004
+ばねの種類の確認 →</a></p>
+<p>基礎部も同じ手順で作る例は、<a
+href="ana003_CalculiX-FrontISTR_代表点MPCばねの比較.md#8-追加基礎部もmpcばねで支持するモデル">ana003後半の基礎ばね支持モデル</a>を参照。底面固定の解除、4面の抽出、地面側代表点の固定まで示す。</p>
+<hr />
+<p><a href="README.html">← docs 目次</a> ｜ <a href="../README.html">⌂
+トップ</a> ｜ <a
+href="ana003_CalculiX-FrontISTR_代表点MPCばねの比較.html">← 前: ana003
+代表点MPCばねの比較</a> ｜ <a
+href="ana004_CalculiX-FrontISTR_ばねの種類の確認.html">次: ana004
+ばねの種類の確認 →</a></p>
+</body>
+</html>

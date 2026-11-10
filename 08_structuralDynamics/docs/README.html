@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>docs — マルチフィジックス学習・検証ログ</title>
+  <style>
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      html {
+        background-color: white;
+      }
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+      font-size: 85%;
+      margin: 0;
+      hyphens: manual;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      background-color: #1a1a1a;
+      border: none;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+  </style>
+  <style>
+  body{font-family:'Noto Sans JP','Hiragino Sans','Meiryo',sans-serif;max-width:1100px;margin:2em auto;padding:0 1.2em;line-height:1.75;color:#222}
+  h1{border-bottom:3px solid #1F3A5F;padding-bottom:.3em;color:#1F3A5F} h2{border-left:6px solid #2F6FB0;padding-left:.5em;margin-top:2em;color:#1F3A5F}
+  h3{color:#2F6FB0} img{max-width:100%;height:auto;border:1px solid #ddd;margin:.5em 0}
+  table{border-collapse:collapse;margin:1em 0;font-size:.95em} th,td{border:1px solid #bbb;padding:.35em .7em} th{background:#E3ECF7}
+  code{background:#f4f4f4;padding:.1em .3em;border-radius:3px} pre{background:#f4f4f4;padding:1em;overflow-x:auto}
+  nav.top{font-size:.9em;margin-bottom:1em} nav.top a{color:#2F6FB0}
+  </style>
+  <nav class="top"><a href="../../index.html">← 一覧に戻る</a></nav>
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">docs — マルチフィジックス学習・検証ログ</h1>
+</header>
+<p><a href="../README.html">⌂ トップ</a></p>
+<h1 id="docs--マルチフィジックス学習検証ログ">docs —
+マルチフィジックス学習・検証ログ</h1>
+<p>工作機械（マシニングセンタ／NC旋盤）を題材に、オープンソースCAE・シミュレーションで
+どこまでできるかを実際に試して記録していく場所。
+振動・熱の研究への接続は研究テーマ一覧（非公開）、権利化の検討は特許戦略（非公開）にまとめる。</p>
+<h2 id="命名規約">命名規約</h2>
+<table>
+<thead>
+<tr class="header">
+<th>種別</th>
+<th>形式</th>
+<th>例</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>解析トライアル</td>
+<td><code>ana連番_ソフト名_内容.md</code></td>
+<td><code>ana001_CalculiX-FrontISTR_簡易工作機械の固有値解析.md</code></td>
+</tr>
+<tr class="even">
+<td>知識・調査メモ</td>
+<td><code>ref連番_分野_内容.md</code></td>
+<td><code>ref000_overview_オープンソースマルチフィジックス総覧.md</code>（勉強ノートは
+<code>../study/</code> へ）</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>連番は3桁ゼロ埋め、通し番号（ソフトごとにリセットしない）</li>
+<li>1ファイル = 1トライアル。失敗も残す（何が動かなかったかが資産）</li>
+<li>解析トライアルのmdには最低限これを書く：
+<ol type="1">
+<li>目的（何を知りたいか／実機の何に対応するか）</li>
+<li>環境（OS・バージョン・インストール方法）</li>
+<li>モデル（寸法・材料・境界条件・メッシュ）</li>
+<li>実行コマンド</li>
+<li>結果（数値・図）</li>
+<li>妥当性チェック（理論式・文献値との比較）</li>
+<li>詰まった点／次の課題</li>
+</ol></li>
+<li>図や画像は <code>images/&lt;ファイルの番号&gt;/</code>（例:
+<code>images/ana001/</code>）に置く。ネットの画像はライセンスを確認し、出典を必ず書く</li>
+<li>数式は TeX で書く（行内は <code>$...$</code>、別行は
+<code>$$...$$</code>）。図の中の数式も matplotlib の mathtext（TeX
+記法）で書く</li>
+<li>入力ファイル・スクリプトは
+<code>../analysis/ana001_ccx_fistr_modal/</code>
+のように解析ごとのフォルダ（フォルダ名は英語）に置き、
+mdからの相対リンクで参照する</li>
+</ul>
+<h2 id="インデックス">インデックス</h2>
+<p><a href="../README.html">⌂ トップ</a> ｜ <a
+href="../study/README.html">study（勉強ノート）</a></p>
+<h3 id="調査設定">調査・設定</h3>
+<table>
+<thead>
+<tr class="header">
+<th>ファイル</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><a
+href="ref000_overview_オープンソースマルチフィジックス総覧.html">ref000_overview_オープンソースマルチフィジックス総覧.md</a></td>
+<td>分野別のOSSツール一覧と選定方針、学習ロードマップ</td>
+</tr>
+<tr class="even">
+<td><a
+href="ref005_CalculiX-FrontISTR_ばね・固有値・周波数応答の設定比較.html">ref005_CalculiX-FrontISTR_ばね・固有値・周波数応答の設定比較.md</a></td>
+<td>CalculiX と FrontISTR
+のキーワード対応表（ばね、MPC、固有値、周波数応答、減衰）</td>
+</tr>
+<tr class="odd">
+<td><a
+href="ref006_FrontISTR_6.0の変更点と5.9との比較.html">ref006_FrontISTR_6.0の変更点と5.9との比較.md</a></td>
+<td>FrontISTR 6.0 の変更点（固有値・周波数応答・mortar 接触など）と、5.9
+との結果・計算時間の比較</td>
+</tr>
+</tbody>
+</table>
+<h3 id="解析">解析</h3>
+<table>
+<thead>
+<tr class="header">
+<th>ファイル</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><a
+href="ana001_CalculiX-FrontISTR_簡易工作機械の固有値解析.html">ana001_CalculiX-FrontISTR_簡易工作機械の固有値解析.md</a></td>
+<td>ばねの入れ方（面と面）、入力ファイルの解説、モード形状</td>
+</tr>
+<tr class="even">
+<td><a
+href="ana002_CalculiX-FrontISTR_簡易工作機械の周波数応答解析.html">ana002_CalculiX-FrontISTR_簡易工作機械の周波数応答解析.md</a></td>
+<td>テーブル上面の FRF、Rayleigh 減衰</td>
+</tr>
+<tr class="odd">
+<td><a
+href="ana003_CalculiX-FrontISTR_代表点MPCばねの比較.html">ana003_CalculiX-FrontISTR_代表点MPCばねの比較.md</a></td>
+<td>両ソルバのばね接続設定を実ファイルで解説。XYZ周波数応答と両ソルバ比較GIF6本</td>
+</tr>
+<tr class="even">
+<td><a
+href="ana004_CalculiX-FrontISTR_ばねの種類の確認.html">ana004_CalculiX-FrontISTR_ばねの種類の確認.md</a></td>
+<td>ばね 3
+種類（地面・方向指定・軸方向）の最小モデル。両ソルバで手計算と一致</td>
+</tr>
+</tbody>
+</table>
+<p><a href="ana005_基礎ばねモデルの加減速と再生びびり分析.html">ana005
+立型MCの基礎支持・加減速・再生びびり分析</a>：主軸頭・主軸・工具・ワークのソリッドモデル、相対FRF、加減速とフライス安定限界。</p>
+<p><a
+href="ana006_CalculiX_主軸頭の高さとコラム位置のびびりパラスタ.html">ana006
+主軸頭の高さとコラム位置のびびりパラスタ</a>：ベッド・テーブル・コラム・主軸頭を案内のばねでつなぎ、主軸頭の
+Z とコラムの Y を動かして安定限界を比べた。</p>
+<p>勉強ノート（工作機械の基礎）は <a
+href="../study/README.html">../study/</a>。</p>
+<p>ばね接続を自分で作るには：<a
+href="ana003_ばね接続モデルを自分で作る手順.html">FrontISTR・CalculiX別の手順と最小入力例</a>。</p>
+</body>
+</html>

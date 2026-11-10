@@ -1,0 +1,36 @@
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       volScalarField;
+    location    "0.orig/gas";
+    object      T;
+}
+
+dimensions      [0 0 0 1 0 0 0];
+
+internalField   uniform 293.15;
+
+boundaryField
+{
+    gasInlet
+    {
+        type            fixedValue;
+        value           uniform 1000.0;
+    }
+    inflator
+    {
+        type            zeroGradient;
+    }
+    gas_to_wall
+    {
+        type            compressible::turbulentTemperatureCoupledBaffleMixed;
+        Tnbr            T;
+        kappaMethod     fluidThermo;
+        value           uniform 293.15;
+    }
+    "(front|back)"
+    {
+        type            wedge;
+    }
+}

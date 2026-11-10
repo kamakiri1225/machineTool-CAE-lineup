@@ -1,0 +1,2506 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>ana005 立型MCの基礎支持・加減速・再生びびり分析</title>
+  <style>
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      html {
+        background-color: white;
+      }
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+      font-size: 85%;
+      margin: 0;
+      hyphens: manual;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      background-color: #1a1a1a;
+      border: none;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    /* CSS for syntax highlighting */
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      {   }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+    code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+    code span.at { color: #7d9029; } /* Attribute */
+    code span.bn { color: #40a070; } /* BaseN */
+    code span.bu { color: #008000; } /* BuiltIn */
+    code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #4070a0; } /* Char */
+    code span.cn { color: #880000; } /* Constant */
+    code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+    code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+    code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+    code span.dt { color: #902000; } /* DataType */
+    code span.dv { color: #40a070; } /* DecVal */
+    code span.er { color: #ff0000; font-weight: bold; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #40a070; } /* Float */
+    code span.fu { color: #06287e; } /* Function */
+    code span.im { color: #008000; font-weight: bold; } /* Import */
+    code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+    code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+    code span.op { color: #666666; } /* Operator */
+    code span.ot { color: #007020; } /* Other */
+    code span.pp { color: #bc7a00; } /* Preprocessor */
+    code span.sc { color: #4070a0; } /* SpecialChar */
+    code span.ss { color: #bb6688; } /* SpecialString */
+    code span.st { color: #4070a0; } /* String */
+    code span.va { color: #19177c; } /* Variable */
+    code span.vs { color: #4070a0; } /* VerbatimString */
+    code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+  <style>
+  body{font-family:'Noto Sans JP','Hiragino Sans','Meiryo',sans-serif;max-width:1100px;margin:2em auto;padding:0 1.2em;line-height:1.75;color:#222}
+  h1{border-bottom:3px solid #1F3A5F;padding-bottom:.3em;color:#1F3A5F} h2{border-left:6px solid #2F6FB0;padding-left:.5em;margin-top:2em;color:#1F3A5F}
+  h3{color:#2F6FB0} img{max-width:100%;height:auto;border:1px solid #ddd;margin:.5em 0}
+  table{border-collapse:collapse;margin:1em 0;font-size:.95em} th,td{border:1px solid #bbb;padding:.35em .7em} th{background:#E3ECF7}
+  code{background:#f4f4f4;padding:.1em .3em;border-radius:3px} pre{background:#f4f4f4;padding:1em;overflow-x:auto}
+  nav.top{font-size:.9em;margin-bottom:1em} nav.top a{color:#2F6FB0}
+  </style>
+  <nav class="top"><a href="../../index.html">← 一覧に戻る</a></nav>
+  <script
+  src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-chtml-full.js"
+  type="text/javascript"></script>
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">ana005 立型MCの基礎支持・加減速・再生びびり分析</h1>
+</header>
+<p><a href="README.html">← docs 目次</a> ｜ <a href="../README.html">⌂
+トップ</a> ｜ <a
+href="ana004_CalculiX-FrontISTR_ばねの種類の確認.html">← 前: ana004
+ばねの種類の確認</a> ｜ <a
+href="ana006_CalculiX_主軸頭の高さとコラム位置のびびりパラスタ.html">次:
+ana006 主軸頭の高さとコラム位置のびびりパラスタ →</a></p>
+<h1 id="ana005-立型mcの基礎支持加減速再生びびり分析">ana005
+立型MCの基礎支持・加減速・再生びびり分析</h1>
+<p>作成: 2026-11-07。入力・計算コード・結果：<a
+href="../analysis/ana005_foundation_accel_chatter/">ana005_foundation_accel_chatter</a>。</p>
+<h2 id="1-分析対象と評価指標">1. 分析対象と評価指標</h2>
+<p>主軸頭・主軸・工具・ワークを追加した簡略立型マシニングセンタで、次を調べる。</p>
+<table>
+<thead>
+<tr class="header">
+<th>分析対象</th>
+<th>入力</th>
+<th>評価量</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>加減速反力による基礎振動</td>
+<td>テーブルの相対加速度指令</td>
+<td>本体の床に対する変位、停止後振動、整定時間</td>
+</tr>
+<tr class="even">
+<td>駆動力の伝達</td>
+<td>ナット両側の逆向きの駆動力</td>
+<td>刃先―ワーク相対FRF</td>
+</tr>
+<tr class="odd">
+<td>切削点の動剛性</td>
+<td>刃先・ワーク接触位置の逆向きの切削力</td>
+<td>相対FRFの実部・虚部、クロス成分</td>
+</tr>
+<tr class="even">
+<td>基礎支持とテーブル結合の影響</td>
+<td>支持・結合剛性の比較</td>
+<td>相対FRFと再生びびりの安定限界</td>
+</tr>
+</tbody>
+</table>
+<p><strong>MON</strong>は「観測点（monitor）」に付けた任意の節点集合名。前のana003ではテーブル上面中央をMONとした。本資料では実際の切削位置に**WORK（ワーク側）とTOOL（刃先側）**という別の節点集合を作り、両者の差を観測する。</p>
+<p>本体が床に対して揺れる量と、刃先・ワークの相対振動を区別する。工具とワークが同じ量だけ動く並進成分は相対変位から消えるため、基礎振動の大きさだけで加工誤差やびびりの限界を決めない。</p>
+<h2 id="2-立型マシニングセンタの検証モデル">2.
+立型マシニングセンタの検証モデル</h2>
+<h3 id="21-部品形状と材料">2.1 部品形状と材料</h3>
+<p><img
+src="../analysis/ana005_foundation_accel_chatter/results/vmc_model.png"
+alt="検証モデルの部品と切削位置" /></p>
+<p>テーブルの下には、リニアガイドのキャリッジ（黄、4
+個）とボールねじのナットブラケット（橙）が付いています。それぞれの相手はベッド側のレール（2
+本）とナット受け台で、このモデルではレールとナット受け台はベッドと一体のソリッドにしています。キャリッジとレールのあいだ、ナットブラケットとナット受け台のあいだが、ガイドとボールねじのばね（長さ
+0）でつながっています。実機のキャリッジは、テーブル下面にボルトで留めたブロックですが、ここではテーブルと一体の小さな直方体で表しています。マシニングセンタはワークをテーブルに固定して削る機械なので、旋盤のような心押し台（テールストック）はありません。</p>
+<p><em>生成スクリプト: <a
+href="../analysis/ana005_foundation_accel_chatter/render_model.py">render_model.py</a></em></p>
+<p>キャリッジは、リニアガイドのレールの上を滑るブロックのことです（メーカーによってはブロック、スライダとも呼びます）。レールはベッドの上に、キャリッジはテーブルの裏にボルトで止まっていて、テーブルは
+4
+個のキャリッジに載って前後に動きます。送り方向にテーブルを押さえているのはボールねじで、ねじ軸を回すとナットが進み、ナットブラケットを通してテーブルを動かします。モデルではねじ軸と軸受を描かず、「ナット受け台」とばね
+1 本で代わりに表しています。</p>
+<p><img
+src="../analysis/ana005_foundation_accel_chatter/results/guide_parts.png"
+alt="リニアガイドとボールねじ" /></p>
+<p><em>生成スクリプト: <a
+href="../analysis/ana005_foundation_accel_chatter/explain_guide_parts.py">explain_guide_parts.py</a>。写真：<a
+href="https://commons.wikimedia.org/wiki/File:Mono_Rail.jpg">Mono
+Rail.jpg</a>（Rollon91、<a
+href="https://creativecommons.org/licenses/by-sa/3.0/">CC BY-SA
+3.0</a>）、<a
+href="https://commons.wikimedia.org/wiki/File:BallScrews-with-detail-insets.jpg">BallScrews-with-detail-insets.jpg</a>（Graibeard、CC
+BY-SA 3.0）</em></p>
+<p>このモデルは、ベッドの上に C
+形のコラムが立ち、テーブルが前後に動く小形の立形マシニングセンタを想定しています。大きさはテーブル
+500 × 400 mm、ベッド 1,000 × 900 mm で、マザックの製品でいえば VCN-430
+クラス（テーブル 900 × 430 mm、主軸 12,000 min⁻¹、#40）の小形立形 MC
+に近い大きさです。ただし形や寸法を似せただけで、実機の図面や剛性値を使ったモデルではありません。線図は
+500〜16,000 min⁻¹ まで計算していますが、12,000 min⁻¹
+を超える範囲は高速主軸を付けた場合の参考と考えてください。</p>
+<p><img
+src="../analysis/ana005_foundation_accel_chatter/results/machine_class.png"
+alt="実機との比較" /></p>
+<p><em>生成スクリプト: <a
+href="../analysis/ana005_foundation_accel_chatter/explain_machine_class.py">explain_machine_class.py</a>。写真：<a
+href="https://commons.wikimedia.org/wiki/File:Vertical_MC_Econo_Center_%E2%85%A2-25_(21032515051).jpg">Vertical
+MC Econo Center Ⅲ-25 (21032515051).jpg</a>（先従隗始、CC0）。VCN-430
+の仕様は <a href="https://mazak.com/id-en/products/vcn">Mazak
+製品ページ</a> などによる代表値</em></p>
+<p>前のベッド・コラム・テーブル・ガイド・ボールねじモデルに、主軸頭、主軸、工具、ワークのソリッド形状を追加した。</p>
+<table>
+<thead>
+<tr class="header">
+<th>部品</th>
+<th>形状・寸法 mm</th>
+<th>材料</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>ベッド・コラム・主軸頭</td>
+<td>ベッド 1000×900×200、コラム 300×200×800、主軸頭
+x=380〜620、y=340〜750、z=650〜850</td>
+<td>鋳鉄相当、E=120 GPa、密度7,300 kg/m³</td>
+</tr>
+<tr class="even">
+<td>主軸</td>
+<td>100×100断面、z=500〜650</td>
+<td>鋼相当、E=210 GPa、密度7,800 kg/m³</td>
+</tr>
+<tr class="odd">
+<td>工具（テストバー）</td>
+<td>60×60断面、長さ100、z=400〜500</td>
+<td>鋼相当、E=210 GPa、密度7,800 kg/m³</td>
+</tr>
+<tr class="even">
+<td>ワーク</td>
+<td>100×100×50、z=350〜400</td>
+<td>鋳鉄相当、テーブルと結合</td>
+</tr>
+<tr class="odd">
+<td>切削位置</td>
+<td><strong>(500,400,400)</strong></td>
+<td>工具下面とワーク上面が接する位置</td>
+</tr>
+</tbody>
+</table>
+<p>工具は、打撃試験で使う太くて硬いテストバーを想定した角柱です（以前は
+20×20 mm
+の細い超硬工具でしたが、工具の先が振れるモードばかりが目立って機械本体の評価にならないため、置き換えました。細い工具の結果は
+<a
+href="../analysis/ana005_foundation_accel_chatter/results_slender_tool/">results_slender_tool/</a>
+に残しています）。主軸軸受・工具把持部・ワーク固定部は完全結合とし、各結合部の個別剛性・減衰、主軸回転・ジャイロ効果は含めていない。特定の市販機の精度・加工能力を再現するモデルではない。</p>
+<p>メッシュは20節点六面体。部品の体積と材料密度から質量を計算した。<a
+href="../analysis/ana005_foundation_accel_chatter/vmc_model.py">モデル生成コード</a>、ParaView用モデル（未収録：スクリプトで再生成）、<a
+href="../analysis/ana005_foundation_accel_chatter/metadata.json">部品別情報と節点番号</a>を保存した。</p>
+<h3 id="22-刃先とワーク接触面の結合">2.2 刃先とワーク接触面の結合</h3>
+<p>テストバー下面の 60×60 mm
+領域と、対応するワーク上面の領域を、それぞれ別の代表点にMPCで結ぶ。工具側・ワーク側の代表点は<strong>同じ座標だが別の節点</strong>であり、両者を固定結合していない。</p>
+<pre class="text"><code>主軸頭 → 主軸 → 工具ソリッド → 工具下面MPC → TOOL（刃先側）
+                                                   ↑ 同じ座標、別節点
+テーブル → ワークソリッド → ワーク上面MPC → WORK（ワーク側）</code></pre>
+<p>WORKに＋1 N、TOOLに−1
+Nの切削力対を与える。作用位置が同じなので、全機に人工的な合力・合モーメントを加えない。切削による力の作用反作用を表すための入力であり、今回の構造計算そのものが切りくず生成や接触を解くわけではない。</p>
+<p>XYZを別々に加振し、各加振に対する両点のXYZ変位を出力する。したがって、相対FRFの同方向3成分とクロス6成分を得る。</p>
+<h3 id="23-比較ケース">2.3 比較ケース</h3>
+<p>ana001〜ana004
+の機械モデルは、すべてベッドの底面を床に完全に固定していました。脚をばねで支える「基礎ばねモデル」は
+ana003 の 8 章で初めて作り、この ana005
+ではそれを標準のモデルとして使っています。3 章〜5
+章で特に断りがない図や数値は基礎ばねモデルの結果で、底面固定とテーブル結合
+10 倍は比べるための別ケースです。</p>
+<p>基礎ばねモデルでは、ベッド底面の 4 か所（100 × 100 mm
+の面）をそれぞれ拘束式で脚の代表点にまとめ、その代表点と地面のあいだを
+X・Y・Z
+の並進ばねと回転ばねでつないでいます。テーブルとベッドのあいだのガイド 4
+個とボールねじナットは、これまでと同じく代表点どうしのばねでつないでいます。下の図は、ばねが見えるようにテーブルを持ち上げ、地面を下げて描いた分解図です（実際はどのばねも長さ
+0 です）。</p>
+<p><img
+src="../analysis/ana005_foundation_accel_chatter/results/foundation_springs.png"
+alt="基礎ばねモデルのばねの入れ方" /></p>
+<p><em>生成スクリプト: <a
+href="../analysis/ana005_foundation_accel_chatter/render_springs.py">render_springs.py</a>。ParaView
+では foundation_springs.vtm（未収録：スクリプトで再生成）
+を開くと、ベッド・テーブル・拘束式の線・ばねを別々に表示・非表示できます。入力ファイルの書き方は
+<a
+href="ana003_CalculiX-FrontISTR_代表点MPCばねの比較.md#8-追加基礎部もmpcばねで支持するモデル">ana003
+の 8 章</a> と <a
+href="ana003_ばね接続モデルを自分で作る手順.html">ばね接続モデルの手順</a>
+を参照。</em></p>
+<table>
+<thead>
+<tr class="header">
+<th>ケース</th>
+<th>基礎支持</th>
+<th>テーブル―ベッドの結合</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>底面固定</td>
+<td>ベッド底面を固定</td>
+<td>元のガイド・ナット剛性</td>
+</tr>
+<tr class="even">
+<td>基礎ばね</td>
+<td>4面のMPC＋基礎ばね</td>
+<td>元のガイド・ナット剛性</td>
+</tr>
+<tr class="odd">
+<td>テーブル結合10倍</td>
+<td>同じ基礎ばね</td>
+<td>ガイド・ナットの並進・回転剛性を10倍</td>
+</tr>
+</tbody>
+</table>
+<p><img
+src="../analysis/ana005_foundation_accel_chatter/results/case_compare_bc.png"
+alt="比べる 3 ケースの境界条件とばね" /></p>
+<p><em>生成スクリプト: <a
+href="../analysis/ana005_foundation_accel_chatter/render_cases.py">render_cases.py</a></em></p>
+<p>第3ケースはテーブル結合の感度を切り分けるための比較で、10倍の実部品を提案・実証したものではない。質量と形状は全ケースで同じ。</p>
+<p>基礎1か所当たりkx=ky=10,000 N/mm、kz=100,000
+N/mm。回転剛性・面の選択は<a
+href="ana003_CalculiX-FrontISTR_代表点MPCばねの比較.md#8-追加基礎部もmpcばねで支持するモデル">ana003の基礎モデル</a>と同じ。これらは説明用の仮定値。</p>
+<p>ばねの値の出どころは次のとおりです。リニアガイドの上下 800 N/µm・横
+560 N/µm（キャリッジ 1 個あたり）は、NSK ローラガイド RA35〜45
+のカタログの理論剛性（1,500〜2,000
+N/µm）を、取付ボルトやベッドの局部変形が直列に入るとして半分程度に見積もった値です（<a
+href="../study/ref004_工作機械_ばね剛性と減衰の決め方.html">study/ref004
+の 2.3 節</a>）。ボールねじの送り方向 200 N/µm
+は、送り系全体の一般的な範囲（100〜500 N/µm）の中間です。基礎ばね（X・Y
+10 N/µm、Z 100
+N/µm）は説明用の仮定値です。マザックを含む工作機械メーカーは、機種ごとのガイドやボールねじの実効剛性を公開していないので、特定の機種に合わせた値ではありません。実機に合わせるには、打撃試験で測った
+FRF のピーク周波数と高さに合うように、これらのばねを調整します。</p>
+<h2 id="3-刃先ワーク相対frf">3. 刃先―ワーク相対FRF</h2>
+<h3 id="31-入力と出力の定義">3.1 入力と出力の定義</h3>
+<p>ワーク側変位を<span class="math inline">\(U_w\)</span>、刃先側を<span
+class="math inline">\(U_t\)</span>とする。方向jの切削力をWORKに＋F、TOOLに−Fで加えたとき、観測方向iの相対コンプライアンスは</p>
+<p><span
+class="math display">\[G_{ij}(\omega)=\frac{U_{w,i}(\omega)-U_{t,i}(\omega)}{F_j(\omega)}\]</span></p>
+<p>である。<strong>添字は先が観測変位方向、後が加振方向</strong>。Gxyなら、切削点をY方向に加振したときの刃先―ワーク相対X変位。単位はmm/N、図ではµm/N。</p>
+<p>自己・相互FRFで表すと</p>
+<p><span
+class="math display">\[G=H_{ww}+H_{tt}-H_{wt}-H_{tw}\]</span></p>
+<p>となる。差を取るのは複素変位であり、<span
+class="math inline">\(|U_w|-|U_t|\)</span>ではない。両点の位相差も必要である。</p>
+<h3 id="32-解析条件と入力ファイル">3.2 解析条件と入力ファイル</h3>
+<p>CalculiX 2.21、80モード、5〜3,000
+Hzのモード重ね合わせ応答を計算した。Rayleigh係数は前のモデルと共通で、α=30.1592894745
+s⁻¹、β=8.4882636316×10⁻⁶ s。減衰は実測していない。150 Hzと600
+Hzで減衰比2%となり、それ以外では一定ではない。</p>
+<p>実入力：<a
+href="../analysis/ana005_foundation_accel_chatter/fixed/relative.inp">底面固定</a>、<a
+href="../analysis/ana005_foundation_accel_chatter/foundation/relative.inp">基礎ばね</a>、<a
+href="../analysis/ana005_foundation_accel_chatter/foundation_table_stiff/relative.inp">テーブル結合10倍</a>。</p>
+<pre class="text"><code>*CLOAD, OP=NEW
+WORK, 1, 1.0
+TOOL, 1, -1.0
+*NODE PRINT, NSET=WORK
+U
+*NODE PRINT, NSET=TOOL
+U</code></pre>
+<p>上はX方向の切削力対。方向番号を2・3に変えた計算も行う。別のステップでは、ナットのテーブル側＋F・ベッド側−FというX方向駆動力対を加え、同じ相対変位を観測する。</p>
+<h3 id="33-frfの比較">3.3 FRFの比較</h3>
+<p>相対コンプライアンスだけを見ると、どちら側が揺れているのかが分かりません。そこで、刃先（テストバーの先）だけを叩いて刃先で測ったとき、ワークだけを叩いてワークで測ったとき、刃先とワークの相対の
+3 つを、3
+つの支持条件ごとに並べました。点線が片側だけのコンプライアンス、太い実線が相対です。</p>
+<p><img
+src="../analysis/ana005_foundation_accel_chatter/results/frf_tool_work_rel.png"
+alt="刃先・ワーク・相対のコンプライアンス" /></p>
+<p><em>生成スクリプト: <a
+href="../analysis/ana005_foundation_accel_chatter/frf_tool_work_rel.py">frf_tool_work_rel.py</a></em></p>
+<p>基礎ばねのモデルでは、刃先とワークの両方に 22 Hz
+の大きな山があります。これは機械全体が脚の上で揺れるモードで、刃先とワークが一緒に動くので、相対の実線には現れません。相対でいちばん高い山は
+X-X の 182 Hz（0.23
+µm/N）で、ここではワーク側（オレンジ）が大きく動いています。テーブルがボールねじのばねで送り方向に揺れるモードです。Y-Y
+の 431 Hz
+もワーク側の山で、テーブルがガイドの横ばねで揺れるモードです。一方、X-X
+の 345 Hz や 910 Hz
+の山では刃先側（青）だけが動いていて、主軸頭・主軸とテストバーの曲げのモードです。</p>
+<p>テーブル結合を 10 倍にすると、ワーク側の 182 Hz
+の山がなくなり（ワークの X-X の最大は 0.029 µm/N
+に下がる）、相対の最大も 0.23 から 0.11 µm/N
+に下がります。底面固定と基礎ばねでは、100 Hz
+以上の山の位置と高さはほとんど同じです。</p>
+<p>基礎ばねモデルの 9 成分（XYZ
+の各方向に叩いて、各方向の揺れを測る）も同じ形で描きました。</p>
+<p><img
+src="../analysis/ana005_foundation_accel_chatter/results/relative_matrix.png"
+alt="9 成分：刃先・ワーク・相対" /></p>
+<p>対角の X-X・Y-Y・Z-Z に比べ、クロス成分（XY など）は 1〜2
+桁小さく、テストバーの中心で叩く限り方向どうしの連成は小さいことが分かります。</p>
+<h3 id="34-切削力対に対する全体振動">3.4 切削力対に対する全体振動</h3>
+<p>相対 X-X の山のうち、ワーク側が主役の山（100〜600
+Hz）と刃先側が主役の山（800〜3,000 Hz）を 1
+つずつ選び、その周波数で切削力対を加えたときの機械全体の揺れをアニメーションにしました。下段は相対
+XYZ のコンプライアンスで、縦線と丸印が上段の周波数です。</p>
+<p><img
+src="../analysis/ana005_foundation_accel_chatter/results/cutting_low.gif"
+alt="182 Hz の全体振動" /></p>
+<p><img
+src="../analysis/ana005_foundation_accel_chatter/results/cutting_high.gif"
+alt="909 Hz の全体振動" /></p>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: right;">応答周波数 Hz</th>
+<th style="text-align: right;">ワーク側 X 振幅 µm/N</th>
+<th style="text-align: right;">刃先側 X 振幅 µm/N</th>
+<th style="text-align: right;">相対 X 振幅 µm/N</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">182.2</td>
+<td style="text-align: right;">0.1941</td>
+<td style="text-align: right;">0.0404</td>
+<td style="text-align: right;">0.2328</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">909.1</td>
+<td style="text-align: right;">0.0016</td>
+<td style="text-align: right;">0.0736</td>
+<td style="text-align: right;">0.0744</td>
+</tr>
+</tbody>
+</table>
+<p>182 Hz ではテーブルが送り方向に大きく揺れ、ワーク側の動きが刃先側の約
+5 倍です。909 Hz
+では主軸とテストバーが一緒に曲がり、ほとんど刃先側だけが動いています。相対の振幅は、両側の振幅を足し引きしたものではなく、位相を含めた複素数の差で求めています。</p>
+<h3 id="35-どのコンプライアンスがどのモードから来ているか">3.5
+どのコンプライアンスが、どのモードから来ているか</h3>
+<p>刃先―ワーク相対 FRF を、基礎ばねモデルの 80
+個の固有モード（質量正規化）の足し算に分解しました。</p>
+<p><span class="math display">\[G_{ij}(\omega) = \sum_r \frac{d_{r,i}\,
+d_{r,j}}{\omega_r^2 - \omega^2 + 2i\zeta_r\omega_r\omega},\qquad
+\boldsymbol{d}_r = \boldsymbol{\phi}_r(\text{ワーク}) -
+\boldsymbol{\phi}_r(\text{刃先})\]</span></p>
+<p><span class="math inline">\(\boldsymbol{d}_r\)</span>
+は、そのモードで刃先とワークがどれだけ食い違って動くかを表します。刃先とワークが一緒に動くモードは、どれだけ大きく揺れても相対コンプライアンスには出てきません。</p>
+<p><img
+src="../analysis/ana005_foundation_accel_chatter/results/compliance_modes.png"
+alt="コンプライアンスのモード分解" /></p>
+<p><img
+src="../analysis/ana005_foundation_accel_chatter/results/compliance_mode_shapes.gif"
+alt="各ピークのモード形状" /></p>
+<p><em>色は動きの大きさ、赤点は切削点。生成スクリプト: <a
+href="../analysis/ana005_foundation_accel_chatter/compliance_modes.py">compliance_modes.py</a>、<a
+href="../analysis/ana005_foundation_accel_chatter/anim_compliance_modes.py">anim_compliance_modes.py</a></em></p>
+<table>
+<thead>
+<tr class="header">
+<th>モード番号</th>
+<th style="text-align: right;">固有振動数 Hz</th>
+<th>大きく動く部品（最大の動きの 50 % 以上）</th>
+<th>運動エネルギーの多い部品</th>
+<th style="text-align: right;">X-X 寄与 µm/N</th>
+<th style="text-align: right;">Y-Y 寄与 µm/N</th>
+<th style="text-align: right;">ワーク側の動き</th>
+<th style="text-align: right;">刃先側の動き</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>8</td>
+<td style="text-align: right;">182.4</td>
+<td>ワーク・テーブル</td>
+<td>テーブル 83%、ベッド 7%</td>
+<td style="text-align: right;">0.2317</td>
+<td style="text-align: right;">0.0000</td>
+<td style="text-align: right;">2.78</td>
+<td style="text-align: right;">0.532</td>
+</tr>
+<tr class="even">
+<td>10</td>
+<td style="text-align: right;">345.6</td>
+<td>テストバー・主軸・コラム</td>
+<td>コラム 41%、主軸頭 26%</td>
+<td style="text-align: right;">0.0825</td>
+<td style="text-align: right;">0.0000</td>
+<td style="text-align: right;">0.166</td>
+<td style="text-align: right;">3.71</td>
+</tr>
+<tr class="odd">
+<td>11</td>
+<td style="text-align: right;">430.6</td>
+<td>テストバー・ワーク・主軸</td>
+<td>テーブル 55%、主軸頭 19%</td>
+<td style="text-align: right;">0.0000</td>
+<td style="text-align: right;">0.1113</td>
+<td style="text-align: right;">2.62</td>
+<td style="text-align: right;">2.65</td>
+</tr>
+<tr class="even">
+<td>13</td>
+<td style="text-align: right;">532.4</td>
+<td>テストバー・主軸・主軸頭</td>
+<td>テーブル 27%、ベッド 27%</td>
+<td style="text-align: right;">0.0000</td>
+<td style="text-align: right;">0.0118</td>
+<td style="text-align: right;">1.74</td>
+<td style="text-align: right;">3.97</td>
+</tr>
+<tr class="odd">
+<td>18</td>
+<td style="text-align: right;">910.3</td>
+<td>テストバー・主軸</td>
+<td>テストバー 35%、主軸頭 20%</td>
+<td style="text-align: right;">0.0670</td>
+<td style="text-align: right;">0.0000</td>
+<td style="text-align: right;">0.331</td>
+<td style="text-align: right;">11.2</td>
+</tr>
+<tr class="even">
+<td>20</td>
+<td style="text-align: right;">996.4</td>
+<td>テストバー・主軸</td>
+<td>ベッド 45%、テストバー 18%</td>
+<td style="text-align: right;">0.0000</td>
+<td style="text-align: right;">0.0319</td>
+<td style="text-align: right;">0.771</td>
+<td style="text-align: right;">7.75</td>
+</tr>
+<tr class="odd">
+<td>22</td>
+<td style="text-align: right;">1171.1</td>
+<td>テストバー・主軸</td>
+<td>ベッド 31%、テストバー 30%</td>
+<td style="text-align: right;">0.0000</td>
+<td style="text-align: right;">0.0295</td>
+<td style="text-align: right;">0.224</td>
+<td style="text-align: right;">10.5</td>
+</tr>
+<tr class="even">
+<td>23</td>
+<td style="text-align: right;">1204.7</td>
+<td>テストバー・主軸</td>
+<td>コラム 40%、ベッド 27%</td>
+<td style="text-align: right;">0.0187</td>
+<td style="text-align: right;">0.0000</td>
+<td style="text-align: right;">0.141</td>
+<td style="text-align: right;">8.7</td>
+</tr>
+</tbody>
+</table>
+<p>モード番号は、固有振動数の低い順に全体で数えた番号です（22 Hz
+の脚のモードがモード 1・2）。モード 8（182 Hz）とモード 11（431
+Hz）はテーブルが動くモードで、ワーク側の動きが大きく、ボールねじとガイドのばねで決まっています。モード
+10（346 Hz）は主軸頭とコラムが前後に曲がるモード、モード 18（910
+Hz）以降は主軸とテストバーが一緒に曲がるモードで、こちらは刃先側だけが動きます。相対コンプライアンスの山は、低い周波数ではテーブル側、高い周波数では主軸側から来ていて、下げたい山によって直す場所が変わります。この分解は
+5
+章で、どのモードがびびりの限界を決めるかを調べるときにそのまま使います。</p>
+<p>支持条件を変えたときの比較（CalculiX の直接計算）です。</p>
+<p><img
+src="../analysis/ana005_foundation_accel_chatter/results/compliance_cases.png"
+alt="支持条件の比較" /></p>
+<p>テーブル結合を 10 倍にすると、テーブル側の山（182 Hz・431
+Hz）だけが高い周波数へ移って低くなり、主軸側の山は変わりません。基礎（脚）の条件を変えても、100
+Hz 以上の相対の山はほとんど変わりません。</p>
+<h3 id="36-静解析との照合">3.6 静解析との照合</h3>
+<p>同じ形状・材料・MPCに静的な切削力対1
+Nを加え、静コンプライアンスを別途求めた。低周波FRFがこの値を再現するかを点検する。</p>
+<p>80
+モードで計算しています。<strong>構造モデルが解けたことと、モード打切りが十分であることは別</strong>である。</p>
+<table>
+<thead>
+<tr class="header">
+<th>ケース</th>
+<th>方向</th>
+<th style="text-align: right;">静解析 µm/N</th>
+<th style="text-align: right;">5 Hz FRF実部 µm/N</th>
+<th style="text-align: right;">比較差 %</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>底面固定</td>
+<td>X</td>
+<td style="text-align: right;">0.019841</td>
+<td style="text-align: right;">0.019434</td>
+<td style="text-align: right;">2.05</td>
+</tr>
+<tr class="even">
+<td>底面固定</td>
+<td>Y</td>
+<td style="text-align: right;">0.011746</td>
+<td style="text-align: right;">0.011391</td>
+<td style="text-align: right;">3.03</td>
+</tr>
+<tr class="odd">
+<td>底面固定</td>
+<td>Z</td>
+<td style="text-align: right;">0.005001</td>
+<td style="text-align: right;">0.004831</td>
+<td style="text-align: right;">3.39</td>
+</tr>
+<tr class="even">
+<td>基礎ばね</td>
+<td>X</td>
+<td style="text-align: right;">0.020257</td>
+<td style="text-align: right;">0.019417</td>
+<td style="text-align: right;">4.15</td>
+</tr>
+<tr class="odd">
+<td>基礎ばね</td>
+<td>Y</td>
+<td style="text-align: right;">0.012172</td>
+<td style="text-align: right;">0.011328</td>
+<td style="text-align: right;">6.93</td>
+</tr>
+<tr class="even">
+<td>基礎ばね</td>
+<td>Z</td>
+<td style="text-align: right;">0.005172</td>
+<td style="text-align: right;">0.004872</td>
+<td style="text-align: right;">5.78</td>
+</tr>
+<tr class="odd">
+<td>テーブル結合10倍</td>
+<td>X</td>
+<td style="text-align: right;">0.015403</td>
+<td style="text-align: right;">0.014854</td>
+<td style="text-align: right;">3.57</td>
+</tr>
+<tr class="even">
+<td>テーブル結合10倍</td>
+<td>Y</td>
+<td style="text-align: right;">0.011372</td>
+<td style="text-align: right;">0.010525</td>
+<td style="text-align: right;">7.45</td>
+</tr>
+<tr class="odd">
+<td>テーブル結合10倍</td>
+<td>Z</td>
+<td style="text-align: right;">0.004695</td>
+<td style="text-align: right;">0.004397</td>
+<td style="text-align: right;">6.35</td>
+</tr>
+</tbody>
+</table>
+<p>XYの比較差は約2〜7%、Zは約3〜7%です。今回のフライス安定限界はXY行列に限定する。5
+Hzと静解析の違いも含む比較なので、この表だけで厳密なモード数収束を証明したとは扱わない。FEMメッシュ・モード数・周波数点の収束確認は今後の検証項目。</p>
+<h2 id="4-加減速反力による基礎振動">4. 加減速反力による基礎振動</h2>
+<h3 id="41-質量剛性減衰と運動方程式">4.1
+質量・剛性・減衰と運動方程式</h3>
+<p>FEM形状の全質量Mとテーブル側質量mt、4支持の横剛性合計kを用い、本体の並進1自由度を計算する。</p>
+<p><img
+src="../analysis/ana005_foundation_accel_chatter/results/accel_model_schematic.png"
+alt="加減速反力の1自由度モデル" /></p>
+<p><em>生成スクリプト: <a
+href="../analysis/ana005_foundation_accel_chatter/explain_accel_model.py">explain_accel_model.py</a></em></p>
+<p>図の左側は床に固定された脚の上に機械本体が載る様子です。青いばねと減衰器が床と本体をつなぎ、緑の矢印
+<span class="math inline">\(x_b\)</span>
+が本体の床に対する動きを表します。テーブルが右（<span
+class="math inline">\(+X\)</span>）へ加速すると、テーブルを押す力は右向き、本体に戻る反力は左向きです。加速を止めた後も、脚のばねに蓄えた力で本体が揺れます。</p>
+<p>解析ではベッド・コラム・主軸頭・テーブルを機械本体としてまとめ、床の上をX方向に動く剛体とみなします。4本の脚の横ばねと減衰が本体を支えます。図の右側の式は、この本体の運動と、送りテーブルから伝わる反力のつり合いです。</p>
+<p><span class="math display">\[M\ddot x_b+c\dot x_b+kx_b=-m_t\ddot
+r(t),\qquad c=\alpha M+\beta k\]</span></p>
+<table>
+<thead>
+<tr class="header">
+<th>式の項</th>
+<th>図との対応</th>
+<th style="text-align: right;">今回の値</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><span class="math inline">\(M\ddot{x}_b\)</span></td>
+<td>本体全体の質量が加速度に抵抗する慣性</td>
+<td style="text-align: right;"><span
+class="math inline">\(M=1928.65\)</span> kg</td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(c\dot{x}_b\)</span></td>
+<td>脚・支持部の減衰が速度に応じて揺れを弱める</td>
+<td style="text-align: right;"><span
+class="math inline">\(c=58{,}506.1\)</span> N·s/m</td>
+</tr>
+<tr class="odd">
+<td><span class="math inline">\(kx_b\)</span></td>
+<td>4本の脚の横ばねが本体を元へ戻す</td>
+<td style="text-align: right;"><span
+class="math inline">\(k=40.0\)</span> MN/m</td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(-m_t\ddot{r}(t)\)</span></td>
+<td>テーブル＋ワークの加速でベッドに伝わる反力</td>
+<td style="text-align: right;"><span
+class="math inline">\(m_t=125.122\)</span> kg</td>
+</tr>
+</tbody>
+</table>
+<p>例えばテーブルを <span class="math inline">\(+X\)</span> に <span
+class="math inline">\(2\)</span> m/s² で加速すると、ベッドにかかる反力は
+<span class="math inline">\(-125.122\times2\approx-250\)</span> N
+です。ばねだけで静的につり合うと仮定した変位は <span
+class="math inline">\(250/(40.0\times10^6)\approx6.25\)</span> µm
+です。過渡応答では慣性と減衰も働くため、加速度が変わった後に振動が残ります。</p>
+<p><span
+class="math inline">\(r(t)\)</span>は本体に対するテーブルの送り位置、<span
+class="math inline">\(x_b\)</span>は床に対する本体変位です。テーブルが指令どおりに動くと仮定します。したがって、これは刃先とワークの相対変位ではなく、本体の傾き・部品の弾性変形・サーボ追従誤差も含みません。</p>
+<p>この値では、近似並進固有振動数は 22.92 Hz、減衰比は 10.53 %
+です。</p>
+<p>これは全FEMの厳密な縮約ではなく、基礎支持に起因する本体並進の近似。ピッチ・ロール、部品の弾性、摩擦、サーボ追従誤差は含まない。また、この本体変位をそのまま刃先―ワーク誤差として扱わない。</p>
+<h3 id="42-加速度ジャークと停止後の本体振動">4.2
+加速度・ジャークと停止後の本体振動</h3>
+<p>移動距離50 mm、最高速度0.2
+m/s、始端・終端速度0を共通にし、最大加速度1／2／4
+m/s²と、ジャーク立上げ0／20／40 msを比較した。0
+msは加速度段差で、有限のジャーク上限を持たない比較波形。</p>
+<p>ジャークは加速度の変化の速さで、加速度を時間で微分したもの（単位
+m/s³）です。位置を微分すると速度、速度を微分すると加速度、加速度を微分するとジャークになります。車でいえばアクセルやブレーキをどれだけ急に踏み込むかに当たり、急に踏むと体がガクンと揺れるのと同じように、機械も加速度を急に変えると揺れます。</p>
+<p><span class="math display">\[j = \frac{d a}{d t},\qquad
+\text{ジャーク立上げ 40 ms のとき } j = \frac{2\ \mathrm{m/s^2}}{0.04\
+\mathrm{s}} = 50\ \mathrm{m/s^3}\]</span></p>
+<p>「ジャーク立上げ 40 ms」は、加速度を 0 から 2 m/s²（または 2 から
+0）まで変えるのに 40 ms かけるという意味です。1
+回の移動の中に、加速の始め・終わり、減速の始め・終わりの 4
+か所あります（下の図の緑の帯）。0 ms
+は加速度を一瞬で切り替える「段差」で、ジャークは無限大です。</p>
+<p><img
+src="../analysis/ana005_foundation_accel_chatter/results/jerk_explained.png"
+alt="ジャークとは" /></p>
+<p><em>生成スクリプト: <a
+href="../analysis/ana005_foundation_accel_chatter/explain_jerk.py">explain_jerk.py</a></em></p>
+<p><img
+src="../analysis/ana005_foundation_accel_chatter/results/acceleration_base.png"
+alt="加減速指令と本体変位" /></p>
+<p><em>上段：テーブルの送り指令の加速度 <span
+class="math inline">\(\ddot
+r(t)\)</span>。下段：そのときの<strong>機械本体全体の床に対する X 変位
+<span class="math inline">\(x_b\)</span></strong>（4.1
+節の図の緑の矢印）。点線は ±1 µm。
+加速・減速の切り替わりで本体が押され、止まった後も約 23 Hz・減衰比 10 %
+で揺れが残る。ジャーク（加速度の立ち上がり）をなだらかにすると、残る揺れが小さくなる。</em></p>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: right;">最大加速度 m/s²</th>
+<th style="text-align: right;">ジャーク立上げ ms</th>
+<th style="text-align: right;">移動 s</th>
+<th style="text-align: right;">停止後の本体変位最大 µm</th>
+<th style="text-align: right;">本体変位±1 µm整定 s</th>
+<th style="text-align: right;">移動＋本体整定 s</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0.450</td>
+<td style="text-align: right;">3.304</td>
+<td style="text-align: right;">0.070</td>
+<td style="text-align: right;">0.520</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">20</td>
+<td style="text-align: right;">0.470</td>
+<td style="text-align: right;">1.635</td>
+<td style="text-align: right;">0.038</td>
+<td style="text-align: right;">0.508</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">40</td>
+<td style="text-align: right;">0.490</td>
+<td style="text-align: right;">0.308</td>
+<td style="text-align: right;">0.000</td>
+<td style="text-align: right;">0.490</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0.350</td>
+<td style="text-align: right;">6.566</td>
+<td style="text-align: right;">0.115</td>
+<td style="text-align: right;">0.465</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">20</td>
+<td style="text-align: right;">0.370</td>
+<td style="text-align: right;">3.247</td>
+<td style="text-align: right;">0.084</td>
+<td style="text-align: right;">0.454</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">40</td>
+<td style="text-align: right;">0.390</td>
+<td style="text-align: right;">0.612</td>
+<td style="text-align: right;">0.000</td>
+<td style="text-align: right;">0.390</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0.300</td>
+<td style="text-align: right;">9.465</td>
+<td style="text-align: right;">0.140</td>
+<td style="text-align: right;">0.440</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">20</td>
+<td style="text-align: right;">0.320</td>
+<td style="text-align: right;">4.679</td>
+<td style="text-align: right;">0.108</td>
+<td style="text-align: right;">0.428</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">40</td>
+<td style="text-align: right;">0.340</td>
+<td style="text-align: right;">0.882</td>
+<td style="text-align: right;">0.000</td>
+<td style="text-align: right;">0.340</td>
+</tr>
+</tbody>
+</table>
+<p>最大加速度2 m/s²の例では、ジャーク立上げ0→40
+msで指令移動時間は0.350→0.390
+sとなる一方、停止後の本体変位最大は6.566→0.612 µmとなり、±1
+µm基準の移動＋本体整定は0.465→0.390
+sとなった。この基礎モデル・指令条件での比較値である。</p>
+<p>整定は、指令終了後に本体変位が±1
+µm以内に入り、その後外れない時刻までの待ち時間。終了後1.2
+sまで評価した。0 sは「停止後の最大振幅が既に許容帯内」の意味。</p>
+<p>表の「移動＋本体整定」は基礎振動を基準とした比較指標で、実機の加工開始可能時刻ではない。移動時間だけでなく停止後の待ち時間も含めると、加速度・ジャークの評価が変わる。</p>
+<h3 id="43-なぜ加速度の上昇時間を周期と同じにすると揺れが消えるのか">4.3
+なぜ加速度の上昇時間を周期と同じにすると揺れが消えるのか</h3>
+<p>下の図は、4.1
+節で使った「脚の上に載った機械本体」のモデルで、テーブルが加速し始める瞬間に機械本体がどう動くかを描いたものです。加速度を
+0 から 2 m/s² に上げる 1
+回の操作だけを取り出し、そのとき本体が床に対して X
+方向にどれだけずれるか（<span
+class="math inline">\(x_b\)</span>）を時間ごとに追っています。</p>
+<p>縦軸の「1」は、加速度 2 m/s²
+がずっと続いたときに本体が落ち着く位置です。テーブルを押す反力 <span
+class="math inline">\(m_t A\)</span> で脚のばねが縮み、本体は <span
+class="math inline">\(m_t A / k\)</span>
+だけずれたところで止まります。この量を 1
+として、揺れがその位置のまわりでどれだけ残るかを比べます。話を分かりやすくするため、減衰は
+0 にしています。</p>
+<p>図は 4 段に分かれていて、上から順に「入力 → 1 つずつの揺れ → 合計 →
+まとめ」になっています。</p>
+<p>②に何本も揺れが描いてあるのは、実際に揺れが何本もあるからではありません。本体の動きは
+1
+つだけで、それが③の太線です。②は、③がなぜその形になるのかを見るための「分解図」です。</p>
+<p>加速度を 20 ms や 44 ms
+かけて上げる指令は、①の灰色の階段のように、小さな段差（ここでは 8
+個）を少しずつ時間をずらして積み上げたものとみなせます。脚の上の本体はばねと質量だけでできた線形な系なので、入力を分けて考えても、それぞれへの応答を足せば元の応答に戻ります（重ね合わせ）。そこで、8
+個の小さな段差がそれぞれ単独で本体をどう揺らすかを描いたのが②です。どの段差も同じ
+22.9 Hz で、大きさは 1/8
+の揺れを起こしますが、段差が入る時刻がずれているので、揺れの始まりも少しずつずれます。</p>
+<p>この 8 本を足すと③になります。8 本の始まりが 1 周期（44
+ms）の中に均等に散らばっていると、ある揺れが山のときに別の揺れが谷になって打ち消し合い、合計は揺れずに止まります。ブランコを
+8 人が 1
+周期の間に順番に押すと、押す力が打ち消し合ってブランコがほとんど揺れないのと同じです。逆に
+20 ms のように短い時間に押す時刻が固まっていると、8
+本の山がほぼそろって重なり、揺れが残ります。</p>
+<table>
+<thead>
+<tr class="header">
+<th>段</th>
+<th>波形</th>
+<th>意味</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>①</td>
+<td>加速度指令</td>
+<td>段差（0 ms）・上昇時間 20 ms・上昇時間 44 ms の 3
+通り。加速度の上昇は 8 個の小さな段差（丸）で近似して考える</td>
+</tr>
+<tr class="even">
+<td>②</td>
+<td>小さな段差 1 つずつが起こす本体の揺れ</td>
+<td>段差 1 つは本体を 22.9 Hz で揺らす。加速度をゆっくり上げると 8
+本の揺れが<strong>少しずつ遅れて</strong>始まる（色は①の丸と対応）</td>
+</tr>
+<tr class="odd">
+<td>③</td>
+<td>②を全部足したもの ＝ 実際の本体の変位 <span
+class="math inline">\(x_b\)</span></td>
+<td>1 で止まれば揺れは残らない。1 のまわりで振れ続ければ揺れが残る</td>
+</tr>
+<tr class="even">
+<td>④</td>
+<td>③の残る揺れの大きさを、加速度の上昇時間ごとに描いたもの</td>
+<td>固有振動数ごとの曲線。0 になる点が「揺れが消える上昇時間」</td>
+</tr>
+</tbody>
+</table>
+<p><img
+src="../analysis/ana005_foundation_accel_chatter/results/jerk_cancel.png"
+alt="ジャークで揺れが消える理由" /></p>
+<p><em>生成スクリプト: <a
+href="../analysis/ana005_foundation_accel_chatter/explain_jerk_cancel.py">explain_jerk_cancel.py</a></em></p>
+<p>ここでいう<strong>加速度の上昇時間</strong>は、加速度のグラフ（4.2
+節の図③）で加速度が 0 から 2 m/s²
+まで斜めに上がっていくのにかける時間のことで、ジャーク立上げ時間と同じものです。</p>
+<p>加速度をゆっくり上げることは、小さな段差を少しずつずらしてたくさん並べることと同じだと考えられます。段差の
+1 つ 1 つは本体を固有振動数（22.9 Hz、周期 44
+ms）で揺らします（②）。上昇時間がちょうど 1
+周期だと、小さな揺れの始まる時刻が 1
+周期の中に均等に散らばるので、ある揺れの山に別の揺れの谷が重なって打ち消し合い、合計（③）は
+1 の位置でぴたりと止まります（右列）。上昇時間が 20 ms
+と短いと打ち消しきれずに 7 割の揺れが残り（中央列）、段差（0
+ms）では揺れがそのまま全部残ります（左列）。</p>
+<p>1 回の加速度の切り替えで残る揺れ（段差を 1 とした比）は</p>
+<p><span class="math display">\[\text{残る揺れ} = \left| \frac{\sin(\pi
+f_n T)}{\pi f_n T} \right|\]</span></p>
+<p><span class="math inline">\(T\)</span> が周期 <span
+class="math inline">\(1/f_n\)</span> の整数倍で 0 になる（④）。</p>
+<p>加速度の上昇時間を短くする（ジャークを大きくする）と、段差に近づくので残る揺れは大きくなります。ただし固有振動数が高い機械なら周期が短いので、短い上昇時間でも揺れを
+0 にできます（45.8 Hz なら 22
+ms）。つまり固有振動数を上げると、揺れの少なさを保ったままジャークを大きくでき、移動時間が縮みます。</p>
+<table>
+<thead>
+<tr class="header">
+<th>用語の向き</th>
+<th>意味</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>ジャークが<strong>大きい</strong></td>
+<td>加速度の上昇時間が<strong>短い</strong>（急に加速度を変える）。速いが揺れやすい</td>
+</tr>
+<tr class="even">
+<td>ジャークが<strong>小さい</strong></td>
+<td>加速度の上昇時間が<strong>長い</strong>（ゆっくり加速度を変える）。揺れにくいが移動が遅くなる</td>
+</tr>
+</tbody>
+</table>
+<h3 id="44-固有振動数を上げたい理由はここに現れるか">4.4
+固有振動数を上げたい理由は、ここに現れるか</h3>
+<p><strong>現れる。</strong> 4.1 と同じモデルで、脚の横剛性 <span
+class="math inline">\(k\)</span> だけを変えて固有振動数を半分（11.5
+Hz）・今（22.9 Hz）・2 倍（45.8 Hz）にし、同じ 50 mm 移動（最大加速度 2
+m/s²）で比べた。</p>
+<p><img
+src="../analysis/ana005_foundation_accel_chatter/results/fn_effect.png"
+alt="固有振動数の効果" /></p>
+<p><em>生成スクリプト: <a
+href="../analysis/ana005_foundation_accel_chatter/fn_effect.py">fn_effect.py</a>（減衰比
+10.5 % で固定。22.9 Hz の値は 4.2 節の表と一致）</em></p>
+<p><strong>アニメーションで見る</strong>（本体の揺れ µm
+は大きく拡大、テーブルの送りは縮小して表示）</p>
+<p><img
+src="../analysis/ana005_foundation_accel_chatter/results/fn_effect_anim.gif"
+alt="固有振動数で比べるアニメーション" /></p>
+<p>↑同じ加減速で 3
+台を動かす。固有振動数が低い（左）ほど本体が大きく揺れ、止まった後も長く揺れ続ける。下のグラフの破線は
+±1 µm に収まった時刻。</p>
+<p><img
+src="../analysis/ana005_foundation_accel_chatter/results/jerk_effect_anim.gif"
+alt="ジャークで比べるアニメーション" /></p>
+<p>↑今の機械（22.9 Hz）で、ジャークを周期と同じ 44 ms
+にすると、揺れがほぼ打ち消される。移動は 0.04 s
+長くなるが、待ち時間がなくなるので合計では早い。</p>
+<p><em>生成スクリプト: <a
+href="../analysis/ana005_foundation_accel_chatter/fn_effect_anim.py">fn_effect_anim.py</a></em></p>
+<table>
+<thead>
+<tr class="header">
+<th>固有振動数</th>
+<th style="text-align: right;">加速度段差（ジャーク 0）の残留揺れ</th>
+<th style="text-align: right;">そのときの移動＋整定</th>
+<th style="text-align: right;">移動＋整定が最短になるジャーク</th>
+<th style="text-align: right;">そのときの移動＋整定</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>11.5 Hz</td>
+<td style="text-align: right;">17.5 µm</td>
+<td style="text-align: right;">0.713 s</td>
+<td style="text-align: right;">84 ms</td>
+<td style="text-align: right;">0.468 s</td>
+</tr>
+<tr class="even">
+<td><strong>22.9 Hz（今）</strong></td>
+<td style="text-align: right;"><strong>6.6 µm</strong></td>
+<td style="text-align: right;"><strong>0.466 s</strong></td>
+<td style="text-align: right;"><strong>38 ms</strong></td>
+<td style="text-align: right;"><strong>0.388 s</strong></td>
+</tr>
+<tr class="odd">
+<td>45.8 Hz</td>
+<td style="text-align: right;">1.6 µm</td>
+<td style="text-align: right;">0.363 s</td>
+<td style="text-align: right;">8 ms</td>
+<td style="text-align: right;">0.358 s</td>
+</tr>
+</tbody>
+</table>
+<p>固有振動数を上げたい理由が、3 つの形で現れる。</p>
+<ol type="1">
+<li><strong>揺れが小さい</strong>：同じ反力 <span
+class="math inline">\(m_t A\)</span> でも、たわみは <span
+class="math inline">\(m_t A / k\)</span> で、<span
+class="math inline">\(k \propto f_n^2\)</span> なので<strong>固有振動数
+2 倍で揺れは約 1/4</strong>（6.6 → 1.6 µm）</li>
+<li><strong>早く収まる</strong>：揺れが減る速さは <span
+class="math inline">\(e^{-\zeta \omega_n t}\)</span>。<strong>固有振動数
+2 倍で収まる時間は約半分</strong>以下（0.116 s → 0.013 s）</li>
+<li><strong>短いジャークで済む</strong>：ジャーク立上げを<strong>固有振動数の周期と同じ長さ</strong>にすると揺れがほぼ打ち消される（①の点線の位置で谷になる）。周期が短い（固有振動数が高い）ほど短いジャークで済み、<strong>移動時間を延ばさなくてよい</strong>（今は
+38 ms 必要 → 2 倍なら 8 ms）</li>
+</ol>
+<p>つまり「固有振動数を上げたい」は、<strong>同じ精度（±1
+µm）を守りながら、より速く動かして次の加工を早く始めたい</strong>ということ。サーボのゲインを上げられる理由（<a
+href="../study/ref003_工作機械_固有振動数とサーボゲイン.html">study/ref003</a>）と同じ考え方で、ここでは基礎（脚）のモードについて現れている。</p>
+<p><strong>固有振動数が低い機械は何がダメか（因果の順に）</strong></p>
+<table>
+<thead>
+<tr class="header">
+<th>段階</th>
+<th>起きること</th>
+<th style="text-align: right;">11.5 Hz</th>
+<th style="text-align: right;">22.9 Hz</th>
+<th style="text-align: right;">45.8 Hz</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>① 力</td>
+<td>テーブルを加速すると反力 <span class="math inline">\(F = m_t
+A\)</span> = 125 kg × 2 m/s² = 250 N が本体を押す（3 台とも同じ）</td>
+<td style="text-align: right;">250 N</td>
+<td style="text-align: right;">250 N</td>
+<td style="text-align: right;">250 N</td>
+</tr>
+<tr class="even">
+<td>② 硬さ</td>
+<td>固有振動数が低い ＝ 脚が柔らかい。<span class="math inline">\(k =
+M(2\pi f_n)^2\)</span></td>
+<td style="text-align: right;">10 N/µm</td>
+<td style="text-align: right;">40 N/µm</td>
+<td style="text-align: right;">160 N/µm</td>
+</tr>
+<tr class="odd">
+<td>③ 揺れの大きさ</td>
+<td>押されたときのずれ <span class="math inline">\(\approx
+F/k\)</span>。急に押すと最大その 2 倍</td>
+<td style="text-align: right;">25 µm</td>
+<td style="text-align: right;">6 µm</td>
+<td style="text-align: right;">1.6 µm</td>
+</tr>
+<tr class="even">
+<td>④ 収まる速さ</td>
+<td>揺れは <span class="math inline">\(e^{-\zeta \omega_n t}\)</span>
+で減る。<span class="math inline">\(f_n\)</span> が低いと 1
+秒あたりの揺れの回数が少なく、減るのが遅い</td>
+<td style="text-align: right;">0.36 s</td>
+<td style="text-align: right;">0.12 s</td>
+<td style="text-align: right;">0.01 s</td>
+</tr>
+<tr class="odd">
+<td>⑤ 待ち時間</td>
+<td>±1 µm に収まるまで次の加工を始められない（停止後の待ち）</td>
+<td style="text-align: right;">長い</td>
+<td style="text-align: right;">中</td>
+<td style="text-align: right;">ほぼ 0</td>
+</tr>
+<tr class="even">
+<td>⑥ 対策の代償</td>
+<td>待たないためには加速度を下げる・加速度の上昇時間を長く（周期以上に）するしかない
+→ 移動そのものが遅くなる</td>
+<td style="text-align: right;">上昇時間 87 ms 必要</td>
+<td style="text-align: right;">44 ms</td>
+<td style="text-align: right;">22 ms</td>
+</tr>
+<tr class="odd">
+<td>⑦ 結果</td>
+<td>位置決めのたびに ⑤か⑥の時間を失う。穴あけ 100 か所なら 100 回分</td>
+<td style="text-align: right;">約 +30 秒</td>
+<td style="text-align: right;">約 +10 秒</td>
+<td style="text-align: right;">ほぼ 0</td>
+</tr>
+</tbody>
+</table>
+<p>つまり <strong>低い固有振動数 → 柔らかい → 大きく揺れる ×
+ゆっくりしか収まらない → 待つか、ゆっくり動かすしかない →
+サイクルタイムが延びる</strong>。</p>
+<p>注意（このモデルの範囲）：ここでの <span
+class="math inline">\(x_b\)</span>
+は<strong>機械全体が床に対して一緒に動く量</strong>で、刃先とワークは一緒に動くので、それ自体は加工誤差にはならない（3.5
+節：基礎のモードは相対 FRF
+にほとんど出ない）。実機で問題になるのは、①本体の揺れが傾き（ピッチング）や部品の変形と連成して刃先―ワークの相対誤差になる、②揺れがサーボの外乱として入り、位置決めの整定を遅らせる・ゲインを上げられなくする（<a
+href="../study/ref003_工作機械_固有振動数とサーボゲイン.html">study/ref003</a>）、③床を通じて隣の機械や測定器・ロボットを揺らす、の
+3 つ。±1 µm はその目安として使っている。</p>
+<p>※ ここでは脚の剛性で固有振動数を変えた。テーブルを軽くする（<span
+class="math inline">\(m_t\)</span>
+を減らす）と反力そのものが小さくなり、同じように揺れが減る（トポロジー最適化で可動部を軽くする価値。<a
+href="../study/ref008_工作機械_トポロジー最適化の社内導入と多目的最適化.html">study/ref008</a>）。</p>
+<h3 id="45-本当に固有振動数は変わるか全体-fem-で確かめる">4.5
+本当に固有振動数は変わるか：全体 FEM で確かめる</h3>
+<p>4.4 は 1 自由度モデル（<span
+class="math inline">\(f_n=\sqrt{k/M}/2\pi\)</span> なので、<span
+class="math inline">\(k\)</span> を 4 倍にすれば必ず 2
+倍）。そこで**全体 FEM（CalculiX）**で、4 本の脚の横剛性（X・Y）だけを
+1/4・1・4
+倍にして、固有値とコンプライアンスを計算した。脚の上下の剛性は変えていない。</p>
+<table>
+<thead>
+<tr class="header">
+<th>ケース</th>
+<th style="text-align: right;">1 次 Hz</th>
+<th style="text-align: right;">2 次 Hz</th>
+<th style="text-align: right;">3 次 Hz</th>
+<th style="text-align: right;">1 次の比（今 = 1）</th>
+<th style="text-align: right;">1 自由度モデルの f_n</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>脚の横剛性 1/4（2.5 N/µm/脚）</td>
+<td style="text-align: right;">11.3</td>
+<td style="text-align: right;">11.4</td>
+<td style="text-align: right;">17.4</td>
+<td style="text-align: right;">0.51</td>
+<td style="text-align: right;">11.5</td>
+</tr>
+<tr class="even">
+<td>今（10 N/µm/脚）</td>
+<td style="text-align: right;">22.2</td>
+<td style="text-align: right;">22.2</td>
+<td style="text-align: right;">34.7</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">22.9</td>
+</tr>
+<tr class="odd">
+<td>4 倍（40 N/µm/脚）</td>
+<td style="text-align: right;">39.3</td>
+<td style="text-align: right;">40.9</td>
+<td style="text-align: right;">68.7</td>
+<td style="text-align: right;">1.77</td>
+<td style="text-align: right;">45.8</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li><strong>1/4 倍と今は、1 自由度モデルとよく一致</strong>（11.3 vs
+11.5 Hz、22.2 vs 22.9 Hz）</li>
+<li><strong>4 倍は 39.3 Hz で、1 自由度モデルの 45.8 Hz
+に届かない</strong>。モード形状（下図）を見ると、横に平行移動するのではなく、<strong>コラムが前後に傾く揺れ（ロッキング）<strong>が混ざってくる。横を硬くすると、今度は脚の</strong>上下の剛性</strong>（傾きを止める硬さ）が効いてくるため</li>
+<li>→
+「固有振動数を上げる」には、効いているモードの形を見て、<strong>どのばねが支配しているか</strong>を確かめる必要がある</li>
+</ul>
+<p><img
+src="../analysis/ana005_foundation_accel_chatter/k_sweep/k_sweep_modes.gif"
+alt="脚の剛性ごとのモード形状（アニメーション）" /></p>
+<p>上の 2 段では 1 次・2 次とも機械全体が脚の上で平行に揺れますが、4
+倍（下段）では 1 次・2
+次でコラム上端が大きく動き、ベッドはあまり動きません。横に滑る揺れから、前後に傾く揺れに変わっていることが分かります。3
+次はどのケースも Z 軸まわりのねじれです。</p>
+<p><em>生成スクリプト: <a
+href="../analysis/ana005_foundation_accel_chatter/k_sweep/anim_modes.py">anim_modes.py</a></em></p>
+<p><img
+src="../analysis/ana005_foundation_accel_chatter/k_sweep/k_sweep_frf.png"
+alt="駆動力に対するコンプライアンス" /></p>
+<p><em>ナットの両端に +1 N（テーブル）・−1 N（ベッド）＝加減速の反力を X
+方向に加えた周波数応答。生成スクリプト: <a
+href="../analysis/ana005_foundation_accel_chatter/k_sweep/run_k_sweep.py">run_k_sweep.py</a>、<a
+href="../analysis/ana005_foundation_accel_chatter/k_sweep/post.py">post.py</a></em></p>
+<ul>
+<li>①②（ベッド・コラムの揺れ）：脚が硬いほど、低い周波数のピークが<strong>右（高い周波数）へ移り、低くなる</strong></li>
+<li>③（刃先―ワークの相対）：<strong>3
+ケースで全く同じ</strong>。脚のモードは機械全体が一緒に動くので、刃先とワークの相対には出ない（3.5
+節と同じ結論）。相対のピーク（約 183
+Hz）はテーブルのボールねじのモード</li>
+</ul>
+<h3 id="46-モードの形が変わっても同じ議論ができるか">4.6
+モードの形が変わっても同じ議論ができるか</h3>
+<p>4.5 で見たように、脚を 4 倍硬くすると 1
+次モードは平行な揺れから傾く揺れに変わります。1
+自由度モデルは平行な揺れしか表せないので、そのまま使ってよいかを確かめるために、全体
+FEM の固有モード 10
+個を使って同じ加減速の時刻歴を計算しました。テーブルを加速する反力は、本体から見るとテーブルの質量全体に慣性力
+<span class="math inline">\(-m_t a(t)\)</span>
+がかかるのと同じなので、それをテーブルの節点に配って各モードを揺らし、足し合わせています。</p>
+<p><img
+src="../analysis/ana005_foundation_accel_chatter/k_sweep/transient_modal.png"
+alt="全体 FEM のモードで計算した加減速の揺れ" /></p>
+<p><em>点線は 1 自由度モデル。生成スクリプト: <a
+href="../analysis/ana005_foundation_accel_chatter/k_sweep/transient_modal.py">transient_modal.py</a></em></p>
+<table>
+<thead>
+<tr class="header">
+<th>ケース</th>
+<th>ジャーク</th>
+<th style="text-align: right;">刃先の最大 µm</th>
+<th style="text-align: right;">ワークの最大 µm</th>
+<th style="text-align: right;">刃先―ワーク相対の最大 µm</th>
+<th style="text-align: right;">停止後のベッド揺れ最大 µm</th>
+<th style="text-align: right;">停止後のコラム上端揺れ最大 µm</th>
+<th style="text-align: right;">1 自由度モデル µm</th>
+<th style="text-align: right;">ベッドが ±1 µm に収まるまで s</th>
+<th style="text-align: right;">コラム上端が ±1 µm に収まるまで s</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>脚 1/4</td>
+<td>0 ms</td>
+<td style="text-align: right;">38.35</td>
+<td style="text-align: right;">40.36</td>
+<td style="text-align: right;">3.122</td>
+<td style="text-align: right;">20.84</td>
+<td style="text-align: right;">17.10</td>
+<td style="text-align: right;">17.46</td>
+<td style="text-align: right;">0.192</td>
+<td style="text-align: right;">0.198</td>
+</tr>
+<tr class="even">
+<td>脚 今</td>
+<td>0 ms</td>
+<td style="text-align: right;">11.59</td>
+<td style="text-align: right;">13.88</td>
+<td style="text-align: right;">3.123</td>
+<td style="text-align: right;">6.39</td>
+<td style="text-align: right;">6.17</td>
+<td style="text-align: right;">6.56</td>
+<td style="text-align: right;">0.098</td>
+<td style="text-align: right;">0.137</td>
+</tr>
+<tr class="odd">
+<td>脚 4 倍</td>
+<td>0 ms</td>
+<td style="text-align: right;">3.99</td>
+<td style="text-align: right;">6.21</td>
+<td style="text-align: right;">3.125</td>
+<td style="text-align: right;">1.38</td>
+<td style="text-align: right;">2.35</td>
+<td style="text-align: right;">1.64</td>
+<td style="text-align: right;">0.012</td>
+<td style="text-align: right;">0.062</td>
+</tr>
+<tr class="even">
+<td>脚 1/4</td>
+<td>40 ms</td>
+<td style="text-align: right;">34.57</td>
+<td style="text-align: right;">36.18</td>
+<td style="text-align: right;">1.674</td>
+<td style="text-align: right;">6.81</td>
+<td style="text-align: right;">8.47</td>
+<td style="text-align: right;">8.61</td>
+<td style="text-align: right;">0.135</td>
+<td style="text-align: right;">0.134</td>
+</tr>
+<tr class="odd">
+<td>脚 今</td>
+<td>40 ms</td>
+<td style="text-align: right;">7.69</td>
+<td style="text-align: right;">9.35</td>
+<td style="text-align: right;">1.673</td>
+<td style="text-align: right;">0.73</td>
+<td style="text-align: right;">0.69</td>
+<td style="text-align: right;">0.61</td>
+<td style="text-align: right;">0.000</td>
+<td style="text-align: right;">0.000</td>
+</tr>
+<tr class="even">
+<td>脚 4 倍</td>
+<td>40 ms</td>
+<td style="text-align: right;">2.38</td>
+<td style="text-align: right;">3.99</td>
+<td style="text-align: right;">1.674</td>
+<td style="text-align: right;">0.17</td>
+<td style="text-align: right;">0.32</td>
+<td style="text-align: right;">0.11</td>
+<td style="text-align: right;">0.000</td>
+<td style="text-align: right;">0.000</td>
+</tr>
+</tbody>
+</table>
+<p>ベッドの揺れは、1/4 倍と今のケースでは 1 自由度モデルとほぼ重なり、4
+倍でも大きさは近い値になりました。脚が硬いほど揺れが小さく早く収まる、加速度の上昇時間を周期に合わせると揺れが消える、という
+4.4・4.3 の議論は、モードの形が変わってもそのまま成り立ちます。</p>
+<p>ただし 4 倍のケースでは、コラム上端の揺れがベッドより大きく、±1 µm
+に収まるまでの時間もベッドの 0.012 s に対して 0.062 s
+と長くなりました。傾く揺れになると、高い所ほど大きく動くからです。どの点の揺れを問題にするかで、効くモードと待ち時間が変わることに注意が必要です。</p>
+<p>刃先とワークは、それぞれ床に対しては大きく揺れ（脚の剛性 1/4
+倍・段差で約 40
+µm）、脚が柔らかいほど大きくなります。ところが両者の相対の揺れは、脚の剛性によらず
+3 ケースとも同じ値（段差で最大 3.1 µm、上昇時間 40 ms で 1.7
+µm）でした。刃先とワークが脚の上で一緒に揺れるので、その分は相対には残らないからです。残った
+3.1 µm は、テーブルがボールねじのばねで揺れる 183 Hz
+のモードから来ています。加工誤差を小さくしたいなら、脚ではなく送り系を見る必要があります。</p>
+<h3 id="47-サーボ駆動系との連成条件">4.7 サーボ・駆動系との連成条件</h3>
+<p>実機の許容加速度やサイクル時間を決めるには、モータ推力／トルク・電流・回転速度、ねじ回転慣性、摩擦、位置・速度・電流ループ、フィードフォワード、制御遅れを加える。評価量はTCP追従誤差と刃先―ワーク相対整定にする。</p>
+<p>現在のFEMは一定姿勢まわりの弾性変位を計算するモデル。50
+mmの剛体送りをそのままガイド・ねじばねの伸びとして与えず、送り軌道に重ねる弾性残差として連成する。</p>
+<h2 id="5-フライス加工の安定限界線図">5. フライス加工の安定限界線図</h2>
+<h3 id="51-切削条件と零次近似">5.1 切削条件と零次近似</h3>
+<p>フライス加工は、刃が何枚かある工具を回転させ、ワークに当てながら横に送って削る加工で、マシニングセンタの主な加工です。旋盤ではワークが回りますが、フライス加工では工具が回ります。エンドミルはフライス工具の一種（側面と先端に刃がある細長い工具）で、安定限界の計算方法は同じです。変わるのは刃数、刃が削る角度の範囲、切削係数だけです。ここでは、次の条件で
+4 枚刃のエンドミルが溝を掘る場合を考えます。</p>
+<p><img
+src="../analysis/ana005_foundation_accel_chatter/results/milling_conditions.png"
+alt="計算に使った切削条件" /></p>
+<p><img
+src="../analysis/ana005_foundation_accel_chatter/results/milling_explained.png"
+alt="切削条件の意味" /></p>
+<p>(c) の <span class="math inline">\(h\)</span> は、1
+枚の刃が実際に削り取る厚さです。工具は刃 1 枚ぶん <span
+class="math inline">\(f_z\)</span>
+だけ送られながら回るので、前の刃が通った跡（点線）と今の刃が通る跡（実線）のあいだの三日月形が、1
+枚の刃が削る部分になります。その厚さは刃の角度 <span
+class="math inline">\(\phi\)</span> によって変わり、<span
+class="math inline">\(h = f_z\sin\phi\)</span>
+です。刃先が揺れると、この <span class="math inline">\(h\)</span>
+に今の揺れと前の刃のときの揺れの差が加わり、それが 5.2
+節の動的切削力になります。</p>
+<p>切削係数は説明用の仮定値で、実際に削って求めたものではありません。構造の計算ではテストバー（角柱）を使い、切削力の計算では刃溝やねじれ角を省いた等ピッチ
+4 枚刃を仮定しています。計算には刃先とワークの相対 FRF の XY
+成分（クロス成分 <span class="math inline">\(G_{xy}\)</span>・<span
+class="math inline">\(G_{yx}\)</span> を含む）を使います。</p>
+<p>ここから先の計算に必要なのは、「刃先とワークが食い違ったとき、どの向きにどれだけ力が出るか」です。それを
+1 つの行列 <span
+class="math inline">\(B_0\)</span>（方向係数）にまとめる手順を、下の図で順に追います。</p>
+<p><img
+src="../analysis/ana005_foundation_accel_chatter/results/B_derivation.png"
+alt="方向係数 B(φ) と B0 の出し方" /></p>
+<p><em>生成スクリプト: <a
+href="../analysis/ana005_foundation_accel_chatter/explain_B.py">explain_B.py</a></em></p>
+<p>①刃先の位置を角度 <span class="math inline">\(\phi\)</span>
+で表し、工具の中心から外へ向かう向きを <span
+class="math inline">\(\boldsymbol{e}_r\)</span>、刃が進む向きを <span
+class="math inline">\(\boldsymbol{e}_t\)</span>
+とします。②刃先とワークが <span
+class="math inline">\(\Delta\boldsymbol{q}\)</span>
+だけ食い違うと、刃が削る厚さは、そのうち <span
+class="math inline">\(\boldsymbol{e}_r\)</span>
+向きの成分だけ変わります（<span class="math inline">\(\Delta h =
+\sin\phi\,\Delta x + \cos\phi\,\Delta
+y\)</span>）。③厚さが変わると、刃の進む向きに <span
+class="math inline">\(\Delta F_t = K_t a_p \Delta
+h\)</span>、外向きにその <span class="math inline">\(K_r\)</span>
+倍の力が出ます。この 2 つを足した力を X・Y の成分で書くと <span
+class="math inline">\(\Delta\boldsymbol{F} =
+K_t\,a_p\,B(\phi)\,\Delta\boldsymbol{q}\)</span> の形になり、④その行列が
+<span class="math inline">\(B(\phi)\)</span> です。</p>
+<p><span class="math inline">\(B(\phi)\)</span>
+は刃が回るとともに変わります。⑤刃が削っている半周（<span
+class="math inline">\(\phi = 0 \sim \pi\)</span>）で 4
+つの成分をそれぞれ平均すると、<span
+class="math inline">\(\sin\phi\cos\phi\)</span> の項は正と負が打ち消して
+0 になり、<span class="math inline">\(\sin^2\phi\)</span> と <span
+class="math inline">\(\cos^2\phi\)</span> の項はどちらも 1/2
+になります（図の破線）。⑥1 回転のうち削っているのは半分で、刃は <span
+class="math inline">\(Z\)</span> 枚あるので、平均に <span
+class="math inline">\(Z/2\)</span> を掛けたものが</p>
+<p><span class="math display">\[B_0 =
+\frac{Z}{2\pi}\int_0^{\pi}B(\phi)\,d\phi =
+\frac{Z}{4}\left[\begin{matrix}K_r &amp; 1\\ -1 &amp;
+K_r\end{matrix}\right]\]</span></p>
+<p>です。このように時間で変わる係数を 1
+回転で平均してしまう近似を<strong>零次近似</strong>と呼びます。対角の
+<span class="math inline">\(K_r\)</span>
+は揺れた向きに押し返す力、非対角の <span
+class="math inline">\(1\)</span> と <span
+class="math inline">\(-1\)</span> は揺れと直角に出る力を表していて、X
+に揺れると Y
+にも力が出ます。コードでは数値積分でもこの値になることを確かめています。</p>
+<p>この <span class="math inline">\(B_0\)</span> が、次の 5.2
+節の動的切削力の式 (3)
+にそのまま入り、そこから限界切込みが求まります。全体の計算の流れは次のとおりです。</p>
+<p><img
+src="../analysis/ana005_foundation_accel_chatter/results/milling_flow.png"
+alt="安定限界線図の計算フロー" /></p>
+<p><em>生成スクリプト: <a
+href="../analysis/ana005_foundation_accel_chatter/explain_milling.py">explain_milling.py</a></em></p>
+<h3 id="52-再生びびりの理論動的切削力から限界切込みまで">5.2
+再生びびりの理論：動的切削力から限界切込みまで</h3>
+<p>ここでは、計算フローの図の①〜⑥を、式で順に追います。記号は次のとおりです。</p>
+<table>
+<thead>
+<tr class="header">
+<th>記号</th>
+<th>意味</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><span class="math inline">\(Z\)</span></td>
+<td>工具の刃の数（刃数）。この計算では 4</td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(n\)</span></td>
+<td>主軸回転数 [min⁻¹]</td>
+</tr>
+<tr class="odd">
+<td><span class="math inline">\(\tau = 60/(Z n)\)</span></td>
+<td>1
+枚の刃が通ってから次の刃が同じ場所に来るまでの時間（刃の通過周期）[s]</td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(a_p\)</span></td>
+<td>軸方向の切込み [mm]（線図の縦軸）</td>
+</tr>
+<tr class="odd">
+<td><span class="math inline">\(K_t\)</span></td>
+<td>削る断面 1 mm² あたりの接線方向の力（比切削抵抗）[N/mm²]</td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(K_r\)</span></td>
+<td>半径方向の力と接線方向の力の比</td>
+</tr>
+<tr class="odd">
+<td><span class="math inline">\(\boldsymbol{q}(t)\)</span></td>
+<td>ワークに対する刃先の相対変位（X, Y）[mm]</td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(G(\omega)\)</span></td>
+<td>刃先―ワーク相対 FRF の 2×2 行列 [mm/N]</td>
+</tr>
+</tbody>
+</table>
+<p><strong>(1) 刃 1 枚にかかる力</strong></p>
+<p>刃の角度を <span class="math inline">\(\phi\)</span>（0 から <span
+class="math inline">\(\pi\)</span> まで刃が削る）、その刃が削る厚さを
+<span class="math inline">\(h(\phi)\)</span>
+とすると、刃にかかる力は削る断面積 <span class="math inline">\(a_p
+h\)</span> に比例します。</p>
+<p><span class="math display">\[F_t = K_t\,a_p\,h(\phi),\qquad F_r =
+K_r\,F_t\]</span></p>
+<p><strong>(2) 動的切削力：揺れが削る厚さを変える</strong></p>
+<p>刃先が揺れていなければ、削る厚さは送りで決まる一定の値で、力も周期的に繰り返すだけです。ところが刃先がワークに対して揺れると、<strong>今の刃の位置
+<span class="math inline">\(\boldsymbol{q}(t)\)</span> と、1
+つ前の刃が残した面の位置 <span
+class="math inline">\(\boldsymbol{q}(t-\tau)\)</span>
+の差</strong>だけ、削る厚さが変わります。</p>
+<p><span class="math display">\[\Delta h(t) = \left[\sin\phi\ \
+\cos\phi\right]\left\{\boldsymbol{q}(t)-\boldsymbol{q}(t-\tau)\right\}\]</span></p>
+<p>この「揺れによる厚さの変化」が生む力の変化を<strong>動的切削力</strong>と呼びます。前の刃が残した波打った面を今の刃が削るので、揺れが次の揺れを生む仕組み（<strong>再生効果</strong>）になっています。これがびびりの原因です。</p>
+<p><strong>(3) 方向係数：刃の向きで力の向きが変わる</strong></p>
+<p>(2) の厚さの変化に、5.1 節の図で求めた方向係数を掛けて 1
+回転で平均すると（<strong>零次近似</strong>）、動的切削力は次の形になります。</p>
+<p><span class="math display">\[\boldsymbol{F}(t) =
+-\,a_p\,K_t\,B_0\left\{\boldsymbol{q}(t)-\boldsymbol{q}(t-\tau)\right\},\qquad
+B_0 = \frac{Z}{2\pi}\int_0^{\pi}B(\phi)\,d\phi =
+\frac{Z}{4}\left[\begin{matrix}K_r &amp; 1\\ -1 &amp;
+K_r\end{matrix}\right]\]</span></p>
+<p><span class="math inline">\(B_0\)</span> の非対角成分（1 と
+−1）は、<strong>X 方向に揺れると Y
+方向にも力が出る</strong>ことを表しています。<span
+class="math inline">\(Z\)</span>
+が大きいほど、同じ揺れに対して力が大きくなります。</p>
+<p><strong>(4) 構造の応答</strong></p>
+<p>揺れは、その力に対する構造の応答です。周波数 <span
+class="math inline">\(\omega\)</span> の揺れ <span
+class="math inline">\(\boldsymbol{q}(t) = \boldsymbol{Q}e^{i\omega
+t}\)</span> を考えると、<span
+class="math inline">\(\boldsymbol{q}(t-\tau) = \boldsymbol{Q}e^{i\omega
+t}e^{-i\omega\tau}\)</span> なので、</p>
+<p><span class="math display">\[\boldsymbol{Q} =
+G(\omega)\,\boldsymbol{F} =
+-\,a_p\,K_t\,\left(1-e^{-i\omega\tau}\right)G(\omega)\,B_0\,\boldsymbol{Q}\]</span></p>
+<p><span class="math inline">\(G\)</span> は刃先とワークの相対 FRF（3.3
+節）で、X・Y の 2×2 行列です。構造としては Z も含めた 3×3（3.3 節の 9
+成分）ですが、側面で削るエンドミルでは削り厚さ <span
+class="math inline">\(h = f_z\sin\phi\)</span> を変えるのは X・Y
+の揺れだけで、Z
+に揺れても厚さは変わりません。また、ねじれ角を考えない今回のモデルでは切削力に
+Z 成分がありません。そのため 3×3 のうち X・Y の 2×2
+だけを取り出して使います。</p>
+<p><img
+src="../analysis/ana005_foundation_accel_chatter/results/tool_types_3d.png"
+alt="Z 方向まで必要になる工具" /></p>
+<p><em>生成スクリプト: <a
+href="../analysis/ana005_foundation_accel_chatter/explain_tool_types.py">explain_tool_types.py</a>。写真はいずれも
+Wikimedia Commons から：<a
+href="https://commons.wikimedia.org/wiki/File:Fresa.jpg">Fresa.jpg</a>（Ricce、パブリックドメイン）、<a
+href="https://commons.wikimedia.org/wiki/File:Fraises_sph%C3%A9riques.jpg">Fraises
+sphériques.jpg</a>（Bricetofly、CC0）、<a
+href="https://commons.wikimedia.org/wiki/File:VHM-WSP-ALU-F-45-IH2.jpg">VHM-WSP-ALU-F-45-IH2.jpg</a>（Raizy、<a
+href="https://creativecommons.org/licenses/by-sa/3.0/">CC BY-SA
+3.0</a>）</em></p>
+<p>実際のエンドミルの多くは左のようなねじれ刃で、軸方向の力 <span
+class="math inline">\(F_z\)</span> が出ます。Z
+に揺れても側面を削る厚さは変わりませんが、<span
+class="math inline">\(F_z\)</span> そのものが構造を押すので、クロス FRF
+<span class="math inline">\(G_{xz}\)</span>・<span
+class="math inline">\(G_{yz}\)</span> を通して X・Y
+の揺れを生み、それが削り厚さに入ります。この影響は 3×3
+で計算しないと分かりません。そこで、軸方向の力を <span
+class="math inline">\(F_z = K_a a_p h\)</span>（<span
+class="math inline">\(K_a/K_t = \pm
+0.3\)</span>、符号はねじれの向き）として、Z
+列まで入れた計算と比べました。削り厚さは X・Y
+の揺れだけで決まるので、<span class="math inline">\(B_0\)</span> は 3×2
+になり、Z の行を刃が削る半周で平均すると <span
+class="math inline">\(\frac{Z}{\pi}\frac{K_a}{K_t}(1,\ 0)\)</span>
+です。</p>
+<p>3×3 の式は、このあと (4)
+の続きにまとめて書きます。比べた計算では、削り厚さに効く <span
+class="math inline">\(Q_x\)</span>・<span
+class="math inline">\(Q_y\)</span> の 2 行と、<span
+class="math inline">\(F_z\)</span> に掛かる 3 列目（<span
+class="math inline">\(G_{xz}\)</span>・<span
+class="math inline">\(G_{yz}\)</span>）まで入れた 2×3
+の部分を使っています。</p>
+<p><img
+src="../analysis/ana005_foundation_accel_chatter/results/check_3x3.png"
+alt="2×2 と 3×3 の比較" /></p>
+<p><em>生成スクリプト: <a
+href="../analysis/ana005_foundation_accel_chatter/check_3x3.py">check_3x3.py</a></em></p>
+<p>最小の限界は 2×2 の 9.22 mm に対して、3×3 では 8.51 mm（<span
+class="math inline">\(K_a/K_t=+0.3\)</span>）と 10.14 mm（<span
+class="math inline">\(-0.3\)</span>）になり、約 ±8 %
+変わりました。回転数によっては最大 18 % 違います。このモデルでは <span
+class="math inline">\(G_{xz}\)</span> はほぼ 0 ですが、<span
+class="math inline">\(G_{yz}\)</span> は 185 Hz で <span
+class="math inline">\(G_{yy}\)</span> と同じくらいの大きさがあり、<span
+class="math inline">\(F_z\)</span> が Y・Z
+が一緒に動くモード（テーブルが Y に動きながら傾くモード 11
+など）を通して Y
+の揺れを生んでいます。ねじれの向きで限界が上がるか下がるかが変わる点も、2×2
+では見えません。したがって、ねじれ刃の工具で実機と比べるなら 3×3
+で計算するべきです。この章の 2×2
+の結果は、直刃という前提での値で、どのモードが限界を決めるかという結論（モード
+8）は 3×3 でも変わりませんが、限界の値には ±1
+割ほどの幅があると考えてください。ボールエンドミルや正面フライスでは、Z
+の揺れそのものが削り厚さに入るので、3×3 が必須です。</p>
+<p>主軸を逆転させたらどうなるかも、同じ計算で確かめられます。逆転は、上から見た図を送りの向きを軸にして鏡に映した形になり、<span
+class="math inline">\(X\)</span> に揺れたときに <span
+class="math inline">\(Y\)</span> に出る力の向きが逆になります（<span
+class="math inline">\(B_0\)</span> の非対角の 1 と −1
+が入れ替わる）。ただ、このモデルは <span
+class="math inline">\(X\)</span> と <span
+class="math inline">\(Y\)</span> が連成しない（<span
+class="math inline">\(G_{xy} \approx
+0\)</span>）ので、正転と逆転で線図は完全に同じになりました。<span
+class="math inline">\(X\)</span> を押すと <span
+class="math inline">\(Y\)</span> にも動く構造（<span
+class="math inline">\(G_{xy} \neq
+0\)</span>）なら、正転と逆転で限界が変わります。ねじれ刃では、ねじれの向きと回転の向きの組み合わせで
+<span class="math inline">\(F_z\)</span>
+が上向きか下向きかが決まり、上の比較のとおり約 ±1 割効きます。</p>
+<p><img
+src="../analysis/ana005_foundation_accel_chatter/results/rotation_direction.png"
+alt="正転・逆転とねじれの向き" /></p>
+<p><em>生成スクリプト: <a
+href="../analysis/ana005_foundation_accel_chatter/explain_rotation.py">explain_rotation.py</a></em></p>
+<p>正転と逆転で変わるのは、X に揺れたときに Y に出る力の向き（<span
+class="math inline">\(B_0\)</span> の非対角の符号）だけです。びびりは「X
+に揺れる → Y に力 → Y に揺れる → X に力 →
+…」と一周して育つので、一周のあいだに非対角を 2 回通り、符号は <span
+class="math inline">\((-1)\times(+1)\)</span> でも <span
+class="math inline">\((+1)\times(-1)\)</span> でも同じ <span
+class="math inline">\(-1\)</span> になります。だから <span
+class="math inline">\(G_{xy}=0\)</span>
+の機械では正転と逆転で結果が変わりません。<span
+class="math inline">\(G_{xy}\neq0\)</span> だと、X の揺れが Y
+の力を経由せずに直接 Y の揺れにもつながる道ができ、そこでは非対角を 1
+回しか通らないので、符号の違いがそのまま結果に出ます。</p>
+<p><img
+src="../analysis/ana005_foundation_accel_chatter/results/rotation_loop.png"
+alt="正転・逆転で変わるもの" /></p>
+<p><em>生成スクリプト: <a
+href="../analysis/ana005_foundation_accel_chatter/explain_rotation_loop.py">explain_rotation_loop.py</a></em></p>
+<p>「Z
+に揺れる」とは、工具が主軸の方向（上下）にずれることです。横から見ると下の図のようになります。今回の計算は
+(a)
+の、直刃の平エンドミルで溝を削る場合を想定しています。刃は溝の側面を削っていて、削る厚さ
+<span class="math inline">\(h\)</span>
+は横方向の幅なので、工具が上下にずれても <span
+class="math inline">\(h\)</span> は変わりません。直刃なので切削力も X・Y
+平面の中だけに出て、<span class="math inline">\(F_z = 0\)</span> です。Z
+の揺れは削り厚さに入らず、Z を揺らす力も出ないので、Z を省いた 2×2
+で同じ答えになります。(b) のボールエンドミルや (c)
+の正面フライスでは、工具が下にずれるとそのぶん深く削るので、Z
+の揺れが削り厚さに入り、3×3 が必要です。</p>
+<p><img
+src="../analysis/ana005_foundation_accel_chatter/results/z_vibration.png"
+alt="Z に揺れるとは" /></p>
+<p><em>生成スクリプト: <a
+href="../analysis/ana005_foundation_accel_chatter/explain_z_vibration.py">explain_z_vibration.py</a></em></p>
+<p>式を X・Y・Z の 3×3
+で書いておきます。切削力は作用・反作用なのでワークに <span
+class="math inline">\(+\boldsymbol{F}\)</span>、刃先に <span
+class="math inline">\(-\boldsymbol{F}\)</span> がかかり、<span
+class="math inline">\(H^{ab}_{ij}\)</span> を「点 <span
+class="math inline">\(b\)</span> を <span
+class="math inline">\(j\)</span> 方向に押したときの点 <span
+class="math inline">\(a\)</span> の <span
+class="math inline">\(i\)</span>
+方向の変位」（w：ワーク、t：刃先）とすると、</p>
+<p><span class="math display">\[\begin{bmatrix} Q_x\\ Q_y\\ Q_z
+\end{bmatrix} = \begin{bmatrix} x_w - x_t\\ y_w - y_t\\ z_w - z_t
+\end{bmatrix} = \begin{bmatrix} G_{xx} &amp; G_{xy} &amp; G_{xz}\\
+G_{yx} &amp; G_{yy} &amp; G_{yz}\\ G_{zx} &amp; G_{zy} &amp; G_{zz}
+\end{bmatrix} \begin{bmatrix} F_x\\ F_y\\ F_z \end{bmatrix}, \qquad
+G_{ij} = H^{ww}_{ij} + H^{tt}_{ij} - H^{wt}_{ij} -
+H^{tw}_{ij}\]</span></p>
+<p>となります（<span class="math inline">\(i, j = x, y,
+z\)</span>）。モードで書くと、モード <span
+class="math inline">\(r\)</span> のワーク点と刃先点の形の差 <span
+class="math inline">\(d_{xr} = \phi^w_{xr}-\phi^t_{xr}\)</span>（<span
+class="math inline">\(y\)</span>・<span class="math inline">\(z\)</span>
+も同じ）を使って</p>
+<p><span class="math display">\[\begin{bmatrix} G_{xx} &amp; G_{xy}
+&amp; G_{xz}\\ G_{yx} &amp; G_{yy} &amp; G_{yz}\\ G_{zx} &amp; G_{zy}
+&amp; G_{zz} \end{bmatrix} = \sum_r \frac{1}{\omega_r^2 - \omega^2 +
+2i\zeta_r\omega_r\omega} \begin{bmatrix} d_{xr}^2 &amp; d_{xr}d_{yr}
+&amp; d_{xr}d_{zr}\\ d_{yr}d_{xr} &amp; d_{yr}^2 &amp; d_{yr}d_{zr}\\
+d_{zr}d_{xr} &amp; d_{zr}d_{yr} &amp; d_{zr}^2
+\end{bmatrix}\]</span></p>
+<p>です。このうちどこを使うかは、削り厚さと切削力の向きで決まります。平エンドミルの側面削りでは削り厚さに効くのは
+<span class="math inline">\(Q_x\)</span>・<span
+class="math inline">\(Q_y\)</span> だけなので、使うのは上の 2
+行です。さらに直刃で <span class="math inline">\(F_z = 0\)</span> なら 3
+列目も掛ける相手がなくなり、左上の 2×2</p>
+<p><span class="math display">\[\begin{bmatrix} Q_x\\ Q_y \end{bmatrix}
+= \begin{bmatrix} G_{xx} &amp; G_{xy}\\ G_{yx} &amp; G_{yy}
+\end{bmatrix} \begin{bmatrix} F_x\\ F_y \end{bmatrix}\]</span></p>
+<p>だけが残ります。以下の (5) と 5.3 節以降の線図は、この
+2×2（直刃）で計算しています。ねじれ刃（<span class="math inline">\(F_z
+\neq 0\)</span>）では 3 列目の <span
+class="math inline">\(G_{xz}\)</span>・<span
+class="math inline">\(G_{yz}\)</span> も残り、上で見たように限界が約 ±1
+割変わります。</p>
+<p><strong>(5) 安定限界：揺れが増えも減りもしない条件</strong></p>
+<p><span class="math inline">\(\boldsymbol{Q} \neq 0\)</span>
+の揺れが続くのは、次の行列式が 0 のときです。</p>
+<p><span class="math display">\[\det\left[\,I +
+a_p\,K_t\,\left(1-e^{-i\omega_c\tau}\right)G(\omega_c)\,B_0\,\right] =
+0\]</span></p>
+<p>成分で書いてみます。<span class="math inline">\(c =
+a_pK_t(1-e^{-i\omega_c\tau})\)</span> とおき、<span
+class="math inline">\(G B_0\)</span> を計算すると</p>
+<p><span class="math display">\[\Phi = G B_0 =\frac{Z}{4}
+\begin{bmatrix}G_{xx}&amp;G_{xy}\\G_{yx}&amp;G_{yy}\end{bmatrix}
+\begin{bmatrix}K_r&amp;1\\-1&amp;K_r\end{bmatrix} =\frac{Z}{4}
+\begin{bmatrix} K_rG_{xx}-G_{xy} &amp; G_{xx}+K_rG_{xy}\\
+K_rG_{yx}-G_{yy} &amp; G_{yx}+K_rG_{yy} \end{bmatrix}\]</span></p>
+<p>で、これは切削力の向きまで含めた FRF です。<span
+class="math inline">\(2\times2\)</span>
+の行列式は（左上×右下）−（右上×左下）なので、</p>
+<p><span class="math display">\[\det\begin{bmatrix} 1+c\,\Phi_{11} &amp;
+c\,\Phi_{12}\\ c\,\Phi_{21} &amp; 1+c\,\Phi_{22} \end{bmatrix}
+=1+c\,(\Phi_{11}+\Phi_{22})+c^2\,(\Phi_{11}\Phi_{22}-\Phi_{12}\Phi_{21})=0\]</span></p>
+<p>となり、<span class="math inline">\(c\)</span> の 2
+次方程式になります。<span class="math inline">\(c = -1/\lambda\)</span>
+とおけば</p>
+<p><span
+class="math display">\[\lambda^2-(\Phi_{11}+\Phi_{22})\,\lambda+(\Phi_{11}\Phi_{22}-\Phi_{12}\Phi_{21})=0\]</span></p>
+<p>で、<span class="math inline">\(\lambda\)</span> は <span
+class="math inline">\(\Phi\)</span> の固有値です。<span
+class="math inline">\(G\)</span> が決まれば数値で 2 つ求まります。</p>
+<p>つまりこの条件は、固有値ごとに</p>
+<p><span class="math display">\[1 +
+a_p\,K_t\left(1-e^{-i\omega_c\tau}\right)\lambda = 0
+\quad\Longleftrightarrow\quad a_p\,K_t\left(1-e^{-i\omega_c\tau}\right)
+= -\frac{1}{\lambda} \equiv \mu = \mu_R + i\,\mu_I\]</span></p>
+<p>と書けます。左辺の <span class="math inline">\(a_p K_t\)</span>
+は実数なので、<span class="math inline">\(1-e^{-i\omega_c\tau} =
+(1-\cos\omega_c\tau) + i\sin\omega_c\tau\)</span> と比べて、実部と虚部の
+2 本の式</p>
+<p><span class="math display">\[a_p K_t\,(1-\cos\omega_c\tau) =
+\mu_R,\qquad a_p K_t\,\sin\omega_c\tau = \mu_I\]</span></p>
+<p>が得られます。2 本目を 1 本目で割ると <span
+class="math inline">\(\kappa = \mu_I/\mu_R =
+\sin\omega_c\tau/(1-\cos\omega_c\tau) = \cot(\omega_c\tau/2)\)</span>
+となり、ここから <span class="math inline">\(1-\cos\omega_c\tau =
+2/(1+\kappa^2)\)</span> です。これを 1 本目に入れると限界切込みが、<span
+class="math inline">\(\cot(\omega_c\tau/2)=\kappa\)</span> を <span
+class="math inline">\(\tau\)</span>
+について解くと回転数が求まります。</p>
+<p><span class="math display">\[a_{\lim} =
+\frac{\mu_R}{2K_t}\left(1+\kappa^2\right),\qquad \kappa =
+\frac{\mu_I}{\mu_R}\]</span></p>
+<p><span class="math display">\[\omega_c\tau = \varepsilon + 2\pi
+k,\quad \varepsilon = \pi - 2\arctan\kappa,\qquad n = \frac{60}{Z\tau} =
+\frac{60\,\omega_c}{Z\,(2\pi k + \varepsilon)},\qquad k = 0, 1, 2,
+\cdots\]</span></p>
+<p>（Altintas・Budak の論文では、方向係数から <span
+class="math inline">\(Z/2\pi\)</span> をくくり出して <span
+class="math inline">\(\Lambda\)</span>
+という記号で同じ式を書いています。ここでは <span
+class="math inline">\(B_0\)</span> に <span
+class="math inline">\(Z\)</span> を含めているので、<span
+class="math inline">\(\mu\)</span> で書いています。）</p>
+<p>この結果を、方向が 1 つだけの簡単な場合で読み解いてみます。<span
+class="math inline">\(\Phi\)</span> がただの数 <span
+class="math inline">\(G\)</span>（1 方向の FRF）だとすると、<span
+class="math inline">\(\lambda = G\)</span> なので</p>
+<p><span class="math display">\[\mu = -\frac{1}{G} =
+-\frac{\overline{G}}{|G|^2} \quad\Rightarrow\quad \mu_R =
+-\frac{\mathrm{Re}\,G}{|G|^2},\qquad \mu_I =
+\frac{\mathrm{Im}\,G}{|G|^2}\]</span></p>
+<p>です。これを上の <span class="math inline">\(a_{\lim}\)</span>
+の式に入れると、<span class="math inline">\(1+\kappa^2 =
+|G|^2/(\mathrm{Re}\,G)^2\)</span> なので、きれいに約分されて</p>
+<p><span class="math display">\[a_{\lim} =
+-\frac{1}{2K_t\,\mathrm{Re}\,G(\omega_c)}\]</span></p>
+<p>となります。切込みは正でなければ意味がないので、<strong>びびりが起こりうるのは
+<span class="math inline">\(\mathrm{Re}\,G &lt; 0\)</span>
+の周波数だけ</strong>です。</p>
+<p><img
+src="../analysis/ana005_foundation_accel_chatter/results/phase_explained.png"
+alt="FRF の実部とびびりの周波数、k と ε" /></p>
+<p><em>生成スクリプト: <a
+href="../analysis/ana005_foundation_accel_chatter/explain_phase.py">explain_phase.py</a></em></p>
+<p>図 (a) は 1 自由度の FRF を実部と虚部に分けたものです。実部 <span
+class="math inline">\(\mathrm{Re}\,G\)</span>
+は「力と同じ向きに動く成分」で、固有振動数より下では正（ばねのように、押した向きに動く）、上では負（質量のように、押した向きと逆に動く）になります。再生びびりでは、削り厚さが「今の揺れ
+−
+前の揺れ」で決まり、揺れが厚さを減らす向きに力を弱めるという負のフィードバックが掛かっています。そのフィードバックが揺れを打ち消さずに逆に支えてしまうのは、構造が力と逆向きに動く、つまり実部が負の周波数のときだけです。</p>
+<p>図 (b) は、各周波数の <span class="math inline">\(a_{\lim} =
+-1/(2K_t\,\mathrm{Re}\,G)\)</span>
+です。固有振動数より下では解がなく、上では実部がいちばん負になる所で
+<span class="math inline">\(a_{\lim}\)</span> が最小になります。1
+自由度ではそれが固有振動数の約 <span
+class="math inline">\((1+\zeta)\)</span>
+倍の所です。だからびびり周波数は、相対コンプライアンスの山の頂上ではなく、**そのすぐ右側（少し高い周波数）**に出ます。今回のモード
+8 では <span class="math inline">\(182 \times 1.018 \approx 185\)</span>
+Hz でした。実際の計算では <span class="math inline">\(G\)</span> は 2×2
+で <span class="math inline">\(B_0\)</span> も掛かりますが、固有値 <span
+class="math inline">\(\lambda\)</span> が上の <span
+class="math inline">\(G\)</span>
+の役をするだけで、考え方は同じです。</p>
+<p>図 (c) は <span class="math inline">\(k\)</span> と <span
+class="math inline">\(\varepsilon\)</span> の意味です。刃は <span
+class="math inline">\(\tau\)</span> ごとに 1
+枚ずつ来て、前の刃が残した波の上を削ります。<span
+class="math inline">\(\tau\)</span>
+のあいだに揺れの波が何個入るかを数えると、ちょうど整数個とは限らず、<span
+class="math inline">\(k\)</span>
+個とその端数になります。その端数を角度で表したものが <span
+class="math inline">\(\varepsilon\)</span> で、</p>
+<p><span class="math display">\[\omega_c\,\tau = 2\pi k +
+\varepsilon\]</span></p>
+<p>です。<span class="math inline">\(\varepsilon = 0\)</span>
+なら今の波と前の波がぴったり重なって削る厚さは変わらず、びびりは育ちません。<span
+class="math inline">\(\varepsilon\)</span>
+だけずれていると、図の橙色のように厚さが波打ち、力が変動します。限界の式は、構造の遅れ（<span
+class="math inline">\(\kappa = \mu_I/\mu_R\)</span>）とちょうど釣り合う
+<span class="math inline">\(\varepsilon = \pi - 2\arctan\kappa\)</span>
+を要求します。<span class="math inline">\(k\)</span> は 0, 1, 2, …
+のどれでもよく、<span class="math inline">\(k\)</span> を 1 つ選ぶごとに
+<span class="math inline">\(\tau\)</span>、つまり回転数 <span
+class="math inline">\(n = 60/(Z\tau)\)</span> が 1 つ決まります。これが
+<span class="math inline">\(k\)</span> ごとのローブで、<span
+class="math inline">\(k\)</span>
+が大きいほど低い回転数側のローブになります。</p>
+<p><strong>(6) 線図</strong></p>
+<p>線図は、びびり周波数 <span class="math inline">\(\omega_c\)</span> を
+1 つ決めて計算し、それを全部の周波数で繰り返して作ります。1
+つの周波数でやることを、最小点に近い 185 Hz
+を例に具体的に書くと次のとおりです。</p>
+<ol type="1">
+<li><strong>FRF を読む</strong>：185 Hz での相対 FRF は <span
+class="math inline">\(G_{xx} = -0.098 - 0.142i\)</span> µm/N、<span
+class="math inline">\(G_{yy} = 0.011 - 0.002i\)</span> µm/N、<span
+class="math inline">\(G_{xy} = G_{yx} \approx 0\)</span> です。</li>
+<li><strong>固有値を出す</strong>：<span class="math inline">\(\Phi = G
+B_0\)</span> を作り、その固有値 <span
+class="math inline">\(\lambda\)</span> を 2 つ求めます。</li>
+<li><strong><span class="math inline">\(\mu\)</span>
+に直す</strong>：<span class="math inline">\(\mu = -1/\lambda\)</span>
+を計算し、実部 <span class="math inline">\(\mu_R\)</span>
+が正のほうだけを使います（負のほうはこの周波数ではびびらない）。</li>
+<li><strong>限界切込み</strong>：<span class="math inline">\(\kappa =
+\mu_I/\mu_R = -0.86\)</span>、<span class="math inline">\(a_{\lim} =
+\mu_R(1+\kappa^2)/(2K_t) = 9.25\)</span> mm が得られます。</li>
+<li><strong>回転数</strong>：位相のずれ <span
+class="math inline">\(\varepsilon = \pi - 2\arctan\kappa = 4.56\)</span>
+rad を使って、<span class="math inline">\(n = 60\,\omega_c/(Z(2\pi k +
+\varepsilon))\)</span> を <span class="math inline">\(k = 0, 1, 2, 3,
+\dots\)</span> について計算すると、3,822、1,608、1,018、745 min⁻¹ …
+となります。</li>
+</ol>
+<p>つまり 1 つの周波数から、<strong>同じ切込み 9.25 mm の点が、<span
+class="math inline">\(k\)</span> ごとに別々の回転数に 1
+つずつ</strong>できます。これを 5〜3,000 Hz
+のすべての周波数で繰り返すと、<span class="math inline">\(k\)</span>
+ごとに 1 本ずつ U 字形の線（ローブ）ができます。同じ回転数にはいくつもの
+<span class="math inline">\(k\)</span>
+のローブが重なっているので、その中でいちばん低い所をつないだものが安定限界線図です。下の図の
+① が手順 1〜4（周波数ごとの <span
+class="math inline">\(a_{\lim}\)</span>）、② が手順 5（<span
+class="math inline">\(k\)</span>
+ごとに回転数へ移したもの）と、最小をつないだ黒線です。赤い丸が 185 Hz
+の点で、<span class="math inline">\(k=0\)</span> の 3,822 min⁻¹
+の点が線図の最小（★）になっています。</p>
+<p><img
+src="../analysis/ana005_foundation_accel_chatter/results/lobes_explained.png"
+alt="ローブの重なりから線図ができるまで" /></p>
+<p><em>生成スクリプト: <a
+href="../analysis/ana005_foundation_accel_chatter/explain_lobes.py">explain_lobes.py</a></em></p>
+<p>線図を作るときには、各回転数でいちばん小さい <span
+class="math inline">\(a_{\lim}\)</span>
+を選ぶだけでなく、<strong>それがどの周波数 <span
+class="math inline">\(\omega_c\)</span>（とどちらの固有値 <span
+class="math inline">\(\lambda\)</span>）から来たか</strong>も一緒に記録しておきます。下段のびびり周波数のグラフはその記録です。モードの割合（5.3
+節の後半）は、記録したその <span class="math inline">\(\omega_c\)</span>
+と <span class="math inline">\(\lambda\)</span> に戻って、びびりの形
+<span class="math inline">\(\boldsymbol{Q}\)</span>
+を求め、モードに分けて出しています。線図の計算そのものからは割合は出てこず、線図で選ばれた点に戻ってもう一度計算する、という
+2 段階です。</p>
+<h3 id="53-支持条件とテーブル結合の比較">5.3
+支持条件とテーブル結合の比較</h3>
+<p><img
+src="../analysis/ana005_foundation_accel_chatter/results/milling_lobes.png"
+alt="XYクロス成分を含むフライス安定限界" /></p>
+<p>3 本とも、刃先とワークの相対コンプライアンス <span
+class="math inline">\(G\)</span>（X・Y の
+2×2、クロス成分を含む）を使って計算しています。上段は回転数と軸方向切込みの限界、下段はその限界でのびびり周波数です。下段のびびり周波数が回転数ごとに求まるのは、5.2
+節の安定限界の式が、もともと切込み・回転数・びびり周波数の 3
+つを同時に決める式だからです。限界のちょうど上では、揺れは増えも減りもせず一定の周波数で続きます。その周波数
+<span class="math inline">\(\omega_c\)</span> のときだけ、(5)
+の式の実部と虚部の 2 本が同時に成り立ちます。計算では、ある回転数 <span
+class="math inline">\(n\)</span> を決めて（つまり <span
+class="math inline">\(\tau\)</span> を決めて）、<span
+class="math inline">\(\omega\)</span> を 5〜3,000 Hz
+で動かしながら虚部の式が 0 になる <span
+class="math inline">\(\omega\)</span> を探し、見つかった <span
+class="math inline">\(\omega\)</span>
+ごとに実部の式から切込みを出します。候補のうちいちばん小さい切込みが線図の値で、そのときの
+<span class="math inline">\(\omega\)</span>
+が下段のびびり周波数です。回転数が変わると、刃の通過周期 <span
+class="math inline">\(\tau\)</span> が変わって位相の条件を満たす <span
+class="math inline">\(\omega\)</span>
+も少しずつずれるので、びびり周波数は回転数とともに斜めに動き、別のモードの候補の方が小さくなった所で飛び移ります。びびり周波数は、その回転数で切込みを少しずつ増やしていき、ちょうどびびりが始まるときに刃先とワークが揺れる周波数のことで、刃が通る周波数（6,000
+min⁻¹・4 刃なら 400 Hz）とは別に、機械の固有振動数の近くに出ます。</p>
+<table>
+<thead>
+<tr class="header">
+<th>ケース</th>
+<th style="text-align: right;">掃引範囲内の最小切込み限界 mm</th>
+<th style="text-align: right;">約 6,000 min⁻¹ での限界 mm</th>
+<th style="text-align: right;">そのときのびびり周波数 Hz</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>底面固定</td>
+<td style="text-align: right;">11.98</td>
+<td style="text-align: right;">19.08</td>
+<td style="text-align: right;">334.9</td>
+</tr>
+<tr class="even">
+<td>基礎ばね</td>
+<td style="text-align: right;">9.36</td>
+<td style="text-align: right;">20.68</td>
+<td style="text-align: right;">990.0</td>
+</tr>
+<tr class="odd">
+<td>テーブル結合 10 倍</td>
+<td style="text-align: right;">16.43</td>
+<td style="text-align: right;">26.74</td>
+<td style="text-align: right;">997.6</td>
+</tr>
+</tbody>
+</table>
+<p>テストバーにすると、限界は細い工具のとき（2.5〜2.7
+mm）より大きくなり、どのモードが効くかが回転数によって変わるようになります。基礎ばねモデルの最小値（約
+3,900 min⁻¹ で 9.4 mm）は、テーブルが送り方向に揺れる 182 Hz
+のモードで決まっていて、テーブル結合を 10 倍にすると 16.4 mm
+まで上がります。テーブル側のびびりが限界を決める条件になったということです。</p>
+<p>どの FRF
+の山・どのモードでびびっているかを、線図の最小点で示したのが次のアニメーションです。</p>
+<p><img
+src="../analysis/ana005_foundation_accel_chatter/results/milling_with_modes.gif"
+alt="安定限界とびびり振動形状（アニメーション）" /></p>
+<p><em>生成スクリプト: <a
+href="../analysis/ana005_foundation_accel_chatter/chatter_point_anim.py">chatter_point_anim.py</a></em></p>
+<p>最小点（★、約 3,890 min⁻¹）のびびり周波数は 185 Hz で、相対 X-X
+のいちばん高い山（モード 8、182
+Hz）のすぐ近くです。ぴったり一致せず少し高くなるのは、びびりが起きるのは
+FRF の実部が負になる側、つまり固有振動数より少し上だからです。1
+自由度では実部が最も負になるのは <span class="math inline">\(\omega
+\approx \omega_r(1+\zeta_r)\)</span> で、モード 8 の <span
+class="math inline">\(\zeta_r \approx 0.018\)</span> を入れると 182 ×
+1.018 ≈ 185 Hz となり、計算と合います。びびり振動の形（③）はモード
+8（④）とほぼ同じで、テーブルとワークが送り方向に揺れ、テストバーはほとんど動いていません。</p>
+<table>
+<thead>
+<tr class="header">
+<th>回転数</th>
+<th style="text-align: right;">切込み限界</th>
+<th style="text-align: right;">びびり周波数</th>
+<th>1 番目に効くモード</th>
+<th>2 番目</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>約 3,000 min⁻¹</td>
+<td style="text-align: right;">14.6 mm</td>
+<td style="text-align: right;">935 Hz</td>
+<td>モード 18：910 Hz 主軸・テストバーの曲げ（50 %）</td>
+<td>モード 20：996 Hz（18 %）</td>
+</tr>
+<tr class="even">
+<td>約 3,900 min⁻¹</td>
+<td style="text-align: right;">9.2 mm</td>
+<td style="text-align: right;">185 Hz</td>
+<td>モード 8：182 Hz テーブルの X 並進（約 80 %）</td>
+<td>モード 11：431 Hz（約 5 %）</td>
+</tr>
+<tr class="odd">
+<td>約 6,000 min⁻¹</td>
+<td style="text-align: right;">20.7 mm</td>
+<td style="text-align: right;">990 Hz</td>
+<td>モード 18：910 Hz（34 %）</td>
+<td>モード 20：996 Hz（32 %）</td>
+</tr>
+<tr class="even">
+<td>約 10,000 min⁻¹</td>
+<td style="text-align: right;">20.1 mm</td>
+<td style="text-align: right;">987 Hz</td>
+<td>モード 18：910 Hz（35 %）</td>
+<td>モード 20：996 Hz（32 %）</td>
+</tr>
+</tbody>
+</table>
+<p>（% は刃先―ワーク相対変位への寄与。<a
+href="../analysis/ana005_foundation_accel_chatter/chatter_modes.py">chatter_modes.py</a>、<a
+href="../analysis/ana005_foundation_accel_chatter/chatter_by_rpm.py">chatter_by_rpm.py</a>
+の結果）</p>
+<h4
+id="びびり振動になぜいくつかのモードが混ざるのか">びびり振動に、なぜいくつかのモードが混ざるのか</h4>
+<p>最初に、線図の「最小の <span class="math inline">\(a_{\lim}\)</span>
+をつなぐ」こととモードが混ざることの関係を整理しておきます。線図を作るときに各回転数で選んでいるのは、いちばん小さい
+<span class="math inline">\(a_{\lim}\)</span>
+を与える<strong>びびり周波数 <span
+class="math inline">\(\omega_c\)</span> 1 つ</strong>です。モードを 1
+つ選んでいるわけではありません。たとえば最小点（3,890 min⁻¹、9.2
+mm）では <span class="math inline">\(\omega_c = 185\)</span> Hz
+が選ばれます。その 185 Hz での相対 FRF <span
+class="math inline">\(G(\omega_c)\)</span> は、下の図 ①
+のように、すべてのモードの分を足し合わせたものです。185 Hz
+の縦線の上で、モード 8 の線はいちばん高いですが、ほかのモードの線も 0
+ではありません。だから 185 Hz で揺れるとき、構造は共振に近いモード 8
+を中心に、ほかのモードも少しずつ一緒に揺れます。図 ②
+が、その揺れをモードごとに分けた割合です。つまり、<span
+class="math inline">\(a_{\lim}\)</span> の計算で周波数が 1
+つ決まり、その周波数での揺れを分解すると、いくつかのモードが混ざって見える、という順番です。</p>
+<p><img
+src="../analysis/ana005_foundation_accel_chatter/results/mode_mix_why.png"
+alt="a_lim とモードの混ざり方のつながり" /></p>
+<p><em>生成スクリプト: <a
+href="../analysis/ana005_foundation_accel_chatter/explain_mode_mix2.py">explain_mode_mix2.py</a></em></p>
+<p>以下では、この「足し合わせ」がどういう式になるかを説明します。</p>
+<p>5.2 の (4) で、びびりのときの揺れ <span
+class="math inline">\(\boldsymbol{Q}\)</span> は、切削力 <span
+class="math inline">\(\boldsymbol{F}\)</span>
+に対する構造の応答でした。3.5
+節で見たように、構造の揺れはいくつかの固有モードの足し合わせで書けます。<span
+class="math inline">\(\boldsymbol{d}_r\)</span> はモード <span
+class="math inline">\(r\)</span>
+で刃先とワークがどう食い違って動くかを表す「形」（X・Y の 2
+成分）、<span class="math inline">\(\eta_r\)</span>
+はそのモードがどれだけ揺れているかを表す「大きさ」（複素数なので位相も含む）です。びびりの揺れは、各モードの形にその大きさを掛けて全部足したものになります。</p>
+<p><span class="math inline">\(\eta_r\)</span>
+の式は、機械全体の運動方程式から出てきます。FEM の運動方程式は、質量行列
+<span class="math inline">\(\boldsymbol{M}\)</span>、減衰行列 <span
+class="math inline">\(\boldsymbol{C}\)</span>、剛性行列 <span
+class="math inline">\(\boldsymbol{K}\)</span>、節点にかかる力 <span
+class="math inline">\(\boldsymbol{f}\)</span> を使って</p>
+<p><span class="math display">\[\boldsymbol{M}\ddot{\boldsymbol{x}} +
+\boldsymbol{C}\dot{\boldsymbol{x}} + \boldsymbol{K}\boldsymbol{x} =
+\boldsymbol{f}\]</span></p>
+<p>と書けます。全節点の変位 <span
+class="math inline">\(\boldsymbol{x}\)</span> を固有モード <span
+class="math inline">\(\boldsymbol{\phi}_r\)</span>（質量正規化：<span
+class="math inline">\(\boldsymbol{\phi}_r^T\boldsymbol{M}\boldsymbol{\phi}_r
+= 1\)</span>、<span
+class="math inline">\(\boldsymbol{\phi}_r^T\boldsymbol{K}\boldsymbol{\phi}_r
+= \omega_r^2\)</span>）の足し合わせ <span
+class="math inline">\(\boldsymbol{x} = \sum_r
+\boldsymbol{\phi}_r\,\eta_r\)</span> で表し、両辺に左から <span
+class="math inline">\(\boldsymbol{\phi}_r^T\)</span>
+を掛けると、モードどうしの直交性によって、モードごとにばらばらの 1
+自由度の式になります（減衰は Rayleigh
+減衰なので同じように分かれます）。</p>
+<p><span class="math display">\[\ddot{\eta}_r +
+2\zeta_r\omega_r\,\dot{\eta}_r + \omega_r^2\,\eta_r =
+\boldsymbol{\phi}_r^T\boldsymbol{f}\]</span></p>
+<p>力が周波数 <span class="math inline">\(\omega_c\)</span>
+で振動している（<span class="math inline">\(\boldsymbol{f}e^{i\omega_c
+t}\)</span>、<span class="math inline">\(\eta_r e^{i\omega_c
+t}\)</span>）とすると、<span class="math inline">\(\ddot{\eta}_r =
+-\omega_c^2\eta_r\)</span>、<span class="math inline">\(\dot{\eta}_r =
+i\omega_c\eta_r\)</span> なので</p>
+<p><span class="math display">\[\eta_r =
+\frac{\boldsymbol{\phi}_r^T\boldsymbol{f}}{\omega_r^2 - \omega_c^2 +
+2i\zeta_r\omega_r\omega_c}\]</span></p>
+<p>です。切削力はワークに <span
+class="math inline">\(+\boldsymbol{F}\)</span>、刃先に <span
+class="math inline">\(-\boldsymbol{F}\)</span>
+と逆向きの対でかかるので、分子は <span
+class="math inline">\(\boldsymbol{\phi}_r(\text{ワーク})^T\boldsymbol{F}
+- \boldsymbol{\phi}_r(\text{刃先})^T\boldsymbol{F} =
+\boldsymbol{d}_r^T\boldsymbol{F}\)</span>
+になり、上の式が得られます。分子の <span
+class="math inline">\(\boldsymbol{d}_r^T\boldsymbol{F}\)</span>
+は「切削力がそのモードをどれだけ押せるか」、分母は「びびり周波数がそのモードの固有振動数にどれだけ近いか」を表しています。3.5
+節の相対 FRF のモード分解の式も、これを <span
+class="math inline">\(\boldsymbol{F}\)</span> で割ったものです。</p>
+<p><span class="math display">\[\boldsymbol{Q} = \sum_r
+\boldsymbol{d}_r\,\eta_r,\qquad \eta_r =
+\frac{\boldsymbol{d}_r^{T}\boldsymbol{F}}{\omega_r^2 - \omega_c^2 +
+2i\zeta_r\omega_r\omega_c}\]</span></p>
+<p>モード <span class="math inline">\(r\)</span>
+がどれだけ混ざるかは、分母と分子の 2
+つで決まります。分母は<strong>びびり周波数がそのモードの固有振動数にどれだけ近いか</strong>で、近いほど大きく揺れます。分子は<strong>切削力の向きとモードの形がどれだけ合っているか</strong>で、力の向きにそのモードが動ける形なら大きくなります。</p>
+<p>割合は、<span class="math inline">\(a_{\lim}\)</span>
+の式からではなく、限界の点でのびびりの形 <span
+class="math inline">\(\boldsymbol{Q}\)</span> から出します。<span
+class="math inline">\(a_{\lim}\)</span> と <span
+class="math inline">\(\omega_c\)</span> が決まると、(5) の行列 <span
+class="math inline">\(I + a_pK_t(1-e^{-i\omega_c\tau})GB_0\)</span>
+は行列式が 0 になる、つまり掛けると 0 になる向きを 1
+つ持ちます。その向きがびびりの形 <span
+class="math inline">\(\boldsymbol{Q}\)</span>（X・Y
+の比と位相）です。そこから切削力 <span
+class="math inline">\(\boldsymbol{F} \propto B_0\boldsymbol{Q}\)</span>
+を作り、上の式で各モードの <span class="math inline">\(\eta_r\)</span>
+を計算して、刃先とワークのずれへの寄与の大きさで割合を決めます。</p>
+<p><span class="math display">\[\text{割合}_r =
+\frac{|\eta_r|\,\|\boldsymbol{d}_r\|}{\sum_s
+|\eta_s|\,\|\boldsymbol{d}_s\|}\]</span></p>
+<p><span class="math inline">\(\boldsymbol{Q}\)</span>
+の大きさ自体は決まらない（限界ではどの振幅でも続く）ので、絶対値ではなく割合だけに意味があります。</p>
+<p><img
+src="../analysis/ana005_foundation_accel_chatter/results/mode_mix.png"
+alt="モードの混ざり方" /></p>
+<p><em>生成スクリプト: <a
+href="../analysis/ana005_foundation_accel_chatter/explain_mode_mix.py">explain_mode_mix.py</a></em></p>
+<p>線図の最小点（185 Hz）では、モード 8（182
+Hz）がびびり周波数のすぐ近くにあるので分母が小さく、79 %
+を占めます。モード 11（431
+Hz）は固有振動数が離れていて分母は大きいのですが、5 %
+混ざっています。これは ④ のように、刃先が X に揺れると、<span
+class="math inline">\(B_0\)</span> の非対角成分のせいで切削力が主に Y
+方向に出るからです。Y 方向に動くテーブルのモード 11
+は力の向きとよく合っていて（分子が大きい）、共振から離れていても少し引きずられます。逆にモード
+22・20
+などの高い周波数のモードは、力の向きとはよく合っていても、共振から遠すぎてほとんど混ざりません。</p>
+<h4
+id="どこを直すべきか変形のエネルギーがどこにたまっているか">どこを直すべきか：変形のエネルギーがどこにたまっているか</h4>
+<p>モードの固有振動数を上げたり山を低くしたりするには、そのモードで<strong>変形のエネルギー（ひずみエネルギー）がたまっている場所</strong>を硬くするのがいちばん効きます。エネルギーがたまっていない所を硬くしても、そのモードはほとんど変わりません。各モードの変形エネルギーを、ガイドのばね・ボールねじのばね・脚のばね・ソリッド（鋳物・主軸など）に分けました。</p>
+<p><img
+src="../analysis/ana005_foundation_accel_chatter/results/strain_energy.png"
+alt="モードごとの変形エネルギーの内訳" /></p>
+<p><img
+src="../analysis/ana005_foundation_accel_chatter/results/mode_energy.png"
+alt="変形エネルギーと応力の分布" /></p>
+<p><em>生成スクリプト: <a
+href="../analysis/ana005_foundation_accel_chatter/strain_energy.py">strain_energy.py</a>、<a
+href="../analysis/ana005_foundation_accel_chatter/render_energy.py">render_energy.py</a>（固有値解析で要素のひずみエネルギーと応力を出力）</em></p>
+<p>固有モードの形には決まった大きさがなく、固有値解析の出力の応力やエネルギーの値はそのままでは意味を持ちません（どこが相対的に大きいかだけが分かる）。そこでこの図では、各モードを「刃先とワークの相対振幅が
+1 µm
+になる大きさ」にそろえてから応力とエネルギー密度を描き、カラーバーに値を入れています。びびりで刃先とワークが
+1 µm
+食い違って揺れているとき、どこにどれだけの応力がかかるかとして読めます。値は振幅に比例し（エネルギーは振幅の
+2 乗）、相対振幅が 10 µm なら応力は 10 倍です。</p>
+<p>モード 8 の図がほぼ真っ暗なのは、変形のエネルギーの 70 %
+がソリッドではなくボールねじのばねにたまっていて、鋳物の部分はほとんど変形していないためです。この図にはばねの中のエネルギーは描かれないので、上の棒グラフと合わせて読んでください。モード
+11 ではキャリッジの周り、モード 18
+では主軸の付け根とテストバーの付け根、主軸頭の前面に応力が集まっています。</p>
+<table>
+<thead>
+<tr class="header">
+<th>モード</th>
+<th>何が効いているか</th>
+<th>直す場所</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>モード 8（182 Hz、限界の最小を決める）</td>
+<td>変形エネルギーの <strong>70 % がボールねじのばね</strong>、ガイドは
+1 %、残りの 28 % はテーブル・ベッドなどのソリッド</td>
+<td><strong>ボールねじ（送り系）の軸方向剛性</strong>：ねじ軸の径、支持方式（固定―固定）、ナットの予圧、サポート軸受（<a
+href="../study/ref004_工作機械_ばね剛性と減衰の決め方.html">study/ref004</a>）。テーブル結合
+10 倍で限界が 9.4 → 16.4 mm になったのはこのため</td>
+</tr>
+<tr class="even">
+<td>モード 11（431 Hz）</td>
+<td>ガイドの横ばねが 31 %、残りはキャリッジ付近とコラムのソリッド</td>
+<td>ガイドの横剛性（形番・予圧）、キャリッジ取付部</td>
+</tr>
+<tr class="odd">
+<td>モード 18（910 Hz、多くの回転数で効く）</td>
+<td>97 %
+がソリッド。応力は<strong>主軸の付け根（主軸頭との境）とテストバーの付け根</strong>、主軸頭の前面に集中</td>
+<td>主軸頭から突き出す主軸まわりの剛性。実機では主軸軸受とツールホルダの剛性がここに入る</td>
+</tr>
+</tbody>
+</table>
+<p>このモデルで「限界の最小値」を上げたいなら、ボールねじの剛性を上げるのが最も効きます。広い回転数で限界を上げたいなら、主軸の付け根の剛性が次の対象です。</p>
+<p>主軸とテストバーの曲げ（910・996
+Hz）が効くのは、このモデルでは主軸（100 mm 角・長さ 150
+mm）を主軸頭に完全結合し、そこからテストバーが突き出しているためです。実機では主軸軸受と工具把持部（ツールホルダ・テーパ）の剛性がここに入るので、そのばねを入れると周波数はさらに下がる可能性があります。</p>
+<p>「テーブル結合 10
+倍」は、ガイド・ナットが限界にどれだけ効くかを調べる感度試験で、10
+倍の部品を提案するものではありません。</p>
+<h3 id="54-どの-frf-を使うかで限界とびびりモードはどう変わるか">5.4 どの
+FRF を使うかで、限界とびびりモードはどう変わるか</h3>
+<p>実機では、刃先だけを叩いた FRF やテーブルだけを叩いた FRF
+を測ることも多いので、同じ基礎ばねモデルから 3 種類の FRF
+を作り、同じ切削条件で線図を描いて比べました。A は刃先だけを叩いた FRF
+でワークは動かないと仮定したもの、B はテーブル上のワークだけを叩いた FRF
+で工具は動かないと仮定したもの、C は刃先とワークの相対 FRF です。</p>
+<p><img
+src="../analysis/ana005_foundation_accel_chatter/results/stability_compare.png"
+alt="3 種類の FRF による安定限界線図" /></p>
+<p><em>生成スクリプト: <a
+href="../analysis/ana005_foundation_accel_chatter/stability_compare.py">stability_compare.py</a></em></p>
+<p>①のコンプライアンスにはいくつも山があるので、主な 4
+つの山がそれぞれどのモードなのかを下のアニメーションで並べました。左から、FRF
+のどの山か（黒い縦線）、そのモードの揺れ方、ひずみエネルギー密度、ミーゼス応力です。応力とエネルギーは、そのモードの最大変位が
+1 µm
+になる大きさにそろえた値なので、行どうしで大きさを比べられます。</p>
+<p><img
+src="../analysis/ana005_foundation_accel_chatter/results/peak_modes.gif"
+alt="①の FRF の山ごとのモード・ひずみエネルギー・応力" /></p>
+<p><em>生成スクリプト: <a
+href="../analysis/ana005_foundation_accel_chatter/peak_modes_anim.py">peak_modes_anim.py</a></em></p>
+<p>いちばん上の 22 Hz（モード 2）は、機械全体が脚のばねの上で X
+方向に揺れるモードです（同じ 22 Hz のモード 1 は Y
+方向の揺れ）。全体が同じように動くので構造体の中にはほとんどひずみが生まれず、応力も
+0.002 MPa
+程度しかありません。刃先（A）とワーク（B）を床に対して測ると大きな山になりますが、両者が一緒に動くので相対（C）には出てきません。A
+と B の線図が低い回転数で 4 mm
+まで下がるのは、この山を拾っているためです。</p>
+<p>2 段目の 182 Hz（モード 8）は、テーブルが送り方向に揺れるモードで、B
+と C に大きな山が出ます。C の線図で最小の限界 9.2 mm
+を決めているのはこのモードです。構造体のひずみエネルギーの図がほとんど黒いのは、エネルギーの
+70 %
+がボールねじのばね（構造体ではなくばね要素）にたまっているからで、構造体の板厚を増やしてもこの山はあまり下がりません。下げるにはボールねじ・ナットまわりの送り方向の剛性を上げることになります。</p>
+<p>3 段目の 346 Hz（モード
+10）は、主軸頭とコラムが前後に曲がるモードで、刃先側が動くので A と C
+に山があります。ひずみエネルギーと応力はコラムの根元と主軸頭の付け根に集まっていて、ここが補強すべき場所です。</p>
+<p>いちばん下の 910 Hz（モード
+18）は、主軸とテストバーが一緒に曲がるモードで、これも A と C
+の山です。応力は主軸の付け根と、主軸を抱える主軸頭のまわりに集中しています。B
+にはこれらの刃先側のモードがほとんど出ないので、テーブルだけを叩いた FRF
+ではこの 2 つの山を見落とします。</p>
+<p>②の線図で、低い回転数（約 600 min⁻¹）で限界が 4 mm
+まで下がっているのは B だけでなく A
+も同じで、青い線がオレンジの線と重なって見えにくくなっています。どちらも
+22 Hz のモードのせいです。びびりの波は、刃 1 枚ぶんの時間 <span
+class="math inline">\(\tau\)</span> のあいだに <span
+class="math inline">\(k + \varepsilon/2\pi\)</span>
+個入る、という位相の条件（5.2 節 (5)）を満たさないと起きません。22 Hz
+のような低い周波数では、いちばん波の数が少ない <span
+class="math inline">\(k = 0\)</span> のローブでも、刃の通過周波数 <span
+class="math inline">\(Zn/60\)</span>
+がびびり周波数と同じくらいの低い回転数、ここでは 4 枚刃で 330〜600 min⁻¹
+付近にしか出てきません。だから 22 Hz
+のモードは低い回転数でだけ限界を下げ、回転数を上げるとその影響は急になくなります（600
+→ 1,500 min⁻¹ で 4 → 16 mm に上がっている部分）。</p>
+<table>
+<thead>
+<tr class="header">
+<th>使う FRF</th>
+<th style="text-align: right;">最小の切込み限界</th>
+<th style="text-align: right;">その回転数</th>
+<th style="text-align: right;">びびり周波数</th>
+<th>効いているモード（寄与）</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>A：刃先の FRF だけ</td>
+<td style="text-align: right;">4.04 mm</td>
+<td style="text-align: right;">578 min⁻¹</td>
+<td style="text-align: right;">23 Hz</td>
+<td>モード 1（22 Hz, 47 %）、モード 2（22 Hz, 44 %）、モード 18（910 Hz,
+1 %）</td>
+</tr>
+<tr class="even">
+<td>B：テーブル（ワーク）の FRF だけ</td>
+<td style="text-align: right;">4.00 mm</td>
+<td style="text-align: right;">578 min⁻¹</td>
+<td style="text-align: right;">22 Hz</td>
+<td>モード 1（22 Hz, 49 %）、モード 2（22 Hz, 47 %）、モード 8（182 Hz,
+2 %）</td>
+</tr>
+<tr class="odd">
+<td>C：刃先―ワーク相対 FRF</td>
+<td style="text-align: right;">9.22 mm</td>
+<td style="text-align: right;">3890 min⁻¹</td>
+<td style="text-align: right;">185 Hz</td>
+<td>モード 8（182 Hz, 86 %）、モード 11（431 Hz, 2 %）、モード 18（910
+Hz, 2 %）</td>
+</tr>
+</tbody>
+</table>
+<p>正しい C では、最小 9.2 mm を決めているのはテーブルの 182 Hz
+のモードです。A と B は、脚の上で機械全体が揺れる 22 Hz
+のモードを拾うため、低い回転数で 4 mm
+という誤った限界を出します。このモードでは刃先とワークが一緒に動くので、実際の削り合いには関係しません。</p>
+<p>「1
+次モードを入れると線図がおかしくなるので外す」という話は、片側だけの FRF
+を使った場合のことです。相対 FRF
+ではこのモードは消えるので、外さなくても正しく求まります。モードを外してよいかは、周波数の低さではなく、相対
+FRF に出るかどうかで判断します。びびりの評価は相対 FRF
+で行うのが基本です。</p>
+<h3 id="55-回転数ごとのびびりモード">5.5 回転数ごとのびびりモード</h3>
+<p>線図の上の点ごとに、限界のときの振動の形を求め、それがどのモードの重ね合わせでできているかを回転数ごとに調べました。アニメーションでは、回転数を低い方から順に動かしながら、①線図上の位置、②相対コンプライアンスのどの山の近くでびびっているか、③びびり振動そのものの形、④⑤その中で割合の大きい
+2 つのモードの形を並べています。</p>
+<p><img
+src="../analysis/ana005_foundation_accel_chatter/results/chatter_by_rpm.gif"
+alt="回転数ごとのびびりモード" /></p>
+<p><img
+src="../analysis/ana005_foundation_accel_chatter/results/chatter_by_rpm.png"
+alt="回転数ごとのモードの割合" /></p>
+<p><em>生成スクリプト: <a
+href="../analysis/ana005_foundation_accel_chatter/chatter_by_rpm.py">chatter_by_rpm.py</a></em></p>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: right;">回転数 [min⁻¹]</th>
+<th style="text-align: right;">切込み限界 [mm]</th>
+<th style="text-align: right;">びびり周波数 [Hz]</th>
+<th>1 番目のモード</th>
+<th>2 番目のモード</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">992</td>
+<td style="text-align: right;">10.15</td>
+<td style="text-align: right;">184</td>
+<td>モード 8（182 Hz） 80 %</td>
+<td>モード 11（431 Hz） 5 %</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">2001</td>
+<td style="text-align: right;">15.97</td>
+<td style="text-align: right;">353</td>
+<td>モード 10（346 Hz） 58 %</td>
+<td>モード 11（431 Hz） 15 %</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">3010</td>
+<td style="text-align: right;">14.61</td>
+<td style="text-align: right;">935</td>
+<td>モード 18（910 Hz） 50 %</td>
+<td>モード 20（996 Hz） 18 %</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">3993</td>
+<td style="text-align: right;">9.27</td>
+<td style="text-align: right;">186</td>
+<td>モード 8（182 Hz） 78 %</td>
+<td>モード 11（431 Hz） 5 %</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">6012</td>
+<td style="text-align: right;">20.67</td>
+<td style="text-align: right;">990</td>
+<td>モード 18（910 Hz） 35 %</td>
+<td>モード 20（996 Hz） 32 %</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">8004</td>
+<td style="text-align: right;">15.42</td>
+<td style="text-align: right;">352</td>
+<td>モード 10（346 Hz） 59 %</td>
+<td>モード 11（431 Hz） 15 %</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">9997</td>
+<td style="text-align: right;">20.05</td>
+<td style="text-align: right;">987</td>
+<td>モード 18（910 Hz） 36 %</td>
+<td>モード 20（996 Hz） 31 %</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">11989</td>
+<td style="text-align: right;">21.33</td>
+<td style="text-align: right;">1199</td>
+<td>モード 22（1171 Hz） 36 %</td>
+<td>モード 23（1205 Hz） 30 %</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">14008</td>
+<td style="text-align: right;">43.44</td>
+<td style="text-align: right;">1254</td>
+<td>モード 22（1171 Hz） 28 %</td>
+<td>モード 23（1205 Hz） 24 %</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">16000</td>
+<td style="text-align: right;">26.20</td>
+<td style="text-align: right;">907</td>
+<td>モード 18（910 Hz） 57 %</td>
+<td>モード 20（996 Hz） 15 %</td>
+</tr>
+</tbody>
+</table>
+<p>回転数によって主役のモードが入れ替わります。限界がいちばん低い谷（約
+1,000 min⁻¹ と 4,000 min⁻¹ 付近）はテーブルの 182 Hz、約 2,000 min⁻¹ と
+8,000 min⁻¹ 付近は主軸頭・コラムの 346
+Hz、それ以外の多くの回転数は主軸とテストバーの曲げ（910・996
+Hz）、12,000 min⁻¹ 以上では 1,171・1,205 Hz
+のモードが効いています。どの回転数帯を使うかで、直すべき場所が変わります。</p>
+<h3 id="56-底面を固定するとなぜ切込み限界が変わるのか">5.6
+底面を固定すると、なぜ切込み限界が変わるのか</h3>
+<p>テストバーのモデルでは、最小の限界は底面固定 12.0 mm、基礎ばね 9.4 mm
+で、底面固定のほうが大きくなりました（細い工具のときは逆でした）。どちらも最小点はテーブルの送り方向のモード（約
+180 Hz）で決まっていて、違いはその山の高さです。</p>
+<p>相対 X-X の 180 Hz 付近の山は、底面固定で 0.19 µm/N、基礎ばねで 0.23
+µm/N
+です。基礎ばねでは脚がわずかに動けるぶん、テーブルの揺れにベッドの揺れが少し加わり、刃先とワークの食い違いが大きくなります。山の負の実部（びびりの起こりやすさ）も
+−0.060 から −0.101 µm/N に大きくなり、そのぶん限界が下がります。</p>
+<p>細い工具のときに基礎ばねのほうが有利だったのは、工具の曲げの周波数の近くに本体側のモードがあって、揺れが分散したためでした。支持条件の良し悪しは、どのモードが限界を決めているかで逆転します。脚の剛性を変えて限界を上げようとするより、限界を決めているモードの部品（ここではボールねじ・ガイド、または主軸側）を直接見直すほうが確実です。</p>
+<h3 id="57-適用範囲">5.7 適用範囲</h3>
+<p>この線図は、仮定した立型モデル・切削係数・零次近似・周波数帯域に対する計算結果。実機への加工条件指定には用いない。主軸軸受・把持・ワーク固定の動特性、回転による変化、周期係数、プロセスダンピング、刃の離脱・非線形性は未検証である。</p>
+<p>次は切削係数の同定、刃先FRFの計測、半離散化法／全離散化法との比較、限定した切削試験によるびびり周波数と境界の照合を行う。</p>
+<p>理論の参照：<a
+href="https://www.malinc.com/wp-content/uploads/2014/06/JMTSReviewPaper_Altintas.pdf">AltintasのMALモデル解説、第4節</a>、<a
+href="https://doi.org/10.1016/S0007-8506(07)62342-7">Altintas・Budak、1995</a>。</p>
+<h2 id="6-研究テーマと比較条件">6. 研究テーマと比較条件</h2>
+<table>
+<thead>
+<tr class="header">
+<th>テーマ</th>
+<th>比較条件と評価指標</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>基礎支持に応じた指令設計</td>
+<td>同じ距離・速度・電流上限で、移動＋刃先相対整定を比較</td>
+</tr>
+<tr class="even">
+<td>テーブル由来モードの寄与分離</td>
+<td>テーブル質量、ガイド・ナット、基礎、工具系を個別に変えてFRF・SLDを比較</td>
+</tr>
+<tr class="odd">
+<td>位置・積載による加工限界の変化</td>
+<td>テーブル中央／端、ワーク質量違いで相対FRF行列とSLDを比較</td>
+</tr>
+<tr class="even">
+<td>指令と加工条件の協調設計</td>
+<td>加速度・ジャークと主軸回転数・切込みを変え、サイクル時間と加工誤差を評価</td>
+</tr>
+</tbody>
+</table>
+<p>ジャークのタイミングで機械ベースの振動を抑える実機研究もある。<a
+href="https://ieeexplore.ieee.org/abstract/document/11435830">2026年AMC論文、出版者要旨確認</a>。特許検討ではS字指令やSLDそのものより、支持状態の推定、相対振動に効くモードの選別、指令・加工条件の更新手順などの具体的な差を調べる。</p>
+<h2 id="7-再現手順と検証記録">7. 再現手順と検証記録</h2>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> analysis/ana005_foundation_accel_chatter</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="ex">./run_bar.sh</span>                       <span class="co"># テストバーで 3 ケースの FEM → FRF → 安定限界 → モード分解 → 図（約 15 分）</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> export_modal_basis.py fixed<span class="kw">;</span> <span class="ex">python</span> export_modal_basis.py foundation_table_stiff   <span class="co"># 他の 2 ケースのモード基底</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> frf_tool_work_rel.py        <span class="co"># 3.3 刃先・ワーク・相対のコンプライアンス</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> render_model.py<span class="kw">;</span> <span class="ex">python</span> render_springs.py   <span class="co"># 2 章のモデル図</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> explain_mode_mix.py<span class="kw">;</span> <span class="ex">python</span> strain_energy.py<span class="kw">;</span> <span class="ex">python</span> render_energy.py   <span class="co"># 5.3 モードの混ざり方と直す場所</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> k_sweep <span class="kw">&amp;&amp;</span> <span class="ex">./rerun_bar.sh</span>       <span class="co"># 4.5〜4.6 脚の剛性スイープ</span></span></code></pre></div>
+<p><code>python</code> は <code>~/opt/venv/bin/python</code>、環境変数
+<code>VMC_TOOL=bar</code>（既定）でテストバー、<code>slender</code>
+で細い工具のモデルになります。</p>
+<p><a
+href="../analysis/ana005_foundation_accel_chatter/results/static_checks.json">静解析照合</a>、<a
+href="../analysis/ana005_foundation_accel_chatter/results/checks.json">相反性・簡略再生モデルの検算</a>、<a
+href="../analysis/ana005_foundation_accel_chatter/results/milling_checks.json">フライス境界の検算</a>、<a
+href="../analysis/ana005_foundation_accel_chatter/results/acceleration.json">加減速の仮定と全結果</a>を保存する。</p>
+<p>境界の特性行列残差、周波数探索格子を倍にした確認、方向係数の積分、加減速指令の距離・終端速度を検算する。これらは計算の整合確認であり、実機・切削実験の検証とは区別する。</p>
+<hr />
+<p><a href="README.html">← docs 目次</a> ｜ <a href="../README.html">⌂
+トップ</a> ｜ <a
+href="ana004_CalculiX-FrontISTR_ばねの種類の確認.html">← 前: ana004
+ばねの種類の確認</a> ｜ <a
+href="ana006_CalculiX_主軸頭の高さとコラム位置のびびりパラスタ.html">次:
+ana006 主軸頭の高さとコラム位置のびびりパラスタ →</a></p>
+</body>
+</html>

@@ -406,6 +406,90 @@ reactingFoam で十分。
 噴流の衝撃波の構造まで正しく見たい場合は、オリフィス付近を細かくし、2
 次精度の離散化や密度ベースのソルバと比べる必要がある。</p>
 <hr />
+<hr />
+<h2 id="3b-固体連成chtの理論式とソルバの向き不向き2026-11-10-追記">3b.
+固体連成（CHT）の理論式とソルバの向き不向き（2026-11-10 追記）</h2>
+<h3 id="3b1-解く式">3b.1 解く式</h3>
+<p><strong>流体の領域</strong>（燃焼ガス・外の空気）：2.6
+と同じ（質量・運動量・成分・エネルギー）。重力を入れるので、圧力は静水圧を引いた
+<span class="math inline">\(p_{rgh} = p - \rho\,\mathbf g\cdot\mathbf
+x\)</span> で解く。</p>
+<p><strong>固体の領域</strong>（鋼の壁）：熱伝導の式だけを解く。</p>
+<p><span class="math display">\[\frac{\partial(\rho_s h_s)}{\partial t}
+= \nabla\cdot\left(\frac{\kappa_s}{c_{p,s}}\nabla h_s\right),\qquad h_s
+= c_{p,s}(T - T_{\mathrm{ref}})\]</span></p>
+<p><strong>流体と固体の境目</strong>：温度と熱流束がつり合う。</p>
+<p><span class="math display">\[T_f = T_s,\qquad \left(\kappa +
+c_p\,\alpha_t\right)_f \frac{\partial T}{\partial n}\bigg|_f = \kappa_s
+\frac{\partial T}{\partial n}\bigg|_s\]</span></p>
+<ul>
+<li>流体側の <span class="math inline">\(\alpha_t\)</span>
+は乱流の熱拡散で、壁関数（<code>alphatJayatillekeWallFunction</code>）が壁の近くの温度分布の形から決める。</li>
+<li><strong>熱伝達率は入力しない</strong>。計算のあとで、壁への熱流束
+<span class="math inline">\(q_w\)</span> と、ガスの平均温度 <span
+class="math inline">\(\bar T_g\)</span>・壁の内面温度 <span
+class="math inline">\(T_w\)</span> から求める。</li>
+</ul>
+<p><span class="math display">\[h = \frac{q_w}{\bar T_g -
+T_w}\]</span></p>
+<p><strong>壁への熱のしみ込みの深さ</strong>（半無限の固体の熱伝導）</p>
+<p><span class="math display">\[\delta \approx \sqrt{\alpha_s t},\qquad
+\alpha_s = \frac{\kappa_s}{\rho_s c_{p,s}} = 1.25\times10^{-5}\
+\mathrm{m^2/s}\ \Rightarrow\ \delta(50\ \mathrm{ms}) \approx 0.8\
+\mathrm{mm}\]</span></p>
+<h3 id="3b2-ソルバの向き不向きソースと計算で確かめた結果">3b.2
+ソルバの向き不向き（ソースと計算で確かめた結果）</h3>
+<table>
+<thead>
+<tr class="header">
+<th>ソルバ（版）</th>
+<th>混合ガス</th>
+<th>体積からの湧き出し</th>
+<th>超音速（<code>transonic</code>）</th>
+<th>固体連成</th>
+<th>この計算への向き</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>reactingFoam</code>（ESI v2512）</td>
+<td>○</td>
+<td>○（圧力の式に <code>fvOptions(psi, p, rho)</code> あり）</td>
+<td>○</td>
+<td>×</td>
+<td>run001 で使用。壁は断熱のみ</td>
+</tr>
+<tr class="even">
+<td><code>chtMultiRegionFoam</code>（ESI v2512）</td>
+<td>○（<code>rhoReactionThermo</code>）</td>
+<td><strong>×</strong>（圧力の式に湧き出しの項がない）</td>
+<td><strong>×</strong></td>
+<td>○</td>
+<td><strong>不向き</strong>。湧き出しは境界からの流量で代用できたが、オリフィスがチョークした
+0.62 ms で停止</td>
+</tr>
+<tr class="odd">
+<td><code>chtMultiRegionSimpleFoam</code>（ESI v2512・v2606）</td>
+<td><strong>×</strong>（<code>rhoThermo</code>）</td>
+<td>×</td>
+<td>×</td>
+<td>○</td>
+<td>不向き（定常のみ・1 種類のガス）</td>
+</tr>
+<tr class="even">
+<td><code>foamMultiRun</code>（Foundation OpenFOAM 13）</td>
+<td>○（<code>multicomponentFluid</code>）</td>
+<td>要確認（境界からの流量なら可）</td>
+<td><strong>○</strong></td>
+<td>○</td>
+<td><strong>候補</strong>。レーザーのアシストガスで、混合ガス・超音速の固体連成が解けた</td>
+</tr>
+</tbody>
+</table>
+<p><strong>結論</strong>：混合ガス・音速〜超音速・固体連成をすべて含むこの計算には、ESI
+版の CHT ソルバは向いていない。 Foundation 版 OpenFOAM 13 の
+<code>foamMultiRun</code> が、今のところ唯一の候補。</p>
+<hr />
 <h2 id="4-フォルダの中身">4. フォルダの中身</h2>
 <table>
 <thead>
@@ -429,6 +513,11 @@ reactingFoam で十分。
 <td>0 次元モデル（比熱が温度で変わる）</td>
 </tr>
 <tr class="even">
+<td><code>run002_CHT_wall_outsideAir</code></td>
+<td>固体連成（ESI <code>chtMultiRegionFoam</code>）。0.62 ms で停止（01
+の 8 章）</td>
+</tr>
+<tr class="odd">
 <td><code>tools</code></td>
 <td>ケースを作るスクリプト、0 次元モデル、描画のスクリプト</td>
 </tr>

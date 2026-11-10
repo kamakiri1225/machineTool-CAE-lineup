@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>ref005 CalculiX と FrontISTR の設定比較（ばね・MPC・固有値・周波数応答・減衰）</title>
+  <style>
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      html {
+        background-color: white;
+      }
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+      font-size: 85%;
+      margin: 0;
+      hyphens: manual;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      background-color: #1a1a1a;
+      border: none;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+  </style>
+  <style>
+  body{font-family:'Noto Sans JP','Hiragino Sans','Meiryo',sans-serif;max-width:1100px;margin:2em auto;padding:0 1.2em;line-height:1.75;color:#222}
+  h1{border-bottom:3px solid #1F3A5F;padding-bottom:.3em;color:#1F3A5F} h2{border-left:6px solid #2F6FB0;padding-left:.5em;margin-top:2em;color:#1F3A5F}
+  h3{color:#2F6FB0} img{max-width:100%;height:auto;border:1px solid #ddd;margin:.5em 0}
+  table{border-collapse:collapse;margin:1em 0;font-size:.95em} th,td{border:1px solid #bbb;padding:.35em .7em} th{background:#E3ECF7}
+  code{background:#f4f4f4;padding:.1em .3em;border-radius:3px} pre{background:#f4f4f4;padding:1em;overflow-x:auto}
+  nav.top{font-size:.9em;margin-bottom:1em} nav.top a{color:#2F6FB0}
+  </style>
+  <nav class="top"><a href="../../index.html">← 一覧に戻る</a></nav>
+  <script
+  src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-chtml-full.js"
+  type="text/javascript"></script>
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">ref005 CalculiX と FrontISTR
+の設定比較（ばね・MPC・固有値・周波数応答・減衰）</h1>
+</header>
+<p><a href="README.html">← docs 目次</a> ｜ <a href="../README.html">⌂
+トップ</a> ｜ <a
+href="ref000_overview_オープンソースマルチフィジックス総覧.html">← 前:
+ref000 オープンソースマルチフィジックス総覧</a> ｜ <a
+href="ref006_FrontISTR_6.0の変更点と5.9との比較.html">次: ref006
+6.0の変更点と5.9との比較 →</a></p>
+<h1
+id="ref005-calculix-と-frontistr-の設定比較ばねmpc固有値周波数応答減衰">ref005
+CalculiX と FrontISTR
+の設定比較（ばね・MPC・固有値・周波数応答・減衰）</h1>
+<p>作成: 2026-11-07 対象: CalculiX 2.21、FrontISTR 6.0（5.9
+でも同じ結果。違いは <a
+href="ref006_FrontISTR_6.0の変更点と5.9との比較.html">ref006</a>）</p>
+<p>「✅ 実行確認」は ana001〜003
+で実際に動かして結果を確かめたもの。それ以外はマニュアル・ソースで確認したもの。</p>
+<h2 id="1-ばね">1. ばね</h2>
+<table>
+<thead>
+<tr class="header">
+<th>やりたいこと</th>
+<th>CalculiX</th>
+<th>FrontISTR</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>節点と<strong>地面</strong>の間のばね</td>
+<td><code>SPRING1</code> 要素 ＋ <code>*SPRING</code></td>
+<td><code>!SPRING</code>（cnt、要素不要）。マニュアル上は静解析と陰解法の動解析で使える</td>
+</tr>
+<tr class="even">
+<td><strong>2節点間、方向を指定</strong>したばね（変形に追従しない）</td>
+<td>✅ <code>SPRING2</code> 要素 ＋
+<code>*SPRING</code>（2行目「自由度1,
+自由度2」、3行目「ばね定数」）</td>
+<td>✅ <code>511</code> 要素（<code>!SECTION, TYPE=INTERFACE</code>）＋
+cnt の <code>!SPRING_D</code>（「自由度1, 自由度2, ばね定数」）</td>
+</tr>
+<tr class="odd">
+<td>2節点間、<strong>節点を結ぶ線の方向</strong>のばね</td>
+<td><code>SPRINGA</code> 要素（長さ 0 は不可）</td>
+<td><code>511</code> 要素 ＋ <code>!SPRING_A</code></td>
+</tr>
+<tr class="even">
+<td>非線形ばね（力−変位の表）</td>
+<td><code>*SPRING, NONLINEAR</code></td>
+<td>―</td>
+</tr>
+<tr class="odd">
+<td>ダッシュポット（減衰器）</td>
+<td><code>DASHPOTA</code> 要素 ＋ <code>*DASHPOT</code></td>
+<td><code>511</code> 要素 ＋ <code>!DASHPOT_D</code> /
+<code>!DASHPOT_A</code></td>
+</tr>
+<tr class="even">
+<td>固有値解析でばねが効くか</td>
+<td>✅ 効く</td>
+<td>✅ 効く（マニュアルに明記なし。ana001 で確認）</td>
+</tr>
+<tr class="odd">
+<td>ばね定数の書き方の注意</td>
+<td>1つの <code>*SPRING</code> に値は 1つ → 値ごとに ELSET を分ける</td>
+<td>値ごとに材料を分ける。<strong>cnt の <code>!MATERIAL</code>
+名はメッシュ側にも同名の材料が必要</strong>（無いと
+<code>Fail in read in material definition</code>）</td>
+</tr>
+</tbody>
+</table>
+<h3 id="11-ばねの種類ごとの設定ファイルと図実際に解いた最小モデル">1.1
+ばねの種類ごとの設定ファイルと図（実際に解いた最小モデル）</h3>
+<p>3 種類のばねを、立方体（1 辺 100 mm の鋼、8 節点六面体 1
+個）の最小モデルで <strong>CalculiX と FrontISTR
+の両方で実際に解いた</strong>（<a
+href="../analysis/ana004_ccx_fistr_spring_types/">analysis/ana004</a>）。
+ばね定数はすべて <span class="math inline">\(k = 1000\)</span> N/mm（= 1
+N/µm）、4 本で 1000 N を受けるので、手計算は <span
+class="math inline">\(u = F/(4k) = 0.25\)</span> mm。</p>
+<table>
+<thead>
+<tr class="header">
+<th>ケース</th>
+<th>ばね</th>
+<th>理論値 [mm]</th>
+<th>CalculiX [mm]</th>
+<th>FrontISTR [mm]</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>A_ground</td>
+<td>地面ばね（SPRING1 / !SPRING）</td>
+<td>-0.2500</td>
+<td>-0.2500</td>
+<td>-0.2500</td>
+</tr>
+<tr class="even">
+<td>B_spring2</td>
+<td>2節点・方向指定（SPRING2 / 511+!SPRING_D）</td>
+<td>0.2500</td>
+<td>0.2500</td>
+<td>0.2500</td>
+</tr>
+<tr class="odd">
+<td>C_springa</td>
+<td>2節点・軸方向（SPRINGA / 511+!SPRING_A）</td>
+<td>-0.2500</td>
+<td>-0.2500</td>
+<td>-0.2500</td>
+</tr>
+</tbody>
+</table>
+<p>3 ケースとも、両ソルバが手計算と一致した（A の −0.25005
+は立方体自体の縮み 0.00005 mm を含む）。</p>
+<p>図は ParaView と同じ VTK ライブラリ（pyvista）で描いた。左 = 設定（赤
+= ばね、黄 = 荷重、水色 = 固定点）、右 = CalculiX の結果（変形を 100
+倍に拡大、色 = 変位の大きさ）。</p>
+<h4 id="a-地面ばね節点--地面">A. 地面ばね（節点 ↔︎ 地面）</h4>
+<p><img
+src="../analysis/ana004_ccx_fistr_spring_types/results/pv_A_ground.png"
+alt="地面ばね" /></p>
+<p>CalculiX（<a
+href="../analysis/ana004_ccx_fistr_spring_types/A_ground/ccx/model.inp">model.inp</a>）:
+<strong>1 節点の要素 <code>SPRING1</code></strong>
+を作り、<code>*SPRING</code> で自由度と値を与える。</p>
+<pre class="text"><code>*ELEMENT, TYPE=SPRING1, ELSET=GS3     ← 1 節点の要素（相手は地面）
+200, 1                                 ← 要素番号, 節点
+201, 2
+202, 3
+203, 4
+*SPRING, ELSET=GS3
+3                                      ← 効かせる自由度（3 = Z）。1 つだけ書ける
+1000.0                                 ← ばね定数 [N/mm]</code></pre>
+<p>X・Y・Z の 3 方向に入れるなら、ELSET を 3 つ（GS1, GS2,
+GS3）作って同じことを繰り返す。</p>
+<p>FrontISTR（<a
+href="../analysis/ana004_ccx_fistr_spring_types/A_ground/fistr/model.cnt">model.cnt</a>）:
+<strong>要素は不要</strong>。解析制御ファイル（cnt）に
+<code>!SPRING</code> を書くだけ。</p>
+<pre class="text"><code>!SPRING
+ SPRN, 1, 1000.0                       ← 節点グループ（または節点番号）, 自由度, ばね定数
+ SPRN, 2, 1000.0
+ SPRN, 3, 1000.0</code></pre>
+<p><code>SPRN</code> はメッシュファイル（msh）の
+<code>!NGROUP, NGRP=SPRN</code> で定義した節点グループ（下面 4
+節点）。</p>
+<h4 id="b-2-節点方向を指定長さ-0-のばね">B. 2 節点・方向を指定（長さ 0
+のばね）</h4>
+<p>工作機械のガイド・ボールねじのように、<strong>同じ位置にある 2
+つの節点</strong>（レール側とキャリッジ側）を方向ごとのばねでつなぐ。ana001〜003
+で使っている方式。 （図では、ばねが見えるように上の立方体を 40 mm
+持ち上げて描いている。実際は長さ 0）</p>
+<p><img
+src="../analysis/ana004_ccx_fistr_spring_types/results/pv_B_spring2.png"
+alt="2 節点・方向指定のばね" /></p>
+<p>CalculiX（<a
+href="../analysis/ana004_ccx_fistr_spring_types/B_spring2/ccx/model.inp">model.inp</a>）:
+<strong>2 節点の要素 <code>SPRING2</code></strong>。<code>*SPRING</code>
+の 2 行目に「節点 1 側の自由度, 節点 2 側の自由度」。</p>
+<pre class="text"><code>*ELEMENT, TYPE=SPRING2, ELSET=S2_1
+200, 5, 11                             ← 要素番号, 下の立方体の節点, 上の立方体の節点
+201, 6, 12
+202, 7, 13
+203, 8, 14
+*SPRING, ELSET=S2_1
+1, 1                                   ← 節点 1 の X と 節点 2 の X をつなぐ
+1000.0</code></pre>
+<p>Y・Z も同じように ELSET を分けて書く（1 つの <code>*SPRING</code>
+には自由度の組と値が 1 つずつ）。</p>
+<p>FrontISTR: <strong>メッシュ（msh）に 511
+要素と「ダミー材料」</strong>、<strong>制御（cnt）にばねの値</strong>を書く（2
+ファイルに分かれる）。</p>
+<pre class="text"><code>（model.msh）
+!ELEMENT, TYPE=511, EGRP=ESPR           ← 2 節点のばね（インターフェース）要素
+200, 5, 11
+201, 6, 12
+202, 7, 13
+203, 8, 14
+!MATERIAL, NAME=SPMAT, ITEM=1           ← ダミー材料（cnt と同じ名前が msh に無いとエラー）
+!ITEM=1, SUBITEM=2
+1.0, 0.3
+!SECTION, TYPE=INTERFACE, EGRP=ESPR, MATERIAL=SPMAT
+
+（model.cnt）
+!MATERIAL, NAME=SPMAT
+!SPRING_D                               ← 方向指定のばね
+ 1, 1, 1000.0                           ← 節点 1 の自由度, 節点 2 の自由度, ばね定数
+ 2, 2, 1000.0                           ← 1 つの材料に X・Y・Z をまとめて書ける
+ 3, 3, 1000.0</code></pre>
+<h4 id="c-2-節点節点を結ぶ線の向き長さのあるばね">C. 2
+節点・節点を結ぶ線の向き（長さのあるばね）</h4>
+<p>ばねの向きを自由度で指定せず、<strong>2
+つの節点を結ぶ線の向き</strong>に効かせる（コイルばね・棒のようなもの）。長さ
+0 は不可。</p>
+<p><img
+src="../analysis/ana004_ccx_fistr_spring_types/results/pv_C_springa.png"
+alt="2 節点・軸方向のばね" /></p>
+<p>CalculiX（<a
+href="../analysis/ana004_ccx_fistr_spring_types/C_springa/ccx/model.inp">model.inp</a>）:</p>
+<pre class="text"><code>*ELEMENT, TYPE=SPRINGA, ELSET=SA
+200, 5, 11                              ← z=100 と z=150 の節点（長さ 50 mm）
+...
+*SPRING, ELSET=SA
+                                        ← 2 行目は空行（向きは節点の位置で決まる）
+1000.0</code></pre>
+<p>FrontISTR（msh は B と同じ 511 要素＋ダミー材料）:</p>
+<pre class="text"><code>!MATERIAL, NAME=SPMAT
+!SPRING_A                               ← 軸方向のばね
+ 1000.0                                 ← ばね定数だけ</code></pre>
+<p>この種類は線と直角な向きには抵抗しないので、このモデルでは上の立方体の
+X・Y を拘束した（拘束しないと横にずれて解けない）。</p>
+<h4 id="どれを使うか">どれを使うか</h4>
+<table>
+<thead>
+<tr class="header">
+<th>種類</th>
+<th>工作機械での使いどころ</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>A 地面ばね</td>
+<td>機械を床（基礎・レベリングブロック）に載せる。床側を作らずに済む</td>
+</tr>
+<tr class="even">
+<td>B 方向指定・長さ 0</td>
+<td><strong>ガイド・ボールねじ・ボルト結合など、面と面の間</strong>（向かい合う節点をつなぐ）。ana001〜003</td>
+</tr>
+<tr class="odd">
+<td>C 軸方向・長さあり</td>
+<td>斜めの支え、ばね・ダンパ部品そのもの、カウンタバランス</td>
+</tr>
+<tr class="even">
+<td>代表点＋MPC＋B</td>
+<td>面が細かく分割されていて節点が向かい合わないとき、面の回転剛性も入れたいとき（ana003）</td>
+</tr>
+</tbody>
+</table>
+<h4 id="paraview-で同じ図を見る">ParaView で同じ図を見る</h4>
+<p><a
+href="../analysis/ana004_ccx_fistr_spring_types/results/">results/</a>
+の
+<code>A_ground.vtu</code>・<code>B_spring2.vtu</code>・<code>C_springa.vtu</code>
+を ParaView で開く。 ばねは線（VTK_LINE）の要素、変位は
+<code>DISPLACEMENT</code> として入れてある。</p>
+<ol type="1">
+<li>File → Open で <code>.vtu</code> を開き、Apply</li>
+<li>Filters → Warp By Vector（Vectors = <code>DISPLACEMENT</code>、Scale
+Factor = 100）</li>
+<li>色を
+<code>DISPLACEMENT</code>（Magnitude）にする。カラーマップは既定の Cool
+to Warm</li>
+<li>ばねだけ見たいときは Threshold で <code>kind</code> = 1（立方体は
+0）</li>
+</ol>
+<p>生成スクリプト: <a
+href="../analysis/ana004_ccx_fistr_spring_types/make_and_run.py">make_and_run.py</a>（入力作成・実行・照合）、<a
+href="../analysis/ana004_ccx_fistr_spring_types/render.py">render.py</a>（図と
+VTU）</p>
+<h2 id="2-面と面をつなぐ代表点mpc">2. 面と面をつなぐ（代表点・MPC）</h2>
+<table>
+<thead>
+<tr class="header">
+<th>やりたいこと</th>
+<th>CalculiX</th>
+<th>FrontISTR</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>線形の拘束式</td>
+<td>✅ <code>*EQUATION</code>（最初の項が従属自由度）</td>
+<td>✅ <code>!EQUATION</code>（メッシュファイル。2行目「項数,
+定数」）</td>
+</tr>
+<tr class="even">
+<td>剛体結合（RBE2 相当）</td>
+<td><code>*RIGID BODY, NSET=…, REF NODE=…, ROT NODE=…</code>、<code>*COUPLING</code>
+＋ <code>*KINEMATIC</code></td>
+<td>専用機能なし → ✅ 標準の
+<code>!EQUATION</code>（線形拘束式）を、剛体の式から係数を計算して並べる（自作スクリプトで生成、ソルバの改造なし。ana003）</td>
+</tr>
+<tr class="odd">
+<td>平均結合（RBE3 相当）</td>
+<td><code>*COUPLING</code> ＋ <code>*DISTRIBUTING</code></td>
+<td>専用機能なし → ✅ 同上（重み付き平均の式を <code>!EQUATION</code>
+で書く。ana003）</td>
+</tr>
+<tr class="even">
+<td>回転のばね</td>
+<td>ROT NODE の並進自由度を回転として使う（<code>*RIGID BODY</code>
+の仕組みと同じ）</td>
+<td>✅ 補助節点の並進自由度を回転として使う（ana003）</td>
+</tr>
+<tr class="odd">
+<td>面どうしを固着</td>
+<td><code>*TIE</code></td>
+<td><code>!CONTACT</code> の TIED</td>
+</tr>
+<tr class="even">
+<td>接触（ペナルティ）</td>
+<td><code>*CONTACT PAIR</code> ＋
+<code>*SURFACE BEHAVIOR</code>（線形の圧力−食い込みで「面ばね」にもなる）</td>
+<td><code>!CONTACT</code>（静解析・動解析）</td>
+</tr>
+</tbody>
+</table>
+<p>代表点＋MPC の図（ana003 のモデル。CalculiX・FrontISTR
+に渡したのと同じ節点・拘束式・ばねのデータから描いたもの）:</p>
+<p><img
+src="../analysis/ana003_ccx_fistr_mpc_spring/results/pv_rbe2_links.png"
+alt="RBE2 の代表点と MPC" /></p>
+<p><em>紫の細線 = 拘束式（面の節点 → 代表点）、赤 =
+代表点どうしのばね、黄 = 代表点。テーブルを 180 mm 持ち上げた分解図。
+生成スクリプト: <a
+href="../analysis/ana003_ccx_fistr_mpc_spring/make_mpc_figs.py">make_mpc_figs.py</a>。詳しくは
+<a
+href="ana003_CalculiX-FrontISTR_代表点MPCばねの比較.html">ana003</a></em></p>
+<h2 id="3-固有値解析">3. 固有値解析</h2>
+<table>
+<thead>
+<tr class="header">
+<th>項目</th>
+<th>CalculiX</th>
+<th>FrontISTR</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>キーワード</td>
+<td>✅ <code>*FREQUENCY</code>（2行目にモード数）</td>
+<td>✅ <code>!SOLUTION, TYPE=EIGEN</code> ＋
+<code>!EIGEN</code>（モード数, 収束判定, 最大反復）</td>
+</tr>
+<tr class="even">
+<td>解法</td>
+<td>ARPACK（Lanczos 系）＋ SPOOLES</td>
+<td>Lanczos 法</td>
+</tr>
+<tr class="odd">
+<td>結果</td>
+<td><code>.dat</code>（固有振動数・刺激係数）、<code>.frd</code>（モード形状）</td>
+<td><code>0.log</code>（固有振動数・刺激係数）、<code>.res</code>、VTK（<code>!WRITE,VISUAL</code>）</td>
+</tr>
+<tr class="even">
+<td>次の周波数応答に渡す</td>
+<td><code>STORAGE=YES</code></td>
+<td><code>0.log</code> と <code>.res</code> を次の解析で読む</td>
+</tr>
+</tbody>
+</table>
+<h2 id="4-周波数応答解析">4. 周波数応答解析</h2>
+<table>
+<thead>
+<tr class="header">
+<th>項目</th>
+<th>CalculiX</th>
+<th>FrontISTR</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>キーワード</td>
+<td>✅ <code>*STEADY STATE DYNAMICS</code>（下限, 上限, 点数,
+偏り）</td>
+<td>✅ <code>!SOLUTION, TYPE=DYNAMIC</code> ＋
+<code>!DYNAMIC</code>（2行目 <code>11, 2</code>）</td>
+</tr>
+<tr class="even">
+<td>解法</td>
+<td>モード重ね合わせ（同じ入力ファイル内で固有値ステップの後に書く）</td>
+<td>モード重ね合わせ（固有値解析を別に流し、<code>!EIGENREAD</code>
+でログを指定、全体制御で <code>result-in</code> に結果ファイル）</td>
+</tr>
+<tr class="odd">
+<td>加振力</td>
+<td><code>*CLOAD</code>（実部）。複素数は <code>LOAD CASE=2</code></td>
+<td><code>!FLOAD, LOAD CASE=1</code>（実部）/
+<code>2</code>（虚部）</td>
+</tr>
+<tr class="even">
+<td>出力</td>
+<td><code>*NODE PRINT</code>（各周波数の実部・虚部）、<code>*NODE FILE</code></td>
+<td><code>0.log</code> にモニタ節点の振幅、可視化用 VTK</td>
+</tr>
+<tr class="odd">
+<td>計算点</td>
+<td>固有振動数の間ごとに N 点（ピーク付近が細かい）</td>
+<td>下限〜上限を等間隔に N 点</td>
+</tr>
+</tbody>
+</table>
+<h2 id="5-減衰">5. 減衰</h2>
+<table>
+<thead>
+<tr class="header">
+<th>方法</th>
+<th>CalculiX</th>
+<th>FrontISTR</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>モード減衰比（直接 <span class="math inline">\(\zeta\)</span>）</td>
+<td><code>*MODAL DAMPING</code>（モード範囲ごとに <span
+class="math inline">\(\zeta\)</span>）</td>
+<td>×（周波数応答では Rayleigh のみ）</td>
+</tr>
+<tr class="even">
+<td>Rayleigh 減衰</td>
+<td>✅ <code>*MODAL DAMPING, RAYLEIGH</code>（2行目
+<code>,,α,β</code>）</td>
+<td>✅ <code>!DYNAMIC</code> の 5行目（<code>1, 1, α, β</code>）</td>
+</tr>
+<tr class="odd">
+<td>構造減衰（複素剛性）</td>
+<td><code>*DAMPING, STRUCTURAL</code>（材料）</td>
+<td>―</td>
+</tr>
+<tr class="even">
+<td>ダッシュポット</td>
+<td><code>DASHPOTA</code>（直接法・時刻歴）</td>
+<td><code>!DASHPOT_D</code> / <code>!DASHPOT_A</code>（時刻歴）</td>
+</tr>
+</tbody>
+</table>
+<h2 id="6-要素">6. 要素</h2>
+<table>
+<thead>
+<tr class="header">
+<th>要素</th>
+<th>CalculiX</th>
+<th>FrontISTR</th>
+<th>節点の順番</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>20節点六面体</td>
+<td>✅ <code>C3D20</code>（低減積分 <code>C3D20R</code>）</td>
+<td>✅ <code>362</code></td>
+<td>同じ（角 1〜8、下面の辺 9〜12、上面の辺 13〜16、縦の辺 17〜20）</td>
+</tr>
+<tr class="even">
+<td>8節点六面体</td>
+<td><code>C3D8</code>、<code>C3D8I</code>（非適合モードで曲げに強い）</td>
+<td><code>361</code>（<code>!ELEMOPT</code> で積分方法を選べる）</td>
+<td>同じ</td>
+</tr>
+<tr class="odd">
+<td>10節点四面体</td>
+<td><code>C3D10</code></td>
+<td><code>342</code></td>
+<td>―</td>
+</tr>
+</tbody>
+</table>
+<h2 id="7-使い分けの感想ana001003-を通して">7.
+使い分けの感想（ana001〜003 を通して）</h2>
+<table>
+<thead>
+<tr class="header">
+<th></th>
+<th>CalculiX</th>
+<th>FrontISTR</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>入れやすさ</td>
+<td>apt パッケージあり（権限がなくても展開して使える）</td>
+<td>ソースからビルド（cmake、Fortran、BLAS/LAPACK が必要）</td>
+</tr>
+<tr class="even">
+<td>入力</td>
+<td>1 ファイルに全部（Abaqus に近い）</td>
+<td>メッシュ・制御・全体制御の 3
+ファイル。解析ごとに全体制御を切り替える</td>
+</tr>
+<tr class="odd">
+<td>日本語の情報</td>
+<td>少ない</td>
+<td><strong>マニュアルが日本語</strong></td>
+</tr>
+<tr class="even">
+<td>減衰の自由度</td>
+<td>高い（モード減衰を直接入れられる）</td>
+<td>周波数応答は Rayleigh のみ</td>
+</tr>
+<tr class="odd">
+<td>大規模・並列</td>
+<td>OpenMP</td>
+<td>MPI 並列が得意（今回は逐次版）</td>
+</tr>
+<tr class="even">
+<td>結果</td>
+<td>ana001〜003 の範囲では両者一致（固有振動数の差 0.3 % 以内、FRF
+もほぼ一致）</td>
+<td>同左</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<p><a href="README.html">← docs 目次</a> ｜ <a href="../README.html">⌂
+トップ</a> ｜ <a
+href="ref000_overview_オープンソースマルチフィジックス総覧.html">← 前:
+ref000 オープンソースマルチフィジックス総覧</a> ｜ <a
+href="ref006_FrontISTR_6.0の変更点と5.9との比較.html">次: ref006
+6.0の変更点と5.9との比較 →</a></p>
+</body>
+</html>
